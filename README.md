@@ -1,9 +1,11 @@
-# hxppet
+# so-ai-pang
 
-## Project setup
+## 安包
 ```
-yarn install
+yarn
 ```
+
+## web环境
 
 ### Compiles and hot-reloads for development
 ```
@@ -18,6 +20,18 @@ yarn build
 ### Lints and fixes files
 ```
 yarn lint
+```
+
+## 桌面应用
+
+### Compiles and hot-reloads for development
+```
+yarn electron:serve
+```
+
+### Compiles and minifies for production
+```
+yarn electron:build
 ```
 
 ### Customize configuration
