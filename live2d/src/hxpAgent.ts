@@ -23,6 +23,29 @@ export let frameBuffer: WebGLFramebuffer = null;
  * 管理Cubism SDK。
  */
 export class HxpAgent {
+
+  _cubismOption: Option; // Cubism SDK Option
+  _view: HxpView; // View信息
+  _captured: boolean; // 是否在点击
+  _mouseX: number; // 鼠标X坐标
+  _mouseY: number; // 鼠标Y坐标
+  _isEnd: boolean; // APP是否已关闭
+  _textureManager: HxpTexture; // 纹理管理
+
+  /**
+   * 构造函数
+   */
+  constructor() {
+    this._captured = false;
+    this._mouseX = 0.0;
+    this._mouseY = 0.0;
+    this._isEnd = false;
+
+    this._cubismOption = new Option();
+    this._view = new HxpView();
+    this._textureManager = new HxpTexture();
+  }
+
   /**
    * 返回类的实例(singleton)。
    * 如果没有生成实例，则在内部生成实例。
@@ -238,19 +261,6 @@ export class HxpAgent {
     return this._textureManager;
   }
 
-  /**
-   * 构造函数
-   */
-  constructor() {
-    this._captured = false;
-    this._mouseX = 0.0;
-    this._mouseY = 0.0;
-    this._isEnd = false;
-
-    this._cubismOption = new Option();
-    this._view = new HxpView();
-    this._textureManager = new HxpTexture();
-  }
 
   /**
    * Cubism SDK的初始化
@@ -280,13 +290,6 @@ export class HxpAgent {
     canvas.height = window.innerHeight;
   }
 
-  _cubismOption: Option; // Cubism SDK Option
-  _view: HxpView; // View信息
-  _captured: boolean; // 是否在点击
-  _mouseX: number; // 鼠标X坐标
-  _mouseY: number; // 鼠标Y坐标
-  _isEnd: boolean; // APP是否已关闭
-  _textureManager: HxpTexture; // 纹理管理
 }
 
 

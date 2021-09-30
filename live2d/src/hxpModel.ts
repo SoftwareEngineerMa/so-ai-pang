@@ -210,7 +210,7 @@ export class HxpModel extends CubismUserModel {
     if (this._modelSetting.getModelFileName() != '') {
       const modelFileName = this._modelSetting.getModelFileName();
 
-      await fetch(`${this._modelHomeDir}${modelFileName}`)
+      fetch(`${this._modelHomeDir}${modelFileName}`)
         .then(response => response.arrayBuffer())
         .then(arrayBuffer => {
           this.loadModel(arrayBuffer);

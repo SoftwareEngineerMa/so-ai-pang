@@ -91,17 +91,16 @@ export class HxpView {
   public render(): void {
     gl.useProgram(this._programId);
 
-    if (this._back) {
-      this._back.render(this._programId);
-    }
+
+
 
     gl.flush();
 
-    const live2DManager: HxpMManager = HxpMManager.getInstance();
+    const modelManager: HxpMManager = HxpMManager.getInstance();
 
-    live2DManager.setViewMatrix(this._viewMatrix);
+    modelManager.setViewMatrix(this._viewMatrix);
 
-    live2DManager.onUpdate();
+    modelManager.onUpdate();
   }
 
   /**
