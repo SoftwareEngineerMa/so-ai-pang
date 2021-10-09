@@ -888,8 +888,6 @@ export class HxpModel extends CubismUserModel {
     }
   }
 
-
-
   get _state() {
     return this.state;
   }
@@ -898,6 +896,4 @@ export class HxpModel extends CubismUserModel {
   set _state(index: number) {
     this.state = index;
   }
-
-
 }

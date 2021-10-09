@@ -118,13 +118,19 @@ export class HxpAgent {
     this.initializeCubism();
 
 
+    // canvas元素事件绑定
+    canvas.onmousedown = onMouseDown;
+    canvas.onmousemove = onMouseMove;
+    canvas.onmouseup = onMouseUp;
+
+
     return true;
   }
 
   /**
    * 调整画布大小并重新初始化视图。
    */
-  public onResize(): void {
+  public onResize() {
     this._resizeCanvas();
     this._view.initialize();
     this._view.initializeSprite();
@@ -291,5 +297,59 @@ export class HxpAgent {
   }
 
 }
+
+// 鼠标点击按下时的模型处理
+function onMouseDown(ev: MouseEvent) {
+  if (!HxpAgent.getInstance().getView()) {
+    console.log('模型加载失败！');
+    return
+  }
+
+  const posX: number = ev.pageX;
+  const posY: number = ev.pageY;
+
+  console.log('鼠标点击按下位置：', posX, posY);
+  // todo 添加点击功能逻辑
+
+}
+
+
+// 拖动模型的处理
+function onMouseMove(ev: MouseEvent) {
+  if (!HxpAgent.getInstance().getView()) {
+    console.log('模型加载失败！');
+    return
+  }
+
+  const rect = (ev.target as Element).getBoundingClientRect();
+  const posX = ev.clientX - rect.left;
+  const posY = ev.clientY - rect.top;
+
+  const viewX = HxpAgent.getInstance()._view.transformScreenX(posX);
+  const viewY = HxpAgent.getInstance()._view.transformScreenY(posY);
+  HxpMManager.getInstance()._model.setDragging(viewX, viewY);
+
+}
+
+// 鼠标点击抬起时的模型处理
+function onMouseUp(ev: MouseEvent) {
+  if (!HxpAgent.getInstance().getView()) {
+    console.log('模型加载失败！');
+    return
+  }
+
+  const posX: number = ev.pageX;
+  const posY: number = ev.pageY;
+
+  console.log('鼠标点击抬起位置：', posX, posY);
+  // todo 添加点击功能逻辑
+
+
+}
+
+
+
+
+
 
 
