@@ -111,6 +111,9 @@ export class HxpTexture {
 
       callback(textureInfo);
     };
+
+    console.log(fileName);
+
     img.src = fileName;
   }
 

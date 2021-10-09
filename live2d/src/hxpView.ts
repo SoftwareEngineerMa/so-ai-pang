@@ -91,9 +91,6 @@ export class HxpView {
   public render(): void {
     gl.useProgram(this._programId);
 
-
-
-
     gl.flush();
 
     const modelManager: HxpMManager = HxpMManager.getInstance();
@@ -111,22 +108,30 @@ export class HxpView {
     const height: number = canvas.height;
 
     const textureManager = HxpAgent.getInstance().getTextureManager();
-    const resourcesPath = LAppDefine.ResourcesPath;
+    const resourcesPath = '../img/hi/';
 
     let imageName = '';
 
     // 背景图像初始化
-    imageName = LAppDefine.BackImageName;
+    imageName = 'test-1.png';
 
     // 因为异步，所以我们创建了回调函数
     const initBackGroundTexture = (textureInfo: TextureInfo): void => {
-      const x: number = width * 0.5;
-      const y: number = height * 0.5;
 
-      const fwidth = textureInfo.width * 2.0;
-      const fheight = height * 0.95;
+      const x = 100;
+      const y = 100;
+      const fwidth = textureInfo.width;
+      const fheight = textureInfo.height;
+
+
       this._back = new HxpSprite(x, y, fwidth, fheight, textureInfo.id);
     };
+
+    textureManager.createTextureFromPngFile(
+      resourcesPath + imageName,
+      false,
+      initBackGroundTexture
+    );
 
 
     // 创建着色器

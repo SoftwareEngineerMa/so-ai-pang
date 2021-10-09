@@ -171,6 +171,7 @@ export class HxpSprite {
 
     // 模型的绘制
     gl.bindTexture(gl.TEXTURE_2D, this._texture);
+
     gl.drawElements(
       gl.TRIANGLES,
       this._indexArray.length,

@@ -279,7 +279,7 @@ export class HxpAgent {
 
     HxpTimer.updateTime();
 
-    this._view.initializeSprite();
+    // this._view.initializeSprite();
   }
 
   /**
