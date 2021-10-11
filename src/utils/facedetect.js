@@ -4,9 +4,9 @@ require('@tensorflow/tfjs-backend-webgl');
 export default async function main() {
   const model = await faceLandmarksDetection.load(
     faceLandmarksDetection.SupportedPackages.mediapipeFacemesh, {maxFaces: 1});
-
-  // renderPrediction();
-
+  
+  // 返回值类型字符串
+  // 'top'|'bottom'|'left'|'right'|'normal'
   return async function () {
       const predictions = await model.estimateFaces({
         input: document.querySelector("video")
@@ -46,6 +46,5 @@ export default async function main() {
         }
       }
       return 'normal';
-      // requestAnimationFrame(renderPrediction);
   }
 }
