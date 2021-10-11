@@ -3,11 +3,18 @@
     <!-- <h1>{{ name }}</h1> -->
     <img src="../assets/gif/angry.gif" v-show="isOdd"/>
     <img src="../assets/gif/cry.gif" v-show="!isOdd"/>
+    <Maze></Maze>
+
   </div>
 </template>
 
 <script>
+import Maze from './Maze'
 export default {
+
+  components: {
+    Maze
+  },
   data: function() {
     return {
         name: 'HelloWorld',
