@@ -7,7 +7,9 @@ export default async function main(video) {
     await faceapi.loadSsdMobilenetv1Model('/model');
     await faceapi.loadFaceLandmarkModel('/model');
     await faceapi.loadFaceExpressionModel('/model');
-    
+
+    // 返回值类型对象 {expression:string, ratio:number}
+    // expression范围：'happy'|'angry'|'sad'|'surprised'|'disgusted'|'fearful'|'normal'
     return async function () {
       let result = {};
       const detectionWithExpressions = await faceapi.detectSingleFace(video, faceapiOptions).withFaceLandmarks().withFaceExpressions();
