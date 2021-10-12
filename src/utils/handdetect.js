@@ -4,10 +4,10 @@ import * as THREE from 'three';
 import * as fp from 'fingerpose';
 
 const knownGestures = [
-    fp.Gestures.VictoryGesture,
-    fp.Gestures.ThumbsUpGesture
-  ];
-    const GE = new fp.GestureEstimator(knownGestures);
+  fp.Gestures.VictoryGesture,
+  fp.Gestures.ThumbsUpGesture
+];
+const GE = new fp.GestureEstimator(knownGestures);
 
 export default async function main() {
 
@@ -25,7 +25,7 @@ export default async function main() {
       //   }
       // }
       let result = mzmJudge(predictions[0].landmarks, predictions[0].annotations);
-      if(result !== 'hand-normal') {
+      if (result !== 'hand-normal') {
         return result;
       }
 
@@ -48,8 +48,8 @@ export default async function main() {
 function mzmJudge(keypoints, annotations) {
   const checkZhan = () => {
     for (let finger in annotations) {
-      for (let i=1; i< annotations[finger].length; i++) {
-        if (annotations[finger][i][1] > annotations[finger][i-1][1]) {
+      for (let i = 1; i < annotations[finger].length; i++) {
+        if (annotations[finger][i][1] > annotations[finger][i - 1][1]) {
           return false;
         }
       }
@@ -67,7 +67,7 @@ function mzmJudge(keypoints, annotations) {
   let fingerTipsList = [keypoints[4], keypoints[8], keypoints[12], keypoints[16], keypoints[20]];
   for (let i = 1; i < fingerTipsList.length; i++) {
     const vec1 = new THREE.Vector3(...fingerTipsList[i]);
-    const vec2 = new THREE.Vector3(...fingerTipsList[i-1]);
+    const vec2 = new THREE.Vector3(...fingerTipsList[i - 1]);
     fingerTipsDistance += vec1.distanceTo(vec2);
   }
   fingerTipsDistance += (new THREE.Vector3(...fingerTipsList[0])).distanceTo(new THREE.Vector3(...fingerTipsList[fingerTipsList.length - 1]));
