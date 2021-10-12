@@ -7,6 +7,8 @@ import KeyboardJS from './lib/keyboard'
 
 import { generateSquareMaze } from './lib/maze'
 
+import setupCamera from '../utils/setCamera';
+import detectFace from '../utils/facedetect';
 
 var camera = undefined,
     scene = undefined,
@@ -246,6 +248,7 @@ function onResize() {
 
 
 function onMoveKey(axis) {
+    console.log(axis);
     keyAxis = axis.slice(0);
 }
 
@@ -274,29 +277,53 @@ function onMoveKey(axis) {
 //     return this;
 // }
 
-export function start() {
+export async function start() {
     // Prepare the instructions.
     // $('#instructions').center();
     // $('#instructions').hide();
     // KeyboardJS.bind.key('i', function () { $('#instructions').show() },
     //     function () { $('#instructions').hide() });
 
-    // Create the renderer.
-    renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+    const video = await setupCamera();
+    if (video) {
+        await video.play();
 
-    // Bind keyboard and resize events.
-    KeyboardJS.bind.axis('left', 'right', 'down', 'up', onMoveKey);
-    KeyboardJS.bind.axis('h', 'l', 'j', 'k', onMoveKey);
-    // $(window).resize(onResize);
+        // 调用人脸检测示例
+        const predictionFace = await detectFace();
+        setInterval(() => {
+            predictionFace().then((res) => {
+                const facePose = res;
+                if (facePose === 'left') {
+                    onMoveKey([-1, 0]);
+                } else if (facePose === 'right') {
+                    onMoveKey([1, 0]);
+                } else if (facePose === 'top') {
+                    onMoveKey([0, 1]);
+                } else if (facePose === 'bottom') {
+                    onMoveKey([0, -1]);
+                }
+                console.log(facePose);
+            });
+
+        }, 10);
+
+        // Create the renderer.
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Bind keyboard and resize events.
+        KeyboardJS.bind.axis('left', 'right', 'down', 'up', onMoveKey);
+        KeyboardJS.bind.axis('h', 'l', 'j', 'k', onMoveKey);
+        // $(window).resize(onResize);
 
 
-    // Set the initial game state.
-    gameState = 'initialize';
+        // Set the initial game state.
+        gameState = 'initialize';
 
-    // Start the game loop.
-    requestAnimationFrame(gameLoop);
+        // Start the game loop.
+        requestAnimationFrame(gameLoop);
 
+    }
 }
 
