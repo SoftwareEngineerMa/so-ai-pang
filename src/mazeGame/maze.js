@@ -15,13 +15,32 @@ import { animationPlay, elFadeIn, elFadeOut } from './utils';
 
 export let gameInstance = null;
 
+export default function getInstance() {
+    if (!gameInstance) {
+        gameInstance = new Maze();
+    }
+    return gameInstance;
+}
 
-export class Maze {
+const moveMap = new Map([
+    ['left', [-1, 0]],
+    ['right', [1, 0]],
+    ['top', [0, 1]],
+    ['bottom', [0, -1]]
+])
+
+
+
+
+class Maze {
 
     camera = undefined;
     scene = undefined;
     renderer = undefined;
     light = undefined;
+
+    targetObject = null;
+
     maze = undefined;
     mazeMesh = undefined;
     mazeDimension = 11;
@@ -91,13 +110,6 @@ export class Maze {
         this.gameState = 'init';
     }
 
-    // static getInstance = () => {
-    //     if (!gameInstance) {
-    //         gameInstance = new Maze();
-    //     }
-    //     return gameInstance;
-    // }
-
     // 游戏开始
     start = () => {
         this.hxpResize();
@@ -108,17 +120,7 @@ export class Maze {
             const predictionFace = await detectFace();
             setInterval(() => {
                 predictionFace().then((res) => {
-                    const facePose = res;
-                    if (facePose === 'left') {
-                        this.onMoveKey([-1, 0]);
-                    } else if (facePose === 'right') {
-                        this.onMoveKey([1, 0]);
-                    } else if (facePose === 'top') {
-                        this.onMoveKey([0, 1]);
-                    } else if (facePose === 'bottom') {
-                        this.onMoveKey([0, -1]);
-                    }
-                    // console.log(facePose);
+                    this.onMoveKey(moveMap.get(res))
                 });
 
             }, 10);
@@ -134,7 +136,7 @@ export class Maze {
         this.createPhysicsWorld();
         this.createRenderWorld();
         this.camera.position.set(1, 1, 5);
-        this.light.position.set(1, 1, 1.3);
+        this.light.position.set(1, 1, 3);
         this.light.intensity = 0;
         // eslint-disable-next-line no-case-declarations
         let level = Math.floor((this.mazeDimension - 1) / 2 - 4);
@@ -241,8 +243,10 @@ export class Maze {
         this.scene = new THREE.Scene();
 
         // Add the light.
-        this.light = new THREE.PointLight(0xffffff, 1);
-        this.light.position.set(50, 50, 50);
+        // this.targetObject = new THREE.Object3D();
+        // this.targetOj
+        this.light = new THREE.SpotLight(0xffffff, 1);
+        this.light.position.set(1, 1, 1.3);
         this.scene.add(this.light);
 
         // Add the ball.
@@ -250,9 +254,9 @@ export class Maze {
         let m = new THREE.MeshPhongMaterial({ map: this.ironTexture });
         this.ballMesh = new THREE.Mesh(g, m);
         this.ballMesh.position.set(1, 1, this.ballRadius);
-        // this.scene.add(this.ballMesh);
-
-
+        this.scene.add(this.ballMesh);
+        this.ballMesh.visible = false;
+        this.light.target = this.ballMesh;
 
         // Add the camera.
         this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
@@ -316,7 +320,8 @@ export class Maze {
     updatePhysicsWorld = () => {
         // Apply "friction". 
         let lv = this.wBall.GetLinearVelocity();
-        lv.Multiply(0.95);
+        // 调整物体惯性
+        lv.Multiply(0.91);
         this.wBall.SetLinearVelocity(lv);
 
         // Apply user-directed force.
@@ -361,9 +366,12 @@ export class Maze {
         this.camera.position.x += (this.ballMesh.position.x - this.camera.position.x) * 0.1;
         this.camera.position.y += (this.ballMesh.position.y - this.camera.position.y) * 0.1;
         this.camera.position.z += (5 - this.camera.position.z) * 0.1;
+        // 调整灯光的位置和高度
         this.light.position.x = this.camera.position.x;
         this.light.position.y = this.camera.position.y;
-        this.light.position.z = this.camera.position.z - 3.7;
+        this.light.position.z = this.camera.position.z - 1.4;
+        console.log(this.light.position.x, this.camera.position.x);
+
     }
 
     // 物体的方向控制

@@ -1,2 +1,2 @@
-import { Maze } from './mazeGame/maze'
-new Maze().start();
+import getMaze from './mazeGame/maze'
+getMaze().start();
