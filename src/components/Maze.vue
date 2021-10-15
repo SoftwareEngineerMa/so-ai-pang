@@ -7,13 +7,14 @@
 
 
 <script>
-import { start } from '../mazeGame/maze';
+// import { Maze } from '../mazeGame/maze';
 
 export default {
     name: 'Maze',
     props: {},
-    mounted: function(){
-        start();
+    created: function(){
+        // const i = new Maze();
+        // i.start();
     }
 }
 </script>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <style>
+      .hxp{
+        display: none;
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        top: 50%;
+        left: 50%;
+        background-image: url('./hxp_run/run.png');
+        background-position: 0 0;
+        background-size: cover;
+        transform: translate(-50%, -50%) ;
+        transition: transform 1s;
+      }
+      .level {
+        display: none;
+        position: absolute;
+        top: 25px;
+        left: 30px;
+        font-size: 25px;
+        color: aliceblue;
+      }
+      #video{
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+        width: auto;
+        height: auto;
+        display: none;
+      }
+      .shade{
+        background-image: url('./texture/concrete.png');
+        background-size:contain;
+      }
+
+      .shade strong{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) ;
+        font-size: 25px;
+        color: aliceblue;
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>
+      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <strong class="level">层数：</strong>
+    <div class="hxp"></div>
+    <div class="shade">
+      <strong>加载中...</strong>
+    </div>
+    <video id="video" playsinline>
+    </video>
+    <!-- built files will be auto injected -->
+  </body>
+</html>
