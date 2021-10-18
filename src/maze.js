@@ -1,2 +1,6 @@
-import getMaze from './mazeGame/maze'
-getMaze().start();
+import Vue from 'vue'
+import Maze from './mazeGame/maze.vue'
+
+new Vue({
+    render: h => h(Maze),
+}).$mount('#app')
