@@ -11,7 +11,7 @@ import Animation from './animation';
 
 import setupCamera from '../utils/setCamera';
 import detectFace from '../utils/facedetect';
-import { animationPlay, elFadeIn, elFadeOut } from './utils';
+import { elFadeIn, elFadeOut } from './utils';
 
 export let gameInstance = null;
 
@@ -26,7 +26,8 @@ const moveMap = new Map([
     ['left', [-1, 0]],
     ['right', [1, 0]],
     ['top', [0, 1]],
-    ['bottom', [0, -1]]
+    ['bottom', [0, -1]],
+    ['normal', [0, 0]]
 ])
 
 
@@ -72,7 +73,11 @@ class Maze {
     hxp = null;
     shade = null;
 
+    awardArray = [];
+
     hxpTimer = null;
+
+    hxpToward = 'left';
 
     hxpAnimation = null;
 
@@ -82,6 +87,7 @@ class Maze {
     lasty = null;
 
     constructor() {
+
 
         // Create the renderer.
         this.renderer = new THREE.WebGLRenderer();
@@ -98,6 +104,7 @@ class Maze {
 
         window.onresize = () => {
             this.onResize();
+            this.hxpResize();
         }
 
         window.onload = () => {
@@ -111,16 +118,17 @@ class Maze {
     }
 
     // 游戏开始
-    start = () => {
+    async start() {
         this.hxpResize();
-        setupCamera().then(async video => {
+        await setupCamera().then(async video => {
             video.play();
-
             // 调用人脸检测示例
             const predictionFace = await detectFace();
             setInterval(() => {
                 predictionFace().then((res) => {
-                    this.onMoveKey(moveMap.get(res))
+                    if (res && res !== 'normal') {
+                        this.onMoveKey(moveMap.get(res))
+                    }
                 });
 
             }, 10);
@@ -130,7 +138,7 @@ class Maze {
     }
 
     // 游戏初始化
-    init = () => {
+    init() {
         this.maze = generateSquareMaze(this.mazeDimension);
         this.maze[this.mazeDimension - 1][this.mazeDimension - 2] = false;
         this.createPhysicsWorld();
@@ -147,7 +155,7 @@ class Maze {
     }
 
     // 场景淡入
-    fadeIn = () => {
+    fadeIn() {
         elFadeIn('.hxp', 20);
         elFadeIn('.level', 20);
         this.light.intensity += 0.1 * (1.0 - this.light.intensity);
@@ -159,7 +167,7 @@ class Maze {
     }
 
     // 游戏进行中
-    play = () => {
+    play() {
         this.updatePhysicsWorld();
         this.updateRenderWorld();
         this.renderer.render(this.scene, this.camera);
@@ -174,7 +182,7 @@ class Maze {
     }
 
     // 场景淡出
-    fadeOut = () => {
+    fadeOut() {
         this.updatePhysicsWorld();
         this.updateRenderWorld();
         this.light.intensity += 0.1 * (0.0 - this.light.intensity);
@@ -187,7 +195,7 @@ class Maze {
     }
 
     // canvas循环渲染
-    loop = () => {
+    loop() {
         switch (this.gameState) {
             case 'init':
                 this.init();
@@ -196,6 +204,7 @@ class Maze {
                 this.fadeIn();
                 break;
             case 'fadeout':
+                elFadeOut('.hxp', 5, () => { console.log('hxp消失'); })
                 this.fadeOut();
                 break;
             case 'play':
@@ -206,7 +215,7 @@ class Maze {
     }
 
     // 创建物理世界
-    createPhysicsWorld = () => {
+    createPhysicsWorld() {
         // Create the world object.
         this.wWorld = new this.b2World(new this.b2Vec2(0, 0), true);
 
@@ -238,7 +247,7 @@ class Maze {
     }
 
     // 创建渲染3d场景
-    createRenderWorld = () => {
+    createRenderWorld() {
         // Create the scene object.
         this.scene = new THREE.Scene();
 
@@ -282,9 +291,9 @@ class Maze {
     generate_maze_mesh = (field) => {
 
         console.log(field);
-        if (!field[8][1]) {
+        if (!field[1][2]) {
             this.onMoveKey([0, 1]);
-        } else if (!field[9][2]) {
+        } else if (!field[2][1]) {
             this.onMoveKey([1, 0]);
         }
         let award = generateSquareMaze(this.mazeDimension);
@@ -306,6 +315,7 @@ class Maze {
                         let awardBall = new THREE.Mesh(ballG, ballM);
                         // awardBall.rotateZ(Math.PI / 4);
                         awardBall.position.set(i, j, 0.5);
+                        this.awardArray.push(awardBall);
                         this.scene.add(awardBall);
                     }
                 }
@@ -317,11 +327,11 @@ class Maze {
     }
 
     // 更新物理世界
-    updatePhysicsWorld = () => {
+    updatePhysicsWorld() {
         // Apply "friction". 
         let lv = this.wBall.GetLinearVelocity();
         // 调整物体惯性
-        lv.Multiply(0.91);
+        lv.Multiply(0.93);
         this.wBall.SetLinearVelocity(lv);
 
         // Apply user-directed force.
@@ -343,7 +353,7 @@ class Maze {
     }
 
     // 更新3d场景
-    updateRenderWorld = () => {
+    updateRenderWorld() {
 
         // Update ball position.
         let stepX = this.wBall.GetPosition().x - this.ballMesh.position.x;
@@ -351,7 +361,7 @@ class Maze {
         this.ballMesh.position.x += stepX;
         this.ballMesh.position.y += stepY;
 
-        // Update ball rotation.
+        // 更新3d小球的转动
         let tempMat = new THREE.Matrix4();
         tempMat.makeRotationAxis(new THREE.Vector3(0, 1, 0), stepX / this.ballRadius);
         tempMat.multiplySelf(this.ballMesh.matrix);
@@ -362,6 +372,21 @@ class Maze {
         this.ballMesh.matrix = tempMat;
         this.ballMesh.rotation.getRotationFromMatrix(this.ballMesh.matrix);
 
+        // 更新奖励物件转动、消失
+        if (this.awardArray.length !== 0) {
+            this.awardArray.forEach(item => {
+                if (item) {
+                    if (this.isHitAward(this.ballMesh.position, item.position)) {
+                        this.scene.remove(item)
+                        item = null;
+                    } else {
+                        item.rotation.z += 0.03;
+                    }
+                }
+
+            })
+        }
+
         // Update camera and light positions.
         this.camera.position.x += (this.ballMesh.position.x - this.camera.position.x) * 0.1;
         this.camera.position.y += (this.ballMesh.position.y - this.camera.position.y) * 0.1;
@@ -369,52 +394,64 @@ class Maze {
         // 调整灯光的位置和高度
         this.light.position.x = this.camera.position.x;
         this.light.position.y = this.camera.position.y;
-        this.light.position.z = this.camera.position.z - 1.4;
-        console.log(this.light.position.x, this.camera.position.x);
+        this.light.position.z = this.camera.position.z + 1;
 
     }
 
     // 物体的方向控制
     onMoveKey = (axis) => {
-        if (axis[0] == 1) {
-            if (this.hxpAngle !== 180) {
-                this.hxpAngle = 180;
-                this.hxp.style.transform = `translate(-50%, -50%) rotate(${this.hxpAngle}deg)`;
+        if (this.hxpToward === 'top') {
+            if (axis[0] === 1) {
+                this.hxpAngle += 90;
+                this.hxpToward = 'right';
+            } else if (axis[0] === -1) {
+                this.hxpAngle -= 90;
+                this.hxpToward = 'left';
+            } else if (axis[1] === -1) {
+                this.hxpAngle += 180;
+                this.hxpToward = 'bottom'
             }
-        } else if (axis[0] == -1) {
-            if (this.hxpAngle !== 0) {
-                console.log(this.hxpAngle);
-                if (this.hxpAngle == 270) {
-                    this.hxpAngle = 360;
-                    this.hxp.style.transform = `translate(-50%, -50%) rotate(${this.hxpAngle}deg)`;
-                } else if (this.hxpAngle == 360) {
-                    this.hxpAngle = 0;
-                    this.hxp.style.transition = '';
-                    this.hxp.style.transform = `translate(-50%, -50%) rotate(${this.hxpAngle}deg)`;
-                    // this.hxp.style.transition = 'transform 1s';
-                } else {
-                    this.hxpAngle = 0;
-                    this.hxp.style.transform = `translate(-50%, -50%) rotate(${this.hxpAngle}deg)`;
-                }
+        } else if (this.hxpToward === 'right') {
+            if (axis[1] === 1) {
+                this.hxpAngle -= 90;
+                this.hxpToward = 'top';
+            } else if (axis[1] === -1) {
+                this.hxpAngle += 90;
+                this.hxpToward = 'bottom';
+            } else if (axis[0] === -1) {
+                this.hxpAngle -= 180;
+                this.hxpToward = 'left';
             }
-        } else if (axis[1] == 1) {
-            if (this.hxpAngle !== 90) {
-                this.hxpAngle = 90;
-                this.hxp.style.transform = `translate(-50%, -50%) rotate(${this.hxpAngle}deg)`;
+        } else if (this.hxpToward === 'bottom') {
+            if (axis[1] === 1) {
+                this.hxpAngle -= 180;
+                this.hxpToward = 'top';
+            } else if (axis[0] === 1) {
+                this.hxpAngle -= 90;
+                this.hxpToward = 'right';
+            } else if (axis[0] === -1) {
+                this.hxpAngle += 90
+                this.hxpToward = 'left'
             }
-        } else if (axis[1] == -1) {
-            if (this.hxpAngle !== 270) {
-                this.hxpAngle = 270;
-                this.hxp.style.transform = `translate(-50%, -50%) rotate(${this.hxpAngle}deg)`;
+        } else if (this.hxpToward === 'left') {
+            if (axis[0] === 1) {
+                this.hxpAngle += 180;
+                this.hxpToward = 'right';
+            } else if (axis[1] === -1) {
+                this.hxpAngle -= 90;
+                this.hxpToward = 'bottom';
+            } else if (axis[1] === 1) {
+                console.log('kkk');
+                this.hxpAngle += 90;
+                this.hxpToward = 'top';
             }
-
         }
-
+        this.hxp.style.transform = `translate(-50%, -50%) rotate(${this.hxpAngle}deg)`;
         this.keyAxis = axis.slice(0);
     }
 
     // 窗口大小调整
-    onResize = () => {
+    onResize() {
         if (this.renderer && this.camera) {
             this.renderer.setSize(window.innerWidth, window.innerHeight);
             this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -422,9 +459,19 @@ class Maze {
         }
     }
 
-    hxpResize = () => {
-        const ratio = window.innerHeight / window.innerWidth;
+    // 黄小胖大小调整 
+    hxpResize() {
         this.hxp.style.width = window.innerWidth * 0.09 + 'px';
         this.hxp.style.height = window.innerWidth * 0.09 + 'px';
+        this.hxpAnimation = new Animation(this.hxp, window.innerWidth * 0.09 * 2, 5, 6);
     }
+
+    // 判定hxp触发奖励
+    isHitAward(h_position, a_position) {
+        if (Math.abs(h_position.x - a_position.x) < 0.23 && Math.abs(h_position.y - a_position.y) < 0.23) {
+            return true
+        }
+    }
+
+
 }

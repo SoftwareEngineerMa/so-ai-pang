@@ -13,17 +13,10 @@
 </template>
 
 <script>
-import Home from './components/Home.vue'
-// import setupCamera from './utils/setCamera';
-// import detectFace from './utils/facedetect';
-// import detectHand from './utils/handdetect';
-// import detectExpression from './utils/emotiondetect';
 
 export default {
   name: 'App',
-  components: {
-    Home
-  },
+  
   data: function() {
     return {
       facePose: 'normal',
