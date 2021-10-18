@@ -3,7 +3,7 @@ import THREE from './lib/Three';
 
 import Box2D from './lib/Box2dWeb.min.js';
 
-import KeyboardJS from './lib/keyboard'
+// import KeyboardJS from './lib/keyboard'
 
 import { generateSquareMaze } from './lib/maze'
 
@@ -89,8 +89,8 @@ class Maze {
         document.body.appendChild(this.renderer.domElement);
 
         // Bind keyboard and resize events.
-        KeyboardJS.bind.axis('left', 'right', 'down', 'up', this.onMoveKey);
-        KeyboardJS.bind.axis('h', 'l', 'j', 'k', this.onMoveKey);
+        // KeyboardJS.bind.axis('left', 'right', 'down', 'up', this.onMoveKey);
+        // KeyboardJS.bind.axis('h', 'l', 'j', 'k', this.onMoveKey);
         this.hxp = document.querySelector('.hxp');
         this.shade = document.querySelector('.shade');
         this.hxpAnimation = new Animation(this.hxp, window.innerWidth * 0.09 * 2, 5, 6);
@@ -111,7 +111,7 @@ class Maze {
     }
 
     // 游戏开始
-    start = () => {
+    start() {
         this.hxpResize();
         setupCamera().then(async video => {
             video.play();
