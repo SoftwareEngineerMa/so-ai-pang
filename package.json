@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "webpack serve",
-    "build": "webpack build",
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
@@ -13,6 +13,7 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.14.5",
     "@tensorflow-models/face-landmarks-detection": "^0.0.3",
     "@tensorflow-models/handpose": "^0.0.7",
     "@tensorflow/tfjs-backend-wasm": "^3.9.0",
@@ -21,7 +22,7 @@
     "@tensorflow/tfjs-core": "^3.9.0",
     "@tensorflow/tfjs-node": "^3.9.0",
     "@vladmandic/face-api": "^1.5.4",
-    "core-js": "^3.6.5",
+    "keyboardjs": "^2.6.4",
     "vue": "^2.6.11"
   },
   "devDependencies": {
@@ -43,10 +44,7 @@
     "url-loader": "^4.1.1",
     "vue-cli-plugin-electron-builder": "~2.1.1",
     "vue-loader": "^15.9.8",
-    "vue-template-compiler": "^2.6.11",
-    "webpack": "^5.58.2",
-    "webpack-cli": "^4.9.0",
-    "webpack-dev-server": "^4.3.1"
+    "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {
     "root": true,

@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <Home msg="Welcome to HuangXiaoPang Vue.js App" :handPose="handPose"/>
     <video id="video" playsinline style="
       -webkit-transform: scaleX(-1);
       transform: scaleX(-1);

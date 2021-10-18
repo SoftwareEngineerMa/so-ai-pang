@@ -3,6 +3,9 @@ module.exports = {
     [
       "@babel/preset-env",
       {
+        "targets": {
+          "ie": "11"
+        },
         "useBuiltIns": "usage",
         "corejs": 3
       }
@@ -14,6 +17,6 @@ module.exports = {
       {
         "corejs": 3 // 指定 runtime-corejs 的版本，目前有 2 3 两个版本
       }
-    ]
+    ],
   ]
 }
