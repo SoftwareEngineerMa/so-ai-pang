@@ -6,7 +6,7 @@ export default async function main() {
     faceLandmarksDetection.SupportedPackages.mediapipeFacemesh, {maxFaces: 1});
   
   // 返回值类型字符串
-  // 'top'|'bottom'|'left'|'right'|'normal'
+  // 'top'|'bottom'|'leanLeft'|'leanRight'|'turnLeft'|'turnRight'|'normal'
   return async function () {
       const predictions = await model.estimateFaces({
         input: document.querySelector("video")
@@ -20,25 +20,35 @@ export default async function main() {
         const faceTop = predictions[0].scaledMesh[10];
         const faceBottom = predictions[0].scaledMesh[152];
 
-        if (predictions[0].faceInViewConfidence>0.99) {
-          if (nose[0] <= faceRight[0]) {
-            // console.log('向右看');
-            return 'right';
+        if (predictions[0].faceInViewConfidence > 0.99) {
+          if (faceRight[1] - faceLeft[1] > 60) {
+            // console.log('向右倒');
+            return 'leanRight';
+          }
+          
+          if (faceRight[1] - faceLeft[1] < -60) {
+            // console.log('向左倒');
+            return 'leanLeft';
           }
 
-          if (nose[0] >= faceLeft[0]) {
-            // console.log('向左看');
-            return 'left';
-          }
-
-          if (faceTop[2] > faceBottom[2] && Math.abs(faceTop[2]-faceBottom[2]) > 60) {
+          if (faceTop[2] > faceBottom[2] && Math.abs(faceTop[2]-faceBottom[2]) > 40) {
             // console.log('向上看');
             return 'top';
           }
 
-          if (faceBottom[2] > faceTop[2] && Math.abs(faceBottom[2]-faceTop[2]) > 60) {
+          if (faceBottom[2] > faceTop[2] && Math.abs(faceBottom[2]-faceTop[2]) > 30) {
             // console.log('向下看');
             return 'bottom';
+          }
+
+          if (nose[0] <= faceRight[0]) {
+            // console.log('向右转');
+            return 'turnRight';
+          }
+
+          if (nose[0] >= faceLeft[0]) {
+            // console.log('向左转');
+            return 'turnLeft';
           }
         } else {
           // console.log('模糊数据');
