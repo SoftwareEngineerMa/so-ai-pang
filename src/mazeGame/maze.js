@@ -1,9 +1,8 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import THREE from './lib/Three';
 
 import Box2D from './lib/Box2dWeb.min.js';
-
-import KeyboardJS from 'keyboardjs/dist/keyboard'
 
 import { generateSquareMaze } from './lib/maze'
 
@@ -27,7 +26,19 @@ const moveMap = new Map([
     ['right', [1, 0]],
     ['top', [0, 1]],
     ['bottom', [0, -1]],
-    ['normal', [0, 0]]
+    ['normal', [0, 0]],
+    [37, [-1, 0]],
+    [40, [0, -1]],
+    [39, [1, 0]],
+    [38, [0, 1]]
+])
+
+// 移动开关
+const moveSwitch = new Map([
+    [37, true],
+    [38, true],
+    [39, true],
+    [40, true]
 ])
 
 
@@ -95,8 +106,7 @@ class Maze {
         document.body.appendChild(this.renderer.domElement);
 
         // Bind keyboard and resize events.
-        KeyboardJS.bind.axis('left', 'right', 'down', 'up', this.onMoveKey);
-        KeyboardJS.bind.axis('h', 'l', 'j', 'k', this.onMoveKey);
+        this.keyboardControl();
         this.hxp = document.querySelector('.hxp');
         this.shade = document.querySelector('.shade');
         this.hxpAnimation = new Animation(this.hxp, window.innerWidth * 0.09 * 2, 5, 6);
@@ -399,7 +409,7 @@ class Maze {
     }
 
     // 物体的方向控制
-    onMoveKey = (axis) => {
+    onMoveKey(axis) {
         if (this.hxpToward === 'top') {
             if (axis[0] === 1) {
                 this.hxpAngle += 90;
@@ -473,5 +483,64 @@ class Maze {
         }
     }
 
+    // 添加键盘控制
+    keyboardControl() {
+        let axis = [0, 0];
+        const keydown = (code, callback) => {
+            if (code instanceof Array) {
+                document.addEventListener('keydown', (ev) => {
+                    if (ev && code.includes(ev.keyCode)) {
+                        callback(ev.keyCode);
+                    }
+                })
+            } else if (typeof code === "number") {
+                document.addEventListener('keydown', (ev) => {
+                    if (ev && ev.keyCode === code) {
+                        callback(code);
+                    }
+                })
+            }
+        }
 
+        const keyup = (code, callback) => {
+            if (code instanceof Array) {
+                document.addEventListener('keyup', (ev) => {
+                    if (ev && code.includes(ev.keyCode)) {
+                        callback(ev.keyCode);
+                    }
+                })
+            } else if (typeof code === "number") {
+                document.addEventListener('keyup', (ev) => {
+                    if (ev && ev.keyCode === code) {
+                        callback(code);
+                    }
+                })
+            }
+        }
+
+        keydown([37, 38, 39, 40], (code) => {
+            moveSwitch.set(code, false);
+            axis = moveMap.get(code);
+
+        })
+
+        keyup([37, 38, 39, 40], (code) => {
+            moveSwitch.set(code, true);
+            if (moveSwitch.get(37) && moveSwitch.get(38) && moveSwitch.get(39) && moveSwitch.get(40)) {
+                axis = [0, 0];
+            } else {
+                for (let k of [37, 38, 39, 40]) {
+                    if (!moveSwitch.get(k)) {
+                        axis = moveMap.get(k)
+                        break
+                    }
+                }
+            }
+        })
+        let timer = setInterval(() => {
+            if (axis[0] != 0 || axis[1] != 0) {
+                this.onMoveKey(axis);
+            }
+        }, 1);
+    }
 }

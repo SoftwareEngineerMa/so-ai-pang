@@ -5,19 +5,21 @@
  * Licenced under the BSD License.
  * See https://raw.github.com/RobertWHurst/KeyboardJS/master/license.txt
  */
+
+
 (function (context, factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        define(factory);
-    } else {
-        // Browser globals
-	    context.k = context.KeyboardJS = factory();
-    }
-}(this, function() {
+	if (typeof define === 'function' && define.amd) {
+		// AMD. Register as an anonymous module.
+		define(factory);
+	} else {
+		// Browser globals
+		context.k = context.KeyboardJS = factory();
+	}
+}(this, function () {
 
 	//polyfills for ms's peice o' shit browsers
-	function bind(target, type, handler) { if (target.addEventListener) { target.addEventListener(type, handler, false); } else { target.attachEvent("on" + type, function(event) { return handler.call(target, event); }); } }
-	[].indexOf||(Array.prototype.indexOf=function(a,b,c){for(c=this.length,b=(c+~~b)%c;b<c&&(!(b in this)||this[b]!==a);b++);return b^c?b:-1;});
+	function bind(target, type, handler) { if (target.addEventListener) { target.addEventListener(type, handler, false); } else { target.attachEvent("on" + type, function (event) { return handler.call(target, event); }); } }
+	[].indexOf || (Array.prototype.indexOf = function (a, b, c) { for (c = this.length, b = (c + ~~b) % c; b < c && (!(b in this) || this[b] !== a); b++); return b ^ c ? b : -1; });
 
 	//locals
 	var locals = {
@@ -80,12 +82,12 @@
 		keyBindingGroups = [];
 
 	//adds keys to the active keys array
-	bind(document, "keydown", function(event) {
+	bind(document, "keydown", function (event) {
 
 		//lookup the key pressed and save it to the active keys array
 		for (var key in keys) {
-			if(keys.hasOwnProperty(key) && event.keyCode === keys[key]) {
-				if(activeKeys.indexOf(key) < 0) {
+			if (keys.hasOwnProperty(key) && event.keyCode === keys[key]) {
+				if (activeKeys.indexOf(key) < 0) {
 					activeKeys.push(key);
 				}
 			}
@@ -100,12 +102,12 @@
 	bind(document, "keyup", function (event) {
 
 		//lookup the key released and prune it from the active keys array
-		for(var key in keys) {
-			if(keys.hasOwnProperty(key) && event.keyCode === keys[key]) {
+		for (var key in keys) {
+			if (keys.hasOwnProperty(key) && event.keyCode === keys[key]) {
 
 				var iAK = activeKeys.indexOf(key);
 
-				if(iAK > -1) {
+				if (iAK > -1) {
 					activeKeys.splice(iAK, 1);
 				}
 			}
@@ -117,7 +119,7 @@
 	});
 
 	//bind to the window blur event and clear all pressed keys
-	bind(window, "blur", function() {
+	bind(window, "blur", function () {
 		activeKeys = [];
 
 		//execute the end callback on the active key binding
@@ -131,29 +133,29 @@
 		var bindingStack = [];
 
 		//loop through the key binding groups by number of keys.
-		for(var keyCount = keyBindingGroups.length; keyCount > -1; keyCount -= 1) {
-			if(keyBindingGroups[keyCount]) {
+		for (var keyCount = keyBindingGroups.length; keyCount > -1; keyCount -= 1) {
+			if (keyBindingGroups[keyCount]) {
 				var KeyBindingGroup = keyBindingGroups[keyCount];
 
 				//loop through the key bindings of the same key length.
-				for(var bindingIndex = 0; bindingIndex < KeyBindingGroup.length; bindingIndex += 1) {
+				for (var bindingIndex = 0; bindingIndex < KeyBindingGroup.length; bindingIndex += 1) {
 					var binding = KeyBindingGroup[bindingIndex],
 
-					//assume the binding is active till a required key is found to be unsatisfied
+						//assume the binding is active till a required key is found to be unsatisfied
 						keyBindingActive = true;
 
 					//loop through each key required by the binding.
-					for(var keyIndex = 0; keyIndex < binding.keys.length;  keyIndex += 1) {
+					for (var keyIndex = 0; keyIndex < binding.keys.length; keyIndex += 1) {
 						var key = binding.keys[keyIndex];
 
 						//if the current key is not in the active keys array the mark the binding as inactive
-						if(activeKeys.indexOf(key) < 0) {
+						if (activeKeys.indexOf(key) < 0) {
 							keyBindingActive = false;
 						}
 					}
 
 					//if the key combo is still active then push it into the binding stack
-					if(keyBindingActive) {
+					if (keyBindingActive) {
 						bindingStack.push(binding);
 					}
 				}
@@ -169,7 +171,7 @@
 	 */
 	function executeActiveKeyBindings(event) {
 
-		if(activeKeys < 1) {
+		if (activeKeys < 1) {
 			return true;
 		}
 
@@ -183,33 +185,33 @@
 				usesSpentKey = false;
 
 			//check each of the required keys. Make sure they have not been used by another binding
-			for(var keyIndex = 0; keyIndex < binding.keys.length; keyIndex += 1) {
+			for (var keyIndex = 0; keyIndex < binding.keys.length; keyIndex += 1) {
 				var key = binding.keys[keyIndex];
-				if(spentKeys.indexOf(key) > -1) {
+				if (spentKeys.indexOf(key) > -1) {
 					usesSpentKey = true;
 					break;
 				}
 			}
 
 			//if the binding does not use a key that has been spent then execute it
-			if(!usesSpentKey) {
+			if (!usesSpentKey) {
 
 				//fire the callback
-				if(typeof binding.callback === "function") {
-					if(!binding.callback(event, binding.keys, binding.keyCombo)) {
+				if (typeof binding.callback === "function") {
+					if (!binding.callback(event, binding.keys, binding.keyCombo)) {
 						output = false
 					}
 				}
 
 				//add the binding's combo to the active bindings array
-				if(!activeBindings[binding.keyCombo]) {
+				if (!activeBindings[binding.keyCombo]) {
 					activeBindings[binding.keyCombo] = binding;
 				}
 
 				//add the current key binding's keys to the spent keys array
-				for(var keyIndex = 0; keyIndex < binding.keys.length; keyIndex += 1) {
+				for (var keyIndex = 0; keyIndex < binding.keys.length; keyIndex += 1) {
 					var key = binding.keys[keyIndex];
-					if(spentKeys.indexOf(key) < 0) {
+					if (spentKeys.indexOf(key) < 0) {
 						spentKeys.push(key);
 					}
 				}
@@ -218,7 +220,7 @@
 
 		//if there are spent keys then we know a binding was fired
 		// and that we need to tell jQuery to prevent event bubbling.
-		if(spentKeys.length) {
+		if (spentKeys.length) {
 			return false;
 		}
 
@@ -234,27 +236,27 @@
 		var output;
 
 		//loop through the active combos
-		for(var bindingCombo in activeBindings) {
-			if(activeBindings.hasOwnProperty(bindingCombo)) {
+		for (var bindingCombo in activeBindings) {
+			if (activeBindings.hasOwnProperty(bindingCombo)) {
 				var binding = activeBindings[bindingCombo],
 					active = false;
 
 				//loop thorugh the active bindings
-				for(var bindingIndex = 0; bindingIndex < bindingStack.length; bindingIndex += 1) {
+				for (var bindingIndex = 0; bindingIndex < bindingStack.length; bindingIndex += 1) {
 					var activeCombo = bindingStack[bindingIndex].keyCombo;
 
 					//check to see if the combo is still active
-					if(activeCombo === bindingCombo) {
+					if (activeCombo === bindingCombo) {
 						active = true;
 						break;
 					}
 				}
 
 				//if the combo is no longer active then fire its end callback and remove it
-				if(!active) {
+				if (!active) {
 
-					if(typeof binding.endCallback === "function") {
-						if(!binding.endCallback(event, binding.keys, binding.keyCombo)) {
+					if (typeof binding.endCallback === "function") {
+						if (!binding.endCallback(event, binding.keys, binding.keyCombo)) {
 							output = false
 						}
 					}
@@ -278,10 +280,10 @@
 	function bindKey(keyCombo, callback, endCallback) {
 
 		function clear() {
-			if(keys && keys.length) {
+			if (keys && keys.length) {
 				var keyBindingGroup = keyBindingGroups[keys.length];
 
-				if(keyBindingGroup.indexOf(keyBinding) > -1) {
+				if (keyBindingGroup.indexOf(keyBinding) > -1) {
 					var index = keyBindingGroups[keys.length].indexOf(keyBinding);
 					keyBindingGroups[keys.length].splice(index, 1);
 				}
@@ -292,14 +294,14 @@
 		var bindSets = keyCombo.toLowerCase().replace(/\s/g, '').split(',');
 
 		//create a binding for each key combo
-		for(var i = 0; i < bindSets.length; i += 1) {
+		for (var i = 0; i < bindSets.length; i += 1) {
 
 			//split up the keys
 			var keys = bindSets[i].split('+');
 
 			//if there are keys in the current combo
-			if(keys.length) {
-				if(!keyBindingGroups[keys.length]) { keyBindingGroups[keys.length] = []; }
+			if (keys.length) {
+				if (!keyBindingGroups[keys.length]) { keyBindingGroups[keys.length] = []; }
 
 				//define the
 				var keyBinding = {
@@ -333,59 +335,59 @@
 	function bindAxis(up, down, left, right, callback) {
 
 		function clear() {
-			if(typeof clearUp === 'function') { clearUp(); }
-			if(typeof clearDown === 'function') { clearDown(); }
-			if(typeof clearLeft === 'function') { clearLeft(); }
-			if(typeof clearRight === 'function') { clearRight(); }
-			if(typeof timer === 'function') { clearInterval(timer); }
+			if (typeof clearUp === 'function') { clearUp(); }
+			if (typeof clearDown === 'function') { clearDown(); }
+			if (typeof clearLeft === 'function') { clearLeft(); }
+			if (typeof clearRight === 'function') { clearRight(); }
+			if (typeof timer === 'function') { clearInterval(timer); }
 		}
 
 		var axis = [0, 0];
 
-		if(typeof callback !== 'function') {
+		if (typeof callback !== 'function') {
 			return false;
 		}
 
 		//up
 		var clearUp = bindKey(up, function () {
-			if(axis[0] === 0) {
+			if (axis[0] === 0) {
 				axis[0] = -1;
 			}
-		}, function() {
+		}, function () {
 			axis[0] = 0;
 		}).clear;
 
 		//down
 		var clearDown = bindKey(down, function () {
-			if(axis[0] === 0) {
+			if (axis[0] === 0) {
 				axis[0] = 1;
 			}
-		}, function() {
+		}, function () {
 			axis[0] = 0;
 		}).clear;
 
 		//left
 		var clearLeft = bindKey(left, function () {
-			if(axis[1] === 0) {
+			if (axis[1] === 0) {
 				axis[1] = -1;
 			}
-		}, function() {
+		}, function () {
 			axis[1] = 0;
 		}).clear;
 
 		//right
 		var clearRight = bindKey(right, function () {
-			if(axis[1] === 0) {
+			if (axis[1] === 0) {
 				axis[1] = 1;
 			}
-		}, function() {
+		}, function () {
 			axis[1] = 0;
 		}).clear;
 
-		var timer = setInterval(function(){
+		var timer = setInterval(function () {
 
 			//NO CHANGE
-			if(axis[0] === 0 && axis[1] === 0) {
+			if (axis[0] === 0 && axis[1] === 0) {
 				return;
 			}
 
@@ -405,7 +407,7 @@
 	 */
 	function unbindKey(keys) {
 
-		if(keys === 'all') {
+		if (keys === 'all') {
 			keyBindingGroups = [];
 			return;
 		}
@@ -413,32 +415,32 @@
 		keys = keys.replace(/\s/g, '').split(',');
 
 		//loop through the key binding groups.
-		for(var iKCL = keyBindingGroups.length; iKCL > -1; iKCL -= 1) {
-			if(keyBindingGroups[iKCL]) {
+		for (var iKCL = keyBindingGroups.length; iKCL > -1; iKCL -= 1) {
+			if (keyBindingGroups[iKCL]) {
 				var KeyBindingGroup = keyBindingGroups[iKCL];
 
 				//loop through the key bindings.
-				for(var iB = 0; iB < KeyBindingGroup.length; iB += 1) {
+				for (var iB = 0; iB < KeyBindingGroup.length; iB += 1) {
 					var keyBinding = KeyBindingGroup[iB],
 						remove = false;
 
 					//loop through the current key binding keys.
-					for(var iKB = 0; iKB < keyBinding.keys.length;  iKB += 1) {
+					for (var iKB = 0; iKB < keyBinding.keys.length; iKB += 1) {
 						var key = keyBinding.keys[iKB];
 
 						//loop through the keys to be removed
-						for(var iKR = 0; iKR < keys.length; iKR += 1) {
+						for (var iKR = 0; iKR < keys.length; iKR += 1) {
 							var keyToRemove = keys[iKR];
-							if(keyToRemove === key) {
+							if (keyToRemove === key) {
 								remove = true;
 								break;
 							}
 						}
-						if(remove) { break; }
+						if (remove) { break; }
 					}
-					if(remove) {
+					if (remove) {
 						keyBindingGroups[iKCL].splice(iB, 1); iB -= 1;
-						if(keyBindingGroups[iKCL].length < 1) {
+						if (keyBindingGroups[iKCL].length < 1) {
 							delete keyBindingGroups[iKCL];
 						}
 					}
@@ -468,7 +470,7 @@
 	 * @param local
 	 */
 	function setLocale(local) {
-		if(locals[local]) {
+		if (locals[local]) {
 			keys = locals[local];
 		}
 
@@ -489,3 +491,5 @@
 		}
 	}
 }));
+
+export default keyboardjs;
