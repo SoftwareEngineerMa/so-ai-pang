@@ -6,14 +6,15 @@
 
 <script>
 import { bcType, boardcast } from '../subject'
-import { filter, throttleTime, bufferTime } from 'rxjs/operators'
+import {  delay, filter, throttleTime } from 'rxjs/operators'
 
 export default {
     name: 'AwardHint',
     data: function() {
         return {
             pos: 'left',
-            show: 'false'
+            show: 'false',
+            hideSwitch: true
         }
     },
     mounted: function() {
@@ -25,14 +26,20 @@ export default {
         boardcast
             .pipe(filter(data => data.type === bcType.HINT_SHOW),throttleTime(100))
             .subscribe(() => {
+                if (this.show === "true") {
+                    this.hideSwitch = false;
+                }
                 this.show = 'true';
-                console.log('oooooo');
                 boardcast.next({type: bcType.HINT_HIDE, value: 99})
             })
         boardcast
-            .pipe(filter(data => data.type === bcType.HINT_HIDE), bufferTime(500))
+            .pipe(filter(data => data.type === bcType.HINT_HIDE), delay(1000))
             .subscribe(() => {
-                this.show = 'false'
+                if (this.hideSwitch) {
+                    this.show = 'false'
+                } else {
+                    this.hideSwitch = true;
+                }
             })
     }
 
