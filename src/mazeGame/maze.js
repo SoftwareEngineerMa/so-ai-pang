@@ -51,10 +51,6 @@ const posMirror = new Map([
 ])
 
 
-
-
-
-
 class Maze {
 
     camera = undefined;
