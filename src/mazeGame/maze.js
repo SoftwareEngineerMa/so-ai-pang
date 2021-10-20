@@ -12,6 +12,8 @@ import setupCamera from '../utils/setCamera';
 import detectFace from '../utils/facedetect';
 import { elFadeIn, elFadeOut } from './utils';
 
+import { boardcast, bcType } from './subject';
+import { filter, delay } from 'rxjs/operators';
 export let gameInstance = null;
 
 export default function getInstance() {
@@ -33,13 +35,14 @@ const moveMap = new Map([
     [38, [0, 1]]
 ])
 
-// 移动开关
-const moveSwitch = new Map([
-    [37, true],
-    [38, true],
-    [39, true],
-    [40, true]
+const posMirror = new Map([
+    ['left', 'right'],
+    ['right', 'left'],
+    ['top', 'bottom'],
+    ['bottom', 'top']
 ])
+
+
 
 
 
@@ -61,9 +64,9 @@ class Maze {
     ballRadius = 0.25;
     keyAxis = [0, 0];
     ironTexture = THREE.ImageUtils.loadTexture('/texture/ball.png');
-    planeTexture = THREE.ImageUtils.loadTexture('/texture/concrete.png');
-    brickTexture = THREE.ImageUtils.loadTexture('/texture/brick.png');
-    awardTexture = THREE.ImageUtils.loadTexture('/texture/award.png')
+    planeTexture = THREE.ImageUtils.loadTexture('/texture/concrete_.png');
+    brickTexture = THREE.ImageUtils.loadTexture('/texture/brick_.png');
+    awardTexture = THREE.ImageUtils.loadTexture('/texture/award_.png')
     gameState = undefined;
 
     b2World = Box2D.Dynamics.b2World;
@@ -88,11 +91,14 @@ class Maze {
 
     hxpTimer = null;
 
-    hxpToward = 'left';
+    _hxpToward = 'left';
 
     hxpAnimation = null;
 
     hxpAngle = 0;
+
+    // hxp行动阻塞
+    // hxpSleep = false;
 
     lastx = null;
     lasty = null;
@@ -143,6 +149,11 @@ class Maze {
 
             }, 10);
         });
+        boardcast
+            .pipe(filter(data => data.type === bcType.HXP_REVIVE), delay(2000))
+            .subscribe(() => {
+                // this.hxpSleep = false;
+            })
 
         requestAnimationFrame(() => { this.loop() });
     }
@@ -264,7 +275,8 @@ class Maze {
         // Add the light.
         // this.targetObject = new THREE.Object3D();
         // this.targetOj
-        this.light = new THREE.SpotLight(0xffffff, 1);
+        // this.light = new THREE.SpotLight(0xffffff, 1);
+        this.light = new THREE.PointLight(0xffffff, 1)
         this.light.position.set(1, 1, 1.3);
         this.scene.add(this.light);
 
@@ -275,7 +287,7 @@ class Maze {
         this.ballMesh.position.set(1, 1, this.ballRadius);
         this.scene.add(this.ballMesh);
         this.ballMesh.visible = false;
-        this.light.target = this.ballMesh;
+        // this.light.target = this.ballMesh;
 
         // Add the camera.
         this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
@@ -287,9 +299,9 @@ class Maze {
         this.scene.add(this.mazeMesh);
 
         // Add the ground.
-        g = new THREE.PlaneGeometry(this.mazeDimension * 10, this.mazeDimension * 10, this.mazeDimension, this.mazeDimension);
-        this.planeTexture.wrapS = this.planeTexture.wrapT = THREE.RepeatWrapping;
-        this.planeTexture.repeat.set(this.mazeDimension * 5, this.mazeDimension * 5);
+        g = new THREE.PlaneGeometry(this.mazeDimension * 2, this.mazeDimension * 2, this.mazeDimension, this.mazeDimension);
+        // this.planeTexture.wrapS = this.planeTexture.wrapT = THREE.RepeatWrapping;
+        this.planeTexture.repeat.set(1, 1);
         m = new THREE.MeshPhongMaterial({ map: this.planeTexture });
         this.planeMesh = new THREE.Mesh(g, m);
         this.planeMesh.position.set((this.mazeDimension - 1) / 2, (this.mazeDimension - 1) / 2, 0);
@@ -320,7 +332,10 @@ class Maze {
                 } else {
                     if (award[i][j]) {
                         // let ballG = new THREE.SphereGeometry(0.25, 32, 16);
-                        let ballG = new THREE.OctahedronGeometry(0.2);
+                        // let ballG = new THREE.OctahedronGeometry(0.3);
+                        let ballG = new THREE.IcosahedronGeometry( 0.25 );
+
+                        console.log(this.awardTexture);
                         let ballM = new THREE.MeshPhongMaterial({ map: this.awardTexture });
                         let awardBall = new THREE.Mesh(ballG, ballM);
                         // awardBall.rotateZ(Math.PI / 4);
@@ -384,11 +399,16 @@ class Maze {
 
         // 更新奖励物件转动、消失
         if (this.awardArray.length !== 0) {
-            this.awardArray.forEach(item => {
+            this.awardArray.forEach((item,index) => {
                 if (item) {
-                    if (this.isHitAward(this.ballMesh.position, item.position)) {
+                    if (this.isHitAward(this.ballMesh.position, item.position) && item) {
+                        // hxp阻塞
+                        // this.hxpSleep = true;
+                        // boardcast.next({ type: bcType.HXP_SLEEP })
+                        boardcast.next({type: bcType.HINT_SHOW})
+                        console.log('uuu');
                         this.scene.remove(item)
-                        item = null;
+                        this.awardArray[index] = null;
                     } else {
                         item.rotation.z += 0.03;
                     }
@@ -404,12 +424,15 @@ class Maze {
         // 调整灯光的位置和高度
         this.light.position.x = this.camera.position.x;
         this.light.position.y = this.camera.position.y;
-        this.light.position.z = this.camera.position.z + 1;
+        this.light.position.z = this.camera.position.z + 3.7;
 
     }
 
     // 物体的方向控制
     onMoveKey(axis) {
+        // if (this.hxpSleep) {
+        //     return
+        // }
         if (this.hxpToward === 'top') {
             if (axis[0] === 1) {
                 this.hxpAngle += 90;
@@ -451,7 +474,6 @@ class Maze {
                 this.hxpAngle -= 90;
                 this.hxpToward = 'bottom';
             } else if (axis[1] === 1) {
-                console.log('kkk');
                 this.hxpAngle += 90;
                 this.hxpToward = 'top';
             }
@@ -486,6 +508,13 @@ class Maze {
     // 添加键盘控制
     keyboardControl() {
         let axis = [0, 0];
+        // 移动开关
+        const moveSwitch = new Map([
+            [37, true],
+            [38, true],
+            [39, true],
+            [40, true]
+        ])
         const keydown = (code, callback) => {
             if (code instanceof Array) {
                 document.addEventListener('keydown', (ev) => {
@@ -542,5 +571,16 @@ class Maze {
                 this.onMoveKey(axis);
             }
         }, 1);
+    }
+
+    get hxpToward() {
+        return this._hxpToward;
+    }
+
+    set hxpToward(val) {
+        this._hxpToward = val;
+        // 传递信息至hint组件中
+        boardcast.next({type: bcType.HXP_DIVERSION, value: posMirror.get(val)});
+        console.log('发送hint');
     }
 }

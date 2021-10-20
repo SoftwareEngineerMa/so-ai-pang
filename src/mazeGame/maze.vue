@@ -6,14 +6,27 @@
       <strong>加载中...</strong>
     </div>
     <video id="video" playsinline></video>
+    <!-- <maze-modal></maze-modal> -->
+    <!-- <maze-tip></maze-tip> -->
+    <award-hint></award-hint>
 </div>
 </template>
 
 <script>
 import getMaze from './maze';
+// import MazeModal from './components/modal.vue';
+// import MazeTip from './components/tip.vue';
+import AwardHint from './components/awardHint.vue'
+
+
 
 export default {
     name: 'Maze',
+    components: {
+        // MazeModal,
+        // MazeTip,
+        AwardHint
+    },
     mounted: function(){
         getMaze().start();
     }
@@ -69,4 +82,5 @@ body{
     font-size: 25px;
     color: aliceblue;
 }
+
 </style>
