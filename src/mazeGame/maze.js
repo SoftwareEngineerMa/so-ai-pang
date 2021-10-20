@@ -23,6 +23,13 @@ export default function getInstance() {
     return gameInstance;
 }
 
+const faceMap = new Map([
+    ['leanLeft', 'left'],
+    ['leanRight', 'right'],
+    ['top', 'top'],
+    ['bottom', 'bottom']
+])
+
 const moveMap = new Map([
     ['left', [-1, 0]],
     ['right', [1, 0]],
@@ -143,7 +150,7 @@ class Maze {
             setInterval(() => {
                 predictionFace().then((res) => {
                     if (res && res !== 'normal') {
-                        this.onMoveKey(moveMap.get(res))
+                        this.onMoveKey(moveMap.get(faceMap.get(res)));
                     }
                 });
 

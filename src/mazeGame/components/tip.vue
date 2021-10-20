@@ -1,33 +1,32 @@
 <template>
 <div v-show="tipShow" class="score">
-    记分板
 </div>
 </template>
 
 <script>
-import { boardcast, bcType } from '../subject'
-import { throttleTime, filter, delay,} from 'rxjs/operators'
+// import { boardcast, bcType } from '../subject'
+// import { throttleTime, filter, delay,} from 'rxjs/operators'
 
 export default {
     name: 'MazeTip',
     data: function(){
         return {
-            tipShow: false,
+            tipShow: true,
         }     
     },
     mounted: function(){
-        boardcast
-            .pipe(filter(data => data.type === bcType.HXP_SLEEP), throttleTime(100))
-            .subscribe(() => {
-                console.log('pppp');
-                this.tipShow = true;
-                boardcast.next({type:bcType.HXP_REVIVE});
-            })
-        boardcast
-            .pipe(filter(data => data.type === bcType.HXP_REVIVE), delay(2000))
-            .subscribe(() => {
-                this.tipShow = false;
-            })
+        // boardcast
+        //     .pipe(filter(data => data.type === bcType.HXP_SLEEP), throttleTime(100))
+        //     .subscribe(() => {
+        //         console.log('pppp');
+        //         this.tipShow = true;
+        //         boardcast.next({type:bcType.HXP_REVIVE});
+        //     })
+        // boardcast
+        //     .pipe(filter(data => data.type === bcType.HXP_REVIVE), delay(2000))
+        //     .subscribe(() => {
+        //         this.tipShow = false;
+        //     })
     },
     watch: {
         // tipShow :function(val) {
