@@ -23,7 +23,7 @@ export default async function main() {
     const predictions = await model.estimateHands(document.querySelector("video"), true);
     if (predictions.length > 0) {
       let result = mzmJudge(predictions[0].landmarks, predictions[0].annotations);
-      if(result) {
+      if (result) {
         return result;
       }
 
@@ -44,8 +44,8 @@ export default async function main() {
 function mzmJudge(keypoints, annotations) {
   const checkZhan = () => {
     for (let finger in annotations) {
-      for (let i=1; i< annotations[finger].length; i++) {
-        if (annotations[finger][i][1] > annotations[finger][i-1][1]) {
+      for (let i = 1; i < annotations[finger].length; i++) {
+        if (annotations[finger][i][1] > annotations[finger][i - 1][1]) {
           return false;
         }
       }
