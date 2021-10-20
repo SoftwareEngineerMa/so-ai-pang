@@ -8,6 +8,7 @@
       display: none;
       ">
     </video>
+    <a href="/maze.html">maze</a>
   </div>
 </template>
 

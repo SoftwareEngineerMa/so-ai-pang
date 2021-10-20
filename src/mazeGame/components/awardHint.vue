@@ -6,7 +6,7 @@
 
 <script>
 import { bcType, boardcast } from '../subject'
-import { filter, throttleTime, delay } from 'rxjs/operators'
+import { filter, throttleTime, bufferTime } from 'rxjs/operators'
 
 export default {
     name: 'AwardHint',
@@ -25,11 +25,12 @@ export default {
         boardcast
             .pipe(filter(data => data.type === bcType.HINT_SHOW),throttleTime(100))
             .subscribe(() => {
-                this.show = 'true'
-                boardcast.next({type: bcType.HINT_HIDE})
+                this.show = 'true';
+                console.log('oooooo');
+                boardcast.next({type: bcType.HINT_HIDE, value: 99})
             })
         boardcast
-            .pipe(filter(data => data.type === bcType.HINT_HIDE), delay(1000))
+            .pipe(filter(data => data.type === bcType.HINT_HIDE), bufferTime(500))
             .subscribe(() => {
                 this.show = 'false'
             })
