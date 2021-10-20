@@ -31,8 +31,8 @@ const faceMap = new Map([
 ])
 
 const moveMap = new Map([
-    ['left', [-1, 0]],
-    ['right', [1, 0]],
+    ['leanLeft', [-1, 0]],
+    ['leanRight', [1, 0]],
     ['top', [0, 1]],
     ['bottom', [0, -1]],
     ['normal', [0, 0]],
@@ -43,8 +43,8 @@ const moveMap = new Map([
 ])
 
 const posMirror = new Map([
-    ['left', 'right'],
-    ['right', 'left'],
+    ['leanLeft', 'leanRight'],
+    ['leanRight', 'leanLeft'],
     ['top', 'bottom'],
     ['bottom', 'top']
 ])
@@ -149,6 +149,7 @@ class Maze {
             const predictionFace = await detectFace();
             setInterval(() => {
                 predictionFace().then((res) => {
+                    console.log(res);
                     if (res && res !== 'normal') {
                         this.onMoveKey(moveMap.get(faceMap.get(res)));
                     }
