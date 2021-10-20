@@ -14,6 +14,7 @@ import { elFadeIn, elFadeOut } from './utils';
 
 import { boardcast, bcType } from './subject';
 import { filter, delay } from 'rxjs/operators';
+import { interval } from 'rxjs';
 export let gameInstance = null;
 
 export default function getInstance() {
@@ -28,7 +29,6 @@ const faceMap = new Map([
     ['leanRight', 'right'],
     ['top', 'top'],
     ['bottom', 'bottom'],
-    ['normal', 'normal']
 ])
 
 const moveMap = new Map([
@@ -92,8 +92,15 @@ class Maze {
     shade = null;
 
     awardArray = [];
+    getAwardNum = 0;
 
-    hxpTimer = null;
+    // 游戏计时器
+    mazeTimer = null;
+    minute = 0;
+    second = 0;
+    millisecond = 0;
+    // 时间信息传递
+    subTimer = null;
 
     _hxpToward = 'left';
 
@@ -146,8 +153,7 @@ class Maze {
             const predictionFace = await detectFace();
             setInterval(() => {
                 predictionFace().then((res) => {
-                    console.log(res);
-                    if (res && res !== 'normal') {
+                    if (faceMap.has(res)) {
                         this.onMoveKey(moveMap.get(faceMap.get(res)));
                     }
                 });
@@ -178,18 +184,22 @@ class Maze {
         le.innerText = '层数:' + level;
         elFadeOut('.shade', 5, () => { console.log('shade消失'); });
         this.gameState = 'fadein';
+        elFadeIn('.hxp', 20, () => {console.log('hxp出现')});
+        elFadeIn('.level', 20);
+        boardcast.next({type: bcType.TIP_SHOW})
+        this.timer();
+        this.timerContact();
     }
 
     // 场景淡入
     fadeIn() {
-        elFadeIn('.hxp', 20);
-        elFadeIn('.level', 20);
         this.light.intensity += 0.1 * (1.0 - this.light.intensity);
         this.renderer.render(this.scene, this.camera);
         if (Math.abs(this.light.intensity - 1.0) < 0.05) {
             this.light.intensity = 1.0;
             this.gameState = 'play';
         }
+        
     }
 
     // 游戏进行中
@@ -210,13 +220,14 @@ class Maze {
     // 场景淡出
     fadeOut() {
         this.updatePhysicsWorld();
-        this.updateRenderWorld();
         this.light.intensity += 0.1 * (0.0 - this.light.intensity);
         this.renderer.render(this.scene, this.camera);
         if (Math.abs(this.light.intensity - 0.0) < 0.1) {
             this.light.intensity = 0.0;
             this.renderer.render(this.scene, this.camera);
             this.gameState = 'init';
+            boardcast.next({type: bcType.TIP_SHOW})
+
         }
     }
 
@@ -230,7 +241,6 @@ class Maze {
                 this.fadeIn();
                 break;
             case 'fadeout':
-                elFadeOut('.hxp', 5, () => { console.log('hxp消失'); })
                 this.fadeOut();
                 break;
             case 'play':
@@ -317,7 +327,6 @@ class Maze {
     // 生成迷宫mesh
     generate_maze_mesh = (field) => {
 
-        console.log(field);
         if (!field[1][2]) {
             this.onMoveKey([0, 1]);
         } else if (!field[2][1]) {
@@ -340,7 +349,6 @@ class Maze {
                         // let ballG = new THREE.OctahedronGeometry(0.3);
                         let ballG = new THREE.IcosahedronGeometry( 0.25 );
 
-                        console.log(this.awardTexture);
                         let ballM = new THREE.MeshPhongMaterial({ map: this.awardTexture });
                         let awardBall = new THREE.Mesh(ballG, ballM);
                         // awardBall.rotateZ(Math.PI / 4);
@@ -411,9 +419,9 @@ class Maze {
                         // this.hxpSleep = true;
                         // boardcast.next({ type: bcType.HXP_SLEEP })
                         boardcast.next({type: bcType.HINT_SHOW})
-                        console.log('uuu');
                         this.scene.remove(item)
                         this.awardArray[index] = null;
+                        this.getAwardNum += 1;
                     } else {
                         item.rotation.z += 0.03;
                     }
@@ -578,6 +586,38 @@ class Maze {
         }, 1);
     }
 
+    timer(){
+        const update = () => {
+            this.millisecond += 1;
+            if (this.millisecond > 100) {
+                this.millisecond = 0;
+                this.second += 1;
+            }
+            if(this.second > 60) {
+                this.second = 0;
+                this.minute += 1;
+            }
+        }
+
+        if(this.mazeTimer) {
+            clearInterval(this.mazeTimer);
+        }
+
+        this.mazeTimer = setInterval(update, 1);
+    }
+
+    timerContact(){
+        if(this.subTimer) {
+            this.subTimer.unsubscribe();
+        }
+        this.subTimer = interval(1).subscribe(() => {
+            const m = this.minute < 10 ? `0${this.minute}` : `${this.minute}`;
+            const s = this.second < 10 ? `0${this.second}` : `${this.second}`;
+            const ms = this.millisecond < 10 ? `0${this.millisecond}` : `${this.millisecond}`;
+            boardcast.next({type: bcType.TIMER_UPDATE, value: `${m}:${s}:${ms}`});
+        })
+    }
+
     get hxpToward() {
         return this._hxpToward;
     }
@@ -586,6 +626,8 @@ class Maze {
         this._hxpToward = val;
         // 传递信息至hint组件中
         boardcast.next({type: bcType.HXP_DIVERSION, value: posMirror.get(val)});
-        console.log('发送hint');
     }
+
+
+
 }

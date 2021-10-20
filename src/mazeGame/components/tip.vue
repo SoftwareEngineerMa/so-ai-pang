@@ -1,17 +1,23 @@
 <template>
-<div v-show="tipShow" class="score">
+<div class="score" :show='`${tipShow}`'>
+    {{ time }}
+    <div>
+        已获得奖励个数：{{ awardNum }}
+    </div>
 </div>
 </template>
 
 <script>
-// import { boardcast, bcType } from '../subject'
-// import { throttleTime, filter, delay,} from 'rxjs/operators'
+import { bcType, boardcast } from '../subject'
+import { filter, map,} from 'rxjs/operators'
 
 export default {
     name: 'MazeTip',
     data: function(){
         return {
-            tipShow: true,
+            tipShow: false,
+            time: '',
+            awardNum: 0
         }     
     },
     mounted: function(){
@@ -27,6 +33,22 @@ export default {
         //     .subscribe(() => {
         //         this.tipShow = false;
         //     })
+        boardcast
+            .pipe(filter(data => data.type === bcType.TIP_SHOW))
+            .subscribe(() => {
+                this.tipShow = !this.tipShow;
+            })
+
+        boardcast
+            .pipe(filter(data => data.type === bcType.HINT_SHOW))
+            .subscribe(() => {
+                this.awardNum += 1;
+            })
+        boardcast
+            .pipe(filter(data => data.type === bcType.TIMER_UPDATE), map((data) => data.value))
+            .subscribe((val) => {
+                this.time = val;
+            })
     },
     watch: {
         // tipShow :function(val) {
@@ -49,6 +71,15 @@ export default {
     height: 18%;
     width: 30%;
     background-color:aliceblue;
+    transition: transform 1s;
+}
+
+.score[show='false'] {
+    transform: translateX(100%);
+}
+
+.score[show='true'] {
+    transform: translateX(0);
 }
 
 </style>
