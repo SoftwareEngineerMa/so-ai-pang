@@ -27,12 +27,13 @@ const faceMap = new Map([
     ['leanLeft', 'left'],
     ['leanRight', 'right'],
     ['top', 'top'],
-    ['bottom', 'bottom']
+    ['bottom', 'bottom'],
+    ['normal', 'normal']
 ])
 
 const moveMap = new Map([
-    ['leanLeft', [-1, 0]],
-    ['leanRight', [1, 0]],
+    ['left', [-1, 0]],
+    ['right', [1, 0]],
     ['top', [0, 1]],
     ['bottom', [0, -1]],
     ['normal', [0, 0]],
@@ -43,8 +44,8 @@ const moveMap = new Map([
 ])
 
 const posMirror = new Map([
-    ['leanLeft', 'leanRight'],
-    ['leanRight', 'leanLeft'],
+    ['left', 'right'],
+    ['right', 'left'],
     ['top', 'bottom'],
     ['bottom', 'top']
 ])
