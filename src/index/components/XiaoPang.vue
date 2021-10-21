@@ -11,7 +11,9 @@
             <img src="../../assets/l-sports.png" alt="">
           </li>
           <li @click="openGame">
-            <img src="../../assets/l-game.png" alt="">
+            <a href="/maze.html"  target="-">
+              <img src="../../assets/l-game.png" alt="">
+            </a>
           </li>
           <li @click="openDoc">
             <img src="../../assets/l-zhiyin.png" alt="">
@@ -192,6 +194,7 @@ export default {
 .open-menu {
   bottom: 0px;
   height: 20px;
+  -webkit-app-region: no-drag;
   /* border: 1px solid #000; */
 }
 .open-menu > img {
@@ -202,9 +205,15 @@ export default {
   list-style: none;
   width: 20px;
   height: 20px;
+  -webkit-app-region: no-drag;
   /* border: 1px solid greenyellow; */
 }
 .list > li > img {
+  width: 20px;
+  height: 20px;
+}
+
+a > img {
   width: 20px;
   height: 20px;
 }
