@@ -109,7 +109,7 @@ class Maze {
     hxpAngle = 0;
 
     // hxp行动阻塞
-    // hxpSleep = false;
+    hxpSleep = false;
 
     lastx = null;
     lasty = null;
@@ -161,9 +161,10 @@ class Maze {
             }, 10);
         });
         boardcast
-            .pipe(filter(data => data.type === bcType.HXP_REVIVE), delay(2000))
+            .pipe(filter(data => data.type === bcType.HXP_REVIVE))
             .subscribe(() => {
-                // this.hxpSleep = false;
+                console.log('false');
+                this.hxpSleep = false;
             })
 
         requestAnimationFrame(() => { this.loop() });
@@ -184,9 +185,11 @@ class Maze {
         le.innerText = '层数:' + level;
         elFadeOut('.shade', 5, () => { console.log('shade消失'); });
         this.gameState = 'fadein';
-        elFadeIn('.hxp', 20, () => {console.log('hxp出现')});
+        elFadeIn('.hxp', 20, () => {
+            console.log('hxp出现');
+            boardcast.next({type: bcType.TIP_SHOW});
+        });
         elFadeIn('.level', 20);
-        boardcast.next({type: bcType.TIP_SHOW})
         this.timer();
         this.timerContact();
     }
@@ -212,6 +215,14 @@ class Maze {
         let mazeX = Math.floor(this.ballMesh.position.x + 0.5);
         let mazeY = Math.floor(this.ballMesh.position.y + 0.5);
         if (mazeX == this.mazeDimension && mazeY == this.mazeDimension - 2) {
+            this.hxpSleep = true;
+            // 小胖阻塞，通知弹出modal
+            boardcast.next({ type: bcType.HXP_SLEEP })
+            // 通知隐藏tip
+            boardcast.next({ type: bcType.TIP_SHOW })
+            // 通知更新tip
+            boardcast.next({ type: bcType.TIP_UPDATE })
+            this.resetTime();
             this.mazeDimension += 2;
             this.gameState = 'fadeout';
         }
@@ -226,8 +237,6 @@ class Maze {
             this.light.intensity = 0.0;
             this.renderer.render(this.scene, this.camera);
             this.gameState = 'init';
-            boardcast.next({type: bcType.TIP_SHOW})
-
         }
     }
 
@@ -241,6 +250,10 @@ class Maze {
                 this.fadeIn();
                 break;
             case 'fadeout':
+                console.log(this.hxpSleep);
+                if (this.hxpSleep) {
+                    break
+                }
                 this.fadeOut();
                 break;
             case 'play':
@@ -415,9 +428,6 @@ class Maze {
             this.awardArray.forEach((item,index) => {
                 if (item) {
                     if (this.isHitAward(this.ballMesh.position, item.position) && item) {
-                        // hxp阻塞
-                        // this.hxpSleep = true;
-                        // boardcast.next({ type: bcType.HXP_SLEEP })
                         boardcast.next({type: bcType.HINT_SHOW})
                         this.scene.remove(item)
                         this.awardArray[index] = null;
@@ -588,6 +598,9 @@ class Maze {
 
     timer(){
         const update = () => {
+            if (this.hxpSleep) {
+                return 
+            }
             this.millisecond += 1;
             if (this.millisecond > 100) {
                 this.millisecond = 0;
@@ -616,6 +629,12 @@ class Maze {
             const ms = this.millisecond < 10 ? `0${this.millisecond}` : `${this.millisecond}`;
             boardcast.next({type: bcType.TIMER_UPDATE, value: `${m}:${s}:${ms}`});
         })
+    }
+
+    resetTime() {
+        this.millisecond = 0;
+        this.second = 0;
+        this.minute = 0;
     }
 
     get hxpToward() {

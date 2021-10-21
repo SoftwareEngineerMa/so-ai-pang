@@ -6,7 +6,7 @@
       <strong>加载中...</strong>
     </div>
     <video id="video" playsinline></video>
-    <!-- <maze-modal></maze-modal> -->
+    <maze-modal></maze-modal>
     <maze-tip></maze-tip>
     <award-hint></award-hint>
 </div>
@@ -14,7 +14,7 @@
 
 <script>
 import getMaze from './maze';
-// import MazeModal from './components/modal.vue';
+import MazeModal from './components/modal.vue';
 import MazeTip from './components/tip.vue';
 import AwardHint from './components/awardHint.vue'
 
@@ -23,7 +23,7 @@ import AwardHint from './components/awardHint.vue'
 export default {
     name: 'Maze',
     components: {
-        // MazeModal,
+        MazeModal,
         MazeTip,
         AwardHint
     },
@@ -38,6 +38,7 @@ export default {
 body{
     margin: 0 0;
     padding: 0 0;
+    overflow: hidden;
 }
 .hxp{
     display: none;

@@ -1,5 +1,5 @@
 <template>
-<div class="score" :show='`${tipShow}`'>
+<div class="score" :show='`${tipShow}`' >
     {{ time }}
     <div>
         已获得奖励个数：{{ awardNum }}
@@ -17,22 +17,10 @@ export default {
         return {
             tipShow: false,
             time: '',
-            awardNum: 0
+            awardNum: 0,
         }     
     },
     mounted: function(){
-        // boardcast
-        //     .pipe(filter(data => data.type === bcType.HXP_SLEEP), throttleTime(100))
-        //     .subscribe(() => {
-        //         console.log('pppp');
-        //         this.tipShow = true;
-        //         boardcast.next({type:bcType.HXP_REVIVE});
-        //     })
-        // boardcast
-        //     .pipe(filter(data => data.type === bcType.HXP_REVIVE), delay(2000))
-        //     .subscribe(() => {
-        //         this.tipShow = false;
-        //     })
         boardcast
             .pipe(filter(data => data.type === bcType.TIP_SHOW))
             .subscribe(() => {
@@ -48,6 +36,12 @@ export default {
             .pipe(filter(data => data.type === bcType.TIMER_UPDATE), map((data) => data.value))
             .subscribe((val) => {
                 this.time = val;
+            })
+        boardcast
+            .pipe(filter(data => data.type === bcType.TIP_UPDATE))
+            .subscribe(() => {
+                this.time = '00:00:00';
+                this.awardNum = 0;
             })
     },
     watch: {

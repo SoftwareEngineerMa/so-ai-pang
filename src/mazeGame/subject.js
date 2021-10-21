@@ -9,7 +9,8 @@ export const bcType = {
     HINT_SHOW: 'hint: show',
     HINT_HIDE: 'hint: hide',
     TIMER_UPDATE: 'timer: update',
-    TIP_SHOW: 'tip: show'
+    TIP_SHOW: 'tip: show',
+    TIP_UPDATE: 'tip: update'
 }
 
 

@@ -1,16 +1,15 @@
 <template>
-<transition name="fade">
 <div v-show="modalShow" class="score_container">
     <div class="score">
         记分板
     </div>
+    <button @click = 'nextClick'>下一关</button>
 </div>
-</transition>
 </template>
 
 <script>
 import { boardcast, bcType } from '../subject'
-import { throttleTime, filter, delay,} from 'rxjs/operators'
+import { throttleTime, filter} from 'rxjs/operators'
 
 export default {
     name: 'MazeModal',
@@ -24,13 +23,14 @@ export default {
             .pipe(filter(data => data.type === bcType.HXP_SLEEP), throttleTime(500))
             .subscribe(() => {
                 this.modalShow = true;
-                boardcast.next({type:bcType.HXP_REVIVE});
             })
-        boardcast
-            .pipe(filter(data => data.type === bcType.HXP_REVIVE), delay(2000))
-            .subscribe(() => {
-                this.modalShow = false;
-            })
+    },
+    methods: {
+        nextClick() {
+            console.log('jjjjjj');
+            this.modalShow = false;
+            boardcast.next({type: bcType.HXP_REVIVE});
+        }
     }
 
 }
