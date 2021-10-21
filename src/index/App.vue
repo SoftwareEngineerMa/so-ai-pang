@@ -8,7 +8,6 @@
       display: none;
       ">
     </video>
-    <a href="/maze.html" target="maze">maze</a>
     <xiao-pang></xiao-pang>
   </div>
 </template>
