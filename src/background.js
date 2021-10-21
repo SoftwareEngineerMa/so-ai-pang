@@ -4,7 +4,7 @@ import { app, protocol, BrowserWindow, ipcMain, screen } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
-const path = require('path')
+// const path = require('path')
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -22,8 +22,8 @@ async function createWindow() {
     // y: screenSize.height - 150,
     // width: 300,
     // height: 300,
-    // frame: false,// 无边框
-    // transparent: true,  // 透明
+    frame: false,// 无边框
+    transparent: true,  // 透明
     webPreferences: {
 
       // Use pluginOptions.nodeIntegration, leave this alone
@@ -98,19 +98,19 @@ if (isDevelopment) {
 // });
 
 // 窗口拖动相关
-let dragIntervalId = -1 
-ipcMain.on("on-drag-listen", (e, winName) => {
-  const { x, y } = screen.getCursorScreenPoint();
-  const bound = win.getBounds()
-  const _delt_x = x - bound.x
-  const _delt_y = y - bound.y
-  dragIntervalId = setInterval(() => {
-    const { x, y } = screen.getCursorScreenPoint();
-    win.setPosition(x - _delt_x, y - _delt_y);
-    win.setSize(800, 600, false);
-    // win.setSize(150, 150, false);
-  }, 10)
-});
-ipcMain.on("remove-drag-listen", () => {
-   clearInterval(dragIntervalId) 
-})
+// let dragIntervalId = -1 
+// ipcMain.on("on-drag-listen", (e, winName) => {
+//   const { x, y } = screen.getCursorScreenPoint();
+//   const bound = win.getBounds()
+//   const _delt_x = x - bound.x
+//   const _delt_y = y - bound.y
+//   dragIntervalId = setInterval(() => {
+//     const { x, y } = screen.getCursorScreenPoint();
+//     win.setPosition(x - _delt_x, y - _delt_y);
+//     win.setSize(800, 600, false);
+//     // win.setSize(150, 150, false);
+//   }, 10)
+// });
+// ipcMain.on("remove-drag-listen", () => {
+//    clearInterval(dragIntervalId) 
+// })

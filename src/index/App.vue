@@ -9,13 +9,20 @@
       ">
     </video>
     <a href="/maze.html" target="maze">maze</a>
+    <xiao-pang></xiao-pang>
   </div>
 </template>
 
 <script>
 
+import XiaoPang from './components/XiaoPang.vue'
+
 export default {
   name: 'App',
+
+  components: {
+    XiaoPang,
+  },
   
   data: function() {
     return {
@@ -71,6 +78,6 @@ export default {
   margin-top: 60px;
 }
 body {
-  /* background-color: #ffffff00; */
+  -webkit-app-region: drag;
 }
 </style>

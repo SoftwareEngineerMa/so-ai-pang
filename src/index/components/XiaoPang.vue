@@ -3,26 +3,26 @@
     <div class="xiao-pang" @click="touchXp"></div>
     <div class="menu">
       <div class="hide">
-        <img src="../assets/yincang.png" alt="">
+        <img src="../../assets/yincang.png" alt="">
       </div>
       <div class="menu-list" v-show="showMenu">
         <ul class="list">
           <li @click="openSports">
-            <img src="../assets/l-sports.png" alt="">
+            <img src="../../assets/l-sports.png" alt="">
           </li>
           <li @click="openGame">
-            <img src="../assets/l-game.png" alt="">
+            <img src="../../assets/l-game.png" alt="">
           </li>
           <li @click="openDoc">
-            <img src="../assets/l-zhiyin.png" alt="">
+            <img src="../../assets/l-zhiyin.png" alt="">
           </li>
           <li @click="closeMenu">
-            <img src="../assets/l-up.png" alt="">
+            <img src="../../assets/l-up.png" alt="">
           </li>
         </ul>
       </div>
       <div class="open-menu" v-show="!showMenu" @click="openMenu">
-        <img src="../assets/l-up.png" alt="">
+        <img src="../../assets/l-up.png" alt="">
       </div>
     </div>
     <!-- <div class="open-menu" @click.stop>
@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { ipcRenderer } from "electron";
+// import { ipcRenderer } from "electron";
 export default {
   name: "XiaoPang",
   data() {
@@ -84,20 +84,20 @@ export default {
     window.addEventListener("mousedown", (e) => {
       // console.log('mousedown');
       latestMouseDownCoor = [e.screenX, e.screenY];
-      ipcRenderer.send("on-drag-listen", "floatBar");
+      // ipcRenderer.send("on-drag-listen", "floatBar");
     });
 
     window.addEventListener("mouseup", (e) => {
       // console.log('mouseup');
       latestMouseUpCoor = [e.screenX, e.screenY];
-      ipcRenderer.send("remove-drag-listen");
+      // ipcRenderer.send("remove-drag-listen");
     });
 
     window.addEventListener(
       "click",
       (e) => {
         // console.log('click');
-        ipcRenderer.send("remove-drag-listen");
+        // ipcRenderer.send("remove-drag-listen");
         if (
           latestMouseDownCoor[0] != latestMouseUpCoor[0] ||
           latestMouseDownCoor[1] != latestMouseUpCoor[1]
@@ -154,7 +154,7 @@ export default {
   top: 0px;
   width: 150px;
   height: 150px;
-  background: url("../assets/xiaopangpang.gif");
+  background: url("../../assets/xiaopangpang.gif");
   background-size: cover;
   border: 1px solid black;
 }
