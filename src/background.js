@@ -13,17 +13,14 @@ protocol.registerSchemesAsPrivileged([
 let win = null
 async function createWindow() {
   let screenSize = screen.getPrimaryDisplay().workAreaSize;
-  // console.log(screenSize.width, screenSize.height);
   // Create the browser window.
   win = new BrowserWindow({
-    // width: 150,
-    // height: 150,
-    // x: screenSize.width - 140,
-    // y: screenSize.height - 150,
-    // width: 300,
-    // height: 300,
-    // frame: false,// 无边框
-    // transparent: true,  // 透明
+    x: screenSize.width - 260,
+    y: screenSize.height - 210,
+    width: 250,
+    height: 210,
+    frame: false,// 无边框
+    transparent: true,  // 透明
     webPreferences: {
 
       // Use pluginOptions.nodeIntegration, leave this alone
@@ -38,7 +35,7 @@ async function createWindow() {
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
+    // if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app')
     // Load the index.html when not in development
@@ -93,24 +90,6 @@ if (isDevelopment) {
   }
 }
 
-// ipcMain.on('sync-render', (event, data) => {
-//   win.setPosition(data.left, data.top)
-// });
-
-// 窗口拖动相关
-let dragIntervalId = -1 
-ipcMain.on("on-drag-listen", (e, winName) => {
-  const { x, y } = screen.getCursorScreenPoint();
-  const bound = win.getBounds()
-  const _delt_x = x - bound.x
-  const _delt_y = y - bound.y
-  dragIntervalId = setInterval(() => {
-    const { x, y } = screen.getCursorScreenPoint();
-    win.setPosition(x - _delt_x, y - _delt_y);
-    win.setSize(800, 600, false);
-    // win.setSize(150, 150, false);
-  }, 10)
-});
-ipcMain.on("remove-drag-listen", () => {
-   clearInterval(dragIntervalId) 
+ipcMain.on("window-min", () => {
+  win.minimize()
 })

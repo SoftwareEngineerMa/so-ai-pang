@@ -1,68 +1,54 @@
 <template>
   <div id="xiaopang">
-    <div class="xiao-pang" @click="touchXp"></div>
+    <Message :message="message"/>
+    <div class="xiao-pang">
+      <img id="img1" src="../assets/images/enen.gif" alt="">
+      <img id="img2" src="../assets/images/heart2.gif" alt="">
+    </div>
     <div class="menu">
       <div class="hide">
-        <img src="../assets/yincang.png" alt="">
+        <img src="../assets/images/min-h.png" alt="" @click="hide">
       </div>
       <div class="menu-list" v-show="showMenu">
         <ul class="list">
-          <li @click="openSports">
-            <img src="../assets/l-sports.png" alt="">
-          </li>
-          <li @click="openGame">
-            <img src="../assets/l-game.png" alt="">
-          </li>
-          <li @click="openDoc">
-            <img src="../assets/l-zhiyin.png" alt="">
-          </li>
-          <li @click="closeMenu">
-            <img src="../assets/l-up.png" alt="">
-          </li>
+          <li class="li-camera" @click="openCamera"></li>
+          <li class="li-game" @click="openGame"></li>
+          <li class="li-doc" @click="openDoc"></li>
+          <li class="li-close" @click="closeMenu"></li>
         </ul>
       </div>
       <div class="open-menu" v-show="!showMenu" @click="openMenu">
-        <img src="../assets/l-up.png" alt="">
+        <img src="../assets/images/up.png" alt="">
       </div>
     </div>
-    <!-- <div class="open-menu" @click.stop>
-      <div class="open">
-        <p>
-          <img src="../assets/l-up.png" alt="菜单栏" />
-        </p>
-      </div>
-      <div class="menu">
-        <p class="p1" @click="goSports">
-          <img src="../assets/l-sports.png" alt="AI运动" />
-        </p>
-        <p class="p2" @click="goGame">
-          <img src="../assets/l-game.png" alt="游戏" />
-        </p>
-        <p class="p3" @click="goDoc">
-          <img src="../assets/l-zhiyin.png" alt="新人引导" />
-        </p>
-      </div>
-    </div> -->
   </div>
 </template>
 
 <script>
 import { ipcRenderer } from "electron";
+import Message from './Message.vue'
+import dateJson from '../assets/json/date.json'
+import randomJson from '../assets/json/random.json'
 export default {
   name: "XiaoPang",
   data() {
     return {
-      showMenu: !false
+      showMenu: false,
+      message: ['哈喽呀，今天也是元气满满的一天呢！',5],
+      // message: ['嘘，我刚刚听我的leader也就是你的leader的黄小胖说你的leader夸你有点优秀，不知道你听懂了没有？',5],
+      dateJson,
+      randomJson
     }
   },
+  components: { Message },
   methods: {
-    touchXp() {
-      console.log("触发交互");
+    hide() {
+      ipcRenderer.send("window-min");
     },
     openMenu() {
       this.showMenu = true;
     },
-    openSports() {
+    openCamera() {
       console.log("AI运动");
     },
     openGame() {
@@ -72,67 +58,75 @@ export default {
       console.log("新手引导");
     },
     closeMenu() {
-      this.showMenu = false;
+      this.showMenu = !this.showMenu;
+    },
+    initMessage() {
+      let date = new Date()
+      let this_year = date.getFullYear()  //  年
+      let this_month = date.getMonth() + 1  // 月
+      let this_day = date.getDate()         // 日
+      let this_date = this_year.toString() + '-' + this_month + '-' + this_day    // 2021-10-20
+      let this_week = date.getDay()     // 周
+      let today = this_week > 0 && this_week < 6 ? 'workdays' : 'weekends' // 工作日or周末
+      let this_h = date.getHours()    //  时
+      let this_m = date.getMinutes()  //  分
+      let random_time = [11, 14, 15, 16, 17, 18]  // 出随机文案的时间节点
+      let msg = []
+      let img1 = document.getElementById('img1')
+      let img2 = document.getElementById('img2')
+      if(today == 'workdays') {
+        // img1.src = require('../assets/images/work.gif')
+        img1.src = require('../assets/images/enen.gif')
+      }
+      setInterval(() => {
+        let sleep = Number(this_h + '' + this_m)
+        this_m = this_m + 1
+        if(this_m == 60) {
+          this_h++
+          this_m = 0
+        }
+        if(sleep > 1239 && sleep < 1400) {
+          if(sleep == 1240) {
+            let time = '12:40:00'
+            msg = today == 'workdays' ? this.dateJson[today][this_date][time] : msg = this.dateJson[today][time]
+          }
+        } else if (this_m == 0) { //  整点
+          let time = this_h + ':' + '00' + ':' + '00'
+          if(random_time.indexOf(Number(this_h)) > -1) {  //  出random
+            let index = parseInt(Math.random() * 98)
+            msg = this.randomJson.date[index]
+          } else {  //  出date
+            msg = today == 'workdays' ? this.dateJson[today][this_date][time] : msg = this.dateJson[today][time]
+          }
+        }
+        msg.action = msg.action || 'enen'
+        this.message = [msg.text, msg.duration]
+        img2.src = require(`../assets/images/${msg.action}.gif`)
+        img1.style.opacity = 0
+        img2.style.opacity = 1
+        setTimeout(() => {
+          img1.style.opacity = 1
+          img2.style.opacity = 0
+        }, msg.duration * 1000)
+      }, 60000)
     }
   },
   mounted() {
-    // let ipcRenderer = require("electron").ipcRenderer;
-    
-    let latestMouseDownCoor = [];
-    let latestMouseUpCoor = [];
-
-    window.addEventListener("mousedown", (e) => {
-      // console.log('mousedown');
-      latestMouseDownCoor = [e.screenX, e.screenY];
-      ipcRenderer.send("on-drag-listen", "floatBar");
-    });
-
-    window.addEventListener("mouseup", (e) => {
-      // console.log('mouseup');
-      latestMouseUpCoor = [e.screenX, e.screenY];
-      ipcRenderer.send("remove-drag-listen");
-    });
-
-    window.addEventListener(
-      "click",
-      (e) => {
-        // console.log('click');
-        ipcRenderer.send("remove-drag-listen");
-        if (
-          latestMouseDownCoor[0] != latestMouseUpCoor[0] ||
-          latestMouseDownCoor[1] != latestMouseUpCoor[1]
-        ) {
-          e.stopPropagation();
-        }
-      },
-      true
-    );
+    this.initMessage()
+    // setTimeout(() => {
+    //   let aa = 'drink'
+    //   let img1 = document.getElementById('img1')
+    //   let img2 = document.getElementById('img2')
+    //   this.message=['喝水时间到！快端起手边的水杯补充一下水分吧！', 5]
+    //   img2.src = require(`../assets/images/${aa}.gif`)
+    //   img1.style.opacity = 0
+    //   img2.style.opacity = 1
+    //   setTimeout(() => {
+    //     img1.style.opacity = 1
+    //     img2.style.opacity = 0
+    //   }, 5000)
+    // }, 8000)
   },
-  // directives: {
-  //   drag: function (el) {
-  //     let dragBox = el; //获取当前元素
-  //     dragBox.onmousedown = (e) => {
-  //       //算出鼠标相对元素的位置
-  //       let disX = e.clientX - dragBox.offsetLeft;
-  //       let disY = e.clientY - dragBox.offsetTop;
-  //       document.onmousemove = (e) => {
-  //         //用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
-  //         let left = e.clientX - disX;
-  //         let top = e.clientY - disY;
-  //         //移动当前元素
-  //         // dragBox.style.left = left + "px";
-  //         // dragBox.style.top = top + "px";
-  //         ipcRenderer.send('sync-render', {left,top});
-  //       };
-  //       document.onmouseup = () => {
-  //         //鼠标弹起来的时候不再移动
-  //         document.onmousemove = null;
-  //         //预防鼠标弹起来后还会循环（即预防鼠标放上去的时候还会移动）
-  //         document.onmouseup = null;
-  //       };
-  //     };
-  //   },
-  // },
 };
 </script>
 
@@ -146,7 +140,8 @@ export default {
   height: 150px;
   position: relative;
   cursor: pointer;
-  border: 1px solid red;
+  -webkit-app-region: drag;
+  /* border: 1px solid red; */
 }
 .xiao-pang {
   position: absolute;
@@ -154,94 +149,94 @@ export default {
   top: 0px;
   width: 150px;
   height: 150px;
-  background: url("../assets/xiaopangpang.gif");
-  background-size: cover;
-  border: 1px solid black;
-}
-/* .xiao-pang:hover + .menu {
-  display: block;
-} */
-.menu {
-  /* display: none; */
+  opacity: 1;
   /* border: 1px solid red; */
-  width: 20px;
-  height: 100px;
+
+}
+.xiao-pang > img {
+  width: 150px;
+  height: 150px;
+  transition: opacity 3s;
+  /* border: 1px solid red; */
+}
+.xiao-pang #img1 {
+  opacity: 1;
+}
+.xiao-pang #img2 {
   position: absolute;
-  bottom: 15px;
-  right: 7px;
+  top: 0px;
+  left: 0px;
+  opacity: 0;
+  /* border: 1px solid red; */
+}
+.menu {
+  width: 30px;
+  height: 150px;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  /* right: -20px; */
+  /* border: 1px solid red; */
 }
 .hide, .menu-list, .open-menu {
   position: absolute;
   right: 0px;
-  width: 20px;
+  width: 30px;
 }
 .hide {
-  top: 0px;
-  height: 20px;
-  /* border: 1px solid #000; */
+  top: 7px;
+  left: 0px;
+  height: 25px;
+  -webkit-app-region: no-drag;
 }
 .hide > img {
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
 }
 .menu-list {
-  bottom: 0px;
-  height: 80px;
-  /* border: 1px solid red; */
+  bottom: -10px;
+  height: 125px;
+  /* background: url('../assets/images/menu-list.png'); */
+  background-size: 110%;
 }
-.open-menu {
-  bottom: 0px;
-  height: 20px;
-  /* border: 1px solid #000; */
-}
-.open-menu > img {
-  width: 20px;
-  height: 20px;
+.list {
+  height: 125px;
 }
 .list > li {
   list-style: none;
-  width: 20px;
-  height: 20px;
-  /* border: 1px solid greenyellow; */
-}
-.list > li > img {
-  width: 20px;
-  height: 20px;
-}
-
-
-
-/* .open-menu {
-  width: 30px;
-  height: 135px;
-  overflow: hidden;
-  position: absolute;
-  right: 0px;
-  bottom: 20px;
-}
-.open-menu > p {
-  height: 30px;
-  margin: 5px 0px;
-}
-.open-menu > div > p > img {
-  width: 30px;
-  height: 30px;
-}
-.open-menu > div > .p3 > img {
   width: 28px;
   height: 28px;
+  background-size: 100%;
+  -webkit-app-region: no-drag;
 }
-.menu {
-  transition: opacity 1s;
-  opacity: 0;
+.li-camera {
+  background: url('../assets/images/camera-h.png');
+  /* background-position: -14px -10px; */
 }
-.open {
-  position: absolute;
-  bottom: 0px;
-  padding: 1px;
-  cursor: default;
+.li-game {
+  background: url('../assets/images/game-h.png');
+  /* background-position: -5px -10px; */
 }
-.open-menu:hover .menu {
-  opacity: 1;
+.li-doc {
+  background: url('../assets/images/doc-h.png');
+  /* background-position: -5px -10px; */
+}
+.li-close {
+  background: url('../assets/images/close-h.png');
+  /* background-position: -15px -10px; */
+}
+/* .list > li > img {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #000;
 } */
+.open-menu {
+  bottom: -2px;
+  left: 0px;
+  -webkit-app-region: no-drag;
+}
+.open-menu > img {
+  width: 30px;
+  height: 30px;
+}
 </style>
