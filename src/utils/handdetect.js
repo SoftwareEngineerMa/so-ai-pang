@@ -1,7 +1,7 @@
-const handpose = require('@tensorflow-models/handpose');
-require('@tensorflow/tfjs-backend-webgl');
+import handpose from '@tensorflow-models/handpose';
+import '@tensorflow/tfjs-backend-webgl';
 // import * as THREE from 'three';
-import fp from '../fingerPose/fingerpose';
+import fp from './static/fingerpose/index';
 
 const knownGestures = [
   fp.Gestures.VictoryGesture,

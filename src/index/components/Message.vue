@@ -1,5 +1,5 @@
 <template>
-  <div class="message">
+  <div id="message" class="message">
       {{ message[0] }}
   </div>
 </template>
@@ -22,7 +22,7 @@ export default {
     }
   },
   mounted() {
-    this.msgBox = document.getElementsByClassName('message')[0]
+    this.msgBox = document.getElementById('message')
       setTimeout(() => {
         this.msgBox.style.opacity = '0'
       }, this.message[1] * 1000)

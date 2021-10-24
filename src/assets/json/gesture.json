@@ -1,0 +1,69 @@
+{
+    "ok": [
+        {
+            "action": "enen",
+            "duration": 3.0,
+            "text": "-"
+        }
+    ],
+    "zhan": [
+        {
+            "action": "",
+            "duration": "",
+            "text": "唤起保留手势"
+        }
+    ],
+    "shoot": [
+        {
+            "action": "angry",
+            "duration": 3.0,
+            "text": "你要上天吗，胆敢挑衅我"
+        },
+        {
+            "action": "han",
+            "duration": 3.0,
+            "text": "我在认真工作没时间理你"
+        }
+    ],
+    "fist": [
+        {
+            "action": "",
+            "duration": "",
+            "text": "唤起保留手势"
+        }
+    ],
+    "great": [
+        {
+            "action": "great",
+            "duration": 3.0,
+            "text": "你也很棒哦！ "
+        },
+        {
+            "action": "love",
+            "duration": 3.0,
+            "text": "今天的你有点帅气哦！ "
+        },
+        {
+            "action": "great",
+            "duration": 5.0,
+            "text": "王菲口吻：好了啦，我很棒我自己知道的啦"
+        }
+    ],
+    "victory": [
+        {
+            "action": "Great",
+            "duration": 3.0,
+            "text": "棒棒哒，为你开心~"
+        },
+        {
+            "action": "great",
+            "duration": 3.0,
+            "text": "你太棒了吧"
+        },
+        {
+            "action": "great",
+            "duration": 3.0,
+            "text": "胜利了，可以适当的骄傲一下子的，嘘，别被敌人看到"
+        }
+    ]
+}
