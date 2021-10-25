@@ -66,3 +66,8 @@ export function throttle(fn, delay) {
     }
 }
 
+export function isHit(ballPosition, awardPosition) {
+    if (Math.abs(ballPosition.x - awardPosition.x) < 0.23 && Math.abs(ballPosition.y - awardPosition.y) < 0.23) {
+        return true
+    }
+}

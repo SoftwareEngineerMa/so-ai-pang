@@ -22,6 +22,7 @@
     "@tensorflow/tfjs-core": "^3.9.0",
     "@tensorflow/tfjs-node": "^3.9.0",
     "@vladmandic/face-api": "^1.5.4",
+    "box2dweb": "^2.1.0-b",
     "rxjs": "^7.4.0",
     "vue": "^2.6.11"
   },
