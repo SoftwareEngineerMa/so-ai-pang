@@ -15,5 +15,10 @@ module.exports = {
             filename: 'maze.html',
             title: 'maze'
         }
+    },
+    pluginOptions: {
+        electronBuilder: {
+            nodeIntegration: true
+        }
     }
 }

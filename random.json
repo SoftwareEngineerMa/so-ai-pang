@@ -1,0 +1,490 @@
+{
+    "total": 97,
+    "data": [
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "嘿，奶茶好好喝，你确定不喝点什么嘛？"
+        },
+        {
+            "action": "drink",
+            "duration": 3.0,
+            "text": "记得喝水…"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "喝水时间到！快端起手边的水杯补充一下水分吧！"
+        },
+        {
+            "action": "han",
+            "duration": 5.0,
+            "text": "你以为你是变形金刚，不需要喝水的吗？"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "该喝水水啦！"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "喝水时间到！"
+        },
+        {
+            "action": "heart",
+            "duration": 5.0,
+            "text": "你今天有点奇怪，怪……怪好看的嘿嘿，就是嘴巴有点干，注意补充水分呀！"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "快来跟我一起喝水！"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "你可别学我，少喝点奶茶！"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "记得喝水哦！"
+        },
+        {
+            "action": "drink",
+            "duration": 3.0,
+            "text": "嘿，喝点水吧！"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "水乃生命之源，(￣ ii ￣;) 吸溜~~"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "看吧，我不提醒，你都不知道喝水，你果然离不开我！"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "该喝水啦宝子！"
+        },
+        {
+            "action": "weiqu",
+            "duration": 5.0,
+            "text": "今天我好忙啊，但也不会忘了提醒你喝水滴！"
+        },
+        {
+            "action": "great",
+            "duration": 6.0,
+            "text": "好棒，今天知道主动喝水了，点个赞！"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "大家好，我是水，主人快来喝喝我……"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "天气越来越干燥了，注意补水哦！"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "天冷了，多喝热水！"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "记得喝水啊笨蛋！"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "今天主动喝水了，真棒！"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "啦啦啦喝水时间到！"
+        },
+        {
+            "action": "han",
+            "duration": 5.0,
+            "text": "我掐指一算，有个人，他又忘记喝水了！"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "你都不喝水的嘛？秋天喝点菊花茶可以降火哦~"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "肥宅快乐水也是水嘛～"
+        },
+        {
+            "action": NaN,
+            "duration": NaN,
+            "text": "朋克养生别学我哦！"
+        },
+        {
+            "action": "angry",
+            "duration": 5.0,
+            "text": "你怎么回事！隔壁黄小胖都知道你忘记喝水了！"
+        },
+        {
+            "action": "wen",
+            "duration": 5.0,
+            "text": "我上午是不是忘记喝水了？你也要提醒我呀！"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "怎么还没到饭点儿，你要不要也喝点水填填肚子？"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "咦，什么声音？啊，是饮水机在召唤我们呢"
+        },
+        {
+            "action": "angry",
+            "duration": 5.0,
+            "text": "你！去给我喝水！"
+        },
+        {
+            "action": "sorry",
+            "duration": 5.0,
+            "text": "Sorry~"
+        },
+        {
+            "action": NaN,
+            "duration": NaN,
+            "text": "忘记提醒你喝水了"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "喂！又忘记喝水了是不是？"
+        },
+        {
+            "action": "weiqu",
+            "duration": 5.0,
+            "text": "还是那句话，多喝热水哦~"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "棒！今天有在自觉喝水哦！"
+        },
+        {
+            "action": "hehe",
+            "duration": 5.0,
+            "text": "你看我有没有因为多喝水变得更加迷人？"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "奶茶在手，谁都不爱~"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "喝一杯热水赶走冬日的孤寂与寒冷~"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "完成今日喝水KPI"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "心疼你忙到一口水都喝不上，照顾好自己哦！"
+        },
+        {
+            "action": "han",
+            "duration": 7.0,
+            "text": "隔壁黄小胖牙肿了，是因为不爱喝水上火了，你懂我意思吗？"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "嗨！今日喝水打卡完成！"
+        },
+        {
+            "action": "drink",
+            "duration": 7.0,
+            "text": "Coffee, tea or coco cola? "
+        },
+        {
+            "action": "drink",
+            "duration": 3.0,
+            "text": "喝杯茶，整个人都平和了许多~"
+        },
+        {
+            "action": "weiqu",
+            "duration": 5.0,
+            "text": "悄悄陪我玩一会儿呗？"
+        },
+        {
+            "action": "hi",
+            "duration": 4.0,
+            "text": "让眼睛休息一会吧！"
+        },
+        {
+            "action": "hehe",
+            "duration": 5.0,
+            "text": "你...认真工作的样子真迷人~"
+        },
+        {
+            "action": "weiqu",
+            "duration": 5.0,
+            "text": "拜托拜托，休息一会吧~"
+        },
+        {
+            "action": "jing",
+            "duration": 6.0,
+            "text": "什么？！你竟然在屏幕前坐了那么久都不起来活动一下！"
+        },
+        {
+            "action": "hehe",
+            "duration": 6.0,
+            "text": "我想你现在应该很忙是不是？这么忙的话，就看前三个字就好了..."
+        },
+        {
+            "action": "great",
+            "duration": 8.0,
+            "text": "嘘，我刚刚听我的leader也就是你的leader的黄小胖说你的leader夸你有点优秀，不知道你听懂了没有？"
+        },
+        {
+            "action": "cry",
+            "duration": 5.0,
+            "text": "好累哦，我的脖子疼，肩膀也疼，跟我一起活动一下吧~"
+        },
+        {
+            "action": "tired",
+            "duration": 3.0,
+            "text": "坚持，坚持..."
+        },
+        {
+            "action": "han",
+            "duration": 3.0,
+            "text": "你也太投入了吧，瑞思拜！"
+        },
+        {
+            "action": "appear",
+            "duration": 3.0,
+            "text": "再不活动一下，你就长草了！"
+        },
+        {
+            "action": "sleep",
+            "duration": 5.0,
+            "text": "怎么肥事，有点困..."
+        },
+        {
+            "action": "hehe",
+            "duration": 3.0,
+            "text": "适当的放松是为了更高效的工作~"
+        },
+        {
+            "action": "heart",
+            "duration": 3.0,
+            "text": "认真工作的人最有魅力了！"
+        },
+        {
+            "action": "enen",
+            "duration": 10.0,
+            "text": "能量耗尽，点开菜单，一起玩个游戏活动下吧~"
+        },
+        {
+            "action": "enen",
+            "duration": 4.0,
+            "text": "舒展一下筋骨吧！"
+        },
+        {
+            "action": "heart",
+            "duration": 5.0,
+            "text": "你为什么携带易燃易爆品啊！"
+        },
+        {
+            "action": NaN,
+            "duration": NaN,
+            "text": "你美炸了你知道嘛？"
+        },
+        {
+            "action": "tired",
+            "duration": 5.0,
+            "text": "我累了，我要和隔壁小胖出去走走..."
+        },
+        {
+            "action": "great",
+            "duration": 3.0,
+            "text": "打工人，挺投入的嘛~"
+        },
+        {
+            "action": "tired",
+            "duration": 4.0,
+            "text": "Respect,你都不累的嘛？休息一下嘛~"
+        },
+        {
+            "action": "clap",
+            "duration": 5.0,
+            "text": "点开菜单，让我帮你活动下僵硬的颈椎吧"
+        },
+        {
+            "action": "hehe",
+            "duration": 5.0,
+            "text": "你知道我做饭用什么油嘛？——爱老虎油（I love you）"
+        },
+        {
+            "action": NaN,
+            "duration": NaN,
+            "text": "对不起，土到你了..."
+        },
+        {
+            "action": "heart",
+            "duration": 5.0,
+            "text": "我的眼睛好看吧！因为我的眼里有你啊"
+        },
+        {
+            "action": "disappear",
+            "duration": 5.0,
+            "text": "辛苦一天了，我出去透透气~"
+        },
+        {
+            "action": "appear",
+            "duration": 6.0,
+            "text": "花间颜色重，淡妆美如斯。你今天的颜值9分，太靓了！"
+        },
+        {
+            "action": "appear",
+            "duration": 5.0,
+            "text": "打开摄像头跟我互动一下吧！"
+        },
+        {
+            "action": "fight",
+            "duration": 5.0,
+            "text": "加油加油，工作就快做完了"
+        },
+        {
+            "action": "great",
+            "duration": 5.0,
+            "text": "莫要心急，饭要一口一口吃，路要一步步走哦！"
+        },
+        {
+            "action": "great",
+            "duration": 5.0,
+            "text": "最近感觉很累吗，那说明你在成为更好的自己哦~"
+        },
+        {
+            "action": "love",
+            "duration": 6.0,
+            "text": "世上有两种最耀眼的光芒，一种是太阳，一种是你努力工作的模样。"
+        },
+        {
+            "action": "appear",
+            "duration": 2.0,
+            "text": "-"
+        },
+        {
+            "action": "appear",
+            "duration": 4.0,
+            "text": "喂，稍微有点姿色行了，倒不必美的如此满分~"
+        },
+        {
+            "action": "hi",
+            "duration": 5.0,
+            "text": "不要走神，认真工作，争取早早下班，躺进温暖的被窝~"
+        },
+        {
+            "action": "love",
+            "duration": 5.0,
+            "text": "距离上次遇到这么好看的人，还是昨天看到你的时候~"
+        },
+        {
+            "action": "enen",
+            "duration": 4.0,
+            "text": "抱抱~~"
+        },
+        {
+            "action": "hi",
+            "duration": 4.0,
+            "text": "要注意劳逸结合哦！"
+        },
+        {
+            "action": "wen",
+            "duration": 4.0,
+            "text": "你的背后即将出现一个靓仔，快看！"
+        },
+        {
+            "action": "appear",
+            "duration": 4.0,
+            "text": "3点钟方向有人偷瞄你，别问我怎么知道的~"
+        },
+        {
+            "action": "tired",
+            "duration": 10.0,
+            "text": "-"
+        },
+        {
+            "action": "hi",
+            "duration": 5.0,
+            "text": "天气越来越冷了，注意保暖~"
+        },
+        {
+            "action": "angry",
+            "duration": 5.0,
+            "text": "喂！最近没有好好戴口罩！我可监督着你呢~"
+        },
+        {
+            "action": "hehe",
+            "duration": 5.0,
+            "text": "又在摸鱼？摸鱼不如摸我，鱼有我可爱吗？"
+        },
+        {
+            "action": "appear",
+            "duration": 6.0,
+            "text": "从前有座山，山上有座庙，庙里有个黄小胖，思念着屏幕前的你……"
+        },
+        {
+            "action": "wen",
+            "duration": 3.0,
+            "text": "这周末做点什么呢"
+        },
+        {
+            "action": "enen",
+            "duration": 5.0,
+            "text": "你的努力一定会被看见的！"
+        },
+        {
+            "action": "hehe",
+            "duration": 5.0,
+            "text": "我要把你的好昭告天下！"
+        },
+        {
+            "action": "wen",
+            "duration": 5.0,
+            "text": "“小安”最近不太开心，你说我怎么帮助它呢"
+        },
+        {
+            "action": "weiqu",
+            "duration": 5.0,
+            "text": "小胖想家了"
+        },
+        {
+            "action": "hehe",
+            "duration": 6.0,
+            "text": "什么是快乐星球，当然是“360星球”！"
+        },
+        {
+            "action": "wen",
+            "duration": 6.0,
+            "text": "你知道吗？只有自己幸福了，才有能力带给被人幸福！"
+        }
+    ]
+}

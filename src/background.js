@@ -1,28 +1,34 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain, screen } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+// const path = require('path')
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
-
+let win = null
 async function createWindow() {
+  let screenSize = screen.getPrimaryDisplay().workAreaSize;
   // Create the browser window.
-  const win = new BrowserWindow({
-    width: 1000,
-    height: 800,
-    transparent: true,
-    frame: true,
+  win = new BrowserWindow({
+    x: screenSize.width - 260,
+    y: screenSize.height - 210,
+    width: 250,
+    height: 210,
+    frame: false,// 无边框
+    transparent: true,  // 透明
     webPreferences: {
-      devTools: true,
+
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
+      // preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+      enableRemoteModule: true
     }
   })
 
@@ -35,6 +41,8 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
+  // win.setPosition(-100,0)  // 设置位置坐标
+  // win.setAlwaysOnTop(true);   // 窗口置顶
 }
 
 // Quit when all windows are closed.
@@ -81,3 +89,7 @@ if (isDevelopment) {
     })
   }
 }
+
+ipcMain.on("window-min", () => {
+  win.minimize()
+})
