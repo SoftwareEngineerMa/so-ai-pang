@@ -10,8 +10,9 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
-let win = null
-async function createWindow() {
+let win = null;
+let maze = null;
+async function createMainWindow() {
   let screenSize = screen.getPrimaryDisplay().workAreaSize;
   // Create the browser window.
   win = new BrowserWindow({
@@ -23,8 +24,6 @@ async function createWindow() {
     transparent: true,  // 透明
     webPreferences: {
 
-      // Use pluginOptions.nodeIntegration, leave this alone
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
@@ -35,14 +34,36 @@ async function createWindow() {
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
+    // if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app')
-    // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
   // win.setPosition(-100,0)  // 设置位置坐标
   // win.setAlwaysOnTop(true);   // 窗口置顶
+}
+
+function createMazeWindow() {
+  let screenSize = screen.getPrimaryDisplay().workAreaSize;
+  maze = new BrowserWindow({
+    x: screenSize.width / 2,
+    y: screenSize.height / 2,
+    width: 700,
+    height: 500,
+    frame: true,// 无边框
+    transparent: false,  // 透明
+    titleBarStyle: 'hidden',
+    webPreferences: {
+      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+      // preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+      enableRemoteModule: true
+    }
+  })
+  maze.loadURL('http://localhost:8080/maze.html');
+  maze.on('closed',()=>{
+        maze=null;
+  })
 }
 
 // Quit when all windows are closed.
@@ -57,7 +78,7 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  if (BrowserWindow.getAllWindows().length === 0) createMainWindow()
 })
 
 // This method will be called when Electron has finished
@@ -72,7 +93,7 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }
-  createWindow()
+  createMainWindow()
 })
 
 // Exit cleanly on request from parent process in development mode.
@@ -93,3 +114,8 @@ if (isDevelopment) {
 ipcMain.on("window-min", () => {
   win.minimize()
 })
+
+ipcMain.on("maze-open", () => {
+  createMazeWindow();
+})
+

@@ -53,7 +53,8 @@ export default {
     },
     openGame() {
       console.log("进入游戏");
-      window.open('/maze.html')
+      // window.open('/maze.html')
+      ipcRenderer.send("maze-open");
     },
     openDoc() {
       console.log("新手引导");
