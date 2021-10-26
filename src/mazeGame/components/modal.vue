@@ -27,9 +27,10 @@ export default {
     },
     methods: {
         nextClick() {
-            console.log('jjjjjj');
             this.modalShow = false;
             boardcast.next({type: bcType.HXP_REVIVE});
+            boardcast.next({type: bcType.LEVEL_HIDE});
+            boardcast.next({ type: bcType.VICTORY });
         }
     }
 

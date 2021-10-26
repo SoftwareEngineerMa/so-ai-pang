@@ -10,21 +10,48 @@
 <script>
 import { bcType, boardcast } from '../subject'
 import { filter, map,} from 'rxjs/operators'
+import { timer } from 'rxjs'
 
 export default {
     name: 'MazeTip',
     data: function(){
         return {
             tipShow: false,
-            time: '',
             awardNum: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 0,
+            timer: null
         }     
+    },
+    computed: {
+        time() {
+            let minuteS = this.minute === 0 ? '00' : null;
+            let secondS = this.second === 0 ? '00' : null;
+            let millisecondeS = this.millisecond === 0 ? '00' : null;
+            if (!minuteS){
+                minuteS = this.minute < 10 ? `0${this.minute}` : `${this.minute}`;
+            }
+            if (!secondS) {
+                secondS = this.second < 10 ? `0${this.second}` : `${this.second}`;
+            }
+            if (!millisecondeS) {
+                millisecondeS = this.millisecond < 10 ? `0${this.millisecond}` : `${this.millisecond}`;
+            }
+            return `${minuteS}:${secondS}:${millisecondeS}`;
+        }
     },
     mounted: function(){
         boardcast
             .pipe(filter(data => data.type === bcType.TIP_SHOW))
             .subscribe(() => {
                 this.tipShow = !this.tipShow;
+                if (this.tipShow) {
+                    if (timer) {
+                        clearInterval(timer)
+                    }
+                    this.timer = setInterval( this.timeUpdate, 10)
+                }
             })
 
         boardcast
@@ -40,9 +67,23 @@ export default {
         boardcast
             .pipe(filter(data => data.type === bcType.TIP_UPDATE))
             .subscribe(() => {
-                this.time = '00:00:00';
+                clearInterval(this.timer);
+                this.minute = this.second = this.millisecond = 0;
                 this.awardNum = 0;
             })
+    },
+    methods: {
+        timeUpdate() {
+            this.millisecond += 1;
+            if (this.millisecond > 100) {
+                this.millisecond = 0;
+                this.second += 1;
+            }
+            if(this.second > 60) {
+                this.second = 0;
+                this.minute += 1;
+            }
+        }
     },
     watch: {
         // tipShow :function(val) {

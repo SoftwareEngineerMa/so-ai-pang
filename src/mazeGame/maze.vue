@@ -1,14 +1,12 @@
 <template>
 <div>
-    <strong class="level">层数：</strong>
-    <div class="hxp"></div>
-    <div class="shade">
-      <strong>加载中...</strong>
-    </div>
+    <strong v-show="levelShow"  class="level">层数：{{level}} </strong>
+    <shade></shade>
     <video id="video" playsinline></video>
     <maze-modal></maze-modal>
     <maze-tip></maze-tip>
     <award-hint></award-hint>
+    <hxp></hxp>
 </div>
 </template>
 
@@ -16,18 +14,46 @@
 import getMaze from './maze';
 import MazeModal from './components/modal.vue';
 import MazeTip from './components/tip.vue';
-import AwardHint from './components/awardHint.vue'
+import AwardHint from './components/awardHint.vue';
+import Hxp from './components/hxp.vue';
+import Shade from './components/shade.vue'
+import { bcType, boardcast } from './subject';
+import { filter } from 'rxjs/operators'
 
 
 
 export default {
     name: 'Maze',
+    data: function() {
+        return {
+            level: 1,
+            levelShow: false,
+        }
+    },
     components: {
         MazeModal,
         MazeTip,
-        AwardHint
+        AwardHint,
+        Hxp,
+        Shade,
     },
     mounted: function(){
+        boardcast
+            .pipe(filter(data => data.type === bcType.VICTORY))
+            .subscribe(() => {
+                this.level += 1;
+            })
+        boardcast
+            .pipe(filter(data => data.type === bcType.LEVEL_SHOW))
+            .subscribe(() => {
+                
+                this.levelShow = true;
+            })
+        boardcast
+            .pipe(filter(data => data.type === bcType.LEVEL_HIDE))
+            .subscribe(() => {
+                this.levelShow = false;
+            }) 
         getMaze().start();
     }
 }
@@ -40,21 +66,8 @@ body{
     padding: 0 0;
     overflow: hidden;
 }
-.hxp{
-    display: none;
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    top: 50%;
-    left: 50%;
-    background-image: url('../../public/hxp_run/run.png');
-    background-position: 0 0;
-    background-size: cover;
-    transform: translate(-50%, -50%) ;
-    transition: transform 0.5s;
-}
+
 .level {
-    display: none;
     position: absolute;
     top: 25px;
     left: 30px;
@@ -70,18 +83,5 @@ body{
     display: none;
 }
 
-.shade{
-    background-image: url('../../public/texture/concrete.png');
-    background-size:contain;
-}
-
-.shade strong{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) ;
-    font-size: 25px;
-    color: aliceblue;
-}
 
 </style>
