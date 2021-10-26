@@ -1,9 +1,9 @@
 {
     "ok": [
         {
-            "action": "enen",
+            "action": "clap",
             "duration": 3.0,
-            "text": "-"
+            "text": "ok了啦"
         }
     ],
     "zhan": [
@@ -20,16 +20,9 @@
             "text": "你要上天吗，胆敢挑衅我"
         },
         {
-            "action": "han",
+            "action": "work",
             "duration": 3.0,
             "text": "我在认真工作没时间理你"
-        }
-    ],
-    "fist": [
-        {
-            "action": "",
-            "duration": "",
-            "text": "唤起保留手势"
         }
     ],
     "great": [
@@ -64,6 +57,33 @@
             "action": "great",
             "duration": 3.0,
             "text": "胜利了，可以适当的骄傲一下子的，嘘，别被敌人看到"
+        }
+    ],
+    "point": [
+        {
+            "action": "appear",
+            "duration": 3.0,
+            "text": "干嘛，再指我，我就把你吃掉！"
+        },
+        {
+            "action": "love",
+            "duration": 3.0,
+            "text": "爱你哦"
+        },
+        {
+            "action": "enen",
+            "duration": 3.0,
+            "text": "小胖一直都在"
+        },
+        {
+            "action": "cry",
+            "duration": 3.0,
+            "text": "唔~谁知道你一直指我是喜欢我还是挑衅我呀"
+        },
+        {
+            "action": "han",
+            "duration": 3.0,
+            "text": "又来"
         }
     ]
 }

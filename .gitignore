@@ -2,6 +2,7 @@
 node_modules
 /dist
 /live2d/dist
+/fingerpose/node_modules
 
 
 # local env files

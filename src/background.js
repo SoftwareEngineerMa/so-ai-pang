@@ -16,10 +16,10 @@ async function createWindow() {
   let screenSize = screen.getPrimaryDisplay().workAreaSize;
   // Create the browser window.
   win = new BrowserWindow({
-    x: screenSize.width - 500,
-    y: screenSize.height - 500,
-    width: 500,
-    height: 500,
+    x: screenSize.width - 400,
+    y: screenSize.height - 400,
+    width: 250,
+    height: 250,
     frame: false,// 无边框
     transparent: true,  // 透明
     skipTaskbar: true, // 取消默认任务栏展示，后面initTrayIcon设置了右侧任务栏图标展示
@@ -36,14 +36,14 @@ async function createWindow() {
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
+    // if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app')
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
   // win.setPosition(-100,0)  // 设置位置坐标
-  // win.setAlwaysOnTop(true);   // 窗口置顶
+  win.setAlwaysOnTop(true);   // 窗口置顶
   win.on('ready-to-show',()=>{
     win.show();
   })

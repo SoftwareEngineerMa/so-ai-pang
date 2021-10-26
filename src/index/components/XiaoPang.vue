@@ -3,7 +3,7 @@
     <Message :message="msg"/>
     <div class="xiao-pang">
       <img id="img1" :src="`./static/actions/${defaultPic}.gif`" alt="">
-      <img id="img2" :src="`./static/actions/${defaultPic}.gif`" alt="">
+      <img id="img2" :src="`./static/actions/${defaultPic2}.gif`" alt="">
     </div>
     <div class="menu">
       <div class="hide">
@@ -37,10 +37,10 @@ import { ipcRenderer } from "electron";
 import Message from './Message.vue'
 // AI识别
 import setupCamera from '../../utils/setCamera';
-// import detectHand from '../../utils/handdetect';
+import detectHand from '../../utils/handdetect';
 // import detectExpression from '../../utils/emotiondetect';
 // 文案
-// import gestureJson from '../../assets/json/gesture';
+import gestureJson from '../../assets/json/gesture';
 import dateJson from '../../assets/json/date.json'
 import randomJson from '../../assets/json/random.json'
 // import expressionJson from '../../assets/json/expression.json'
@@ -50,6 +50,7 @@ export default {
   data() {
     return {
       defaultPic: 'enen',
+      defaultPic2: 'enen',
       random_time: [11, 15, 16, 18],  // 出随机文案的时间节点
       emotionList: [
         { name: 'happy', value: 0 },
@@ -66,7 +67,7 @@ export default {
       action: ['enen', '你好呀，我是黄小胖~', 0],
       dateJson,
       randomJson,
-      // gestureJson,
+      gestureJson,
       // expressionJson,
       activeTime: null,
       handPose: '',
@@ -84,25 +85,16 @@ export default {
       second: null,
       
       camera: false,
+      hm: 0,
+      predictionHand: null,
+      gestureTotal: null,
     }
   },
   components: { Message },
   async mounted() {
     await this.openCamera()
-    this.initMessage()
-    // setTimeout(() => {
-    //   let aa = 'drink'
-    //   let img1 = document.getElementById('img1')
-    //   let img2 = document.getElementById('img2')
-    //   this.msg=['喝水时间到！快端起手边的水杯补充一下水分吧！', 5]
-    //   img2.src = `./static/actions/${aa}.gif`
-    //   img1.style.opacity = 0
-    //   img2.style.opacity = 1
-    //   setTimeout(() => {
-    //     img1.style.opacity = 1
-    //     img2.style.opacity = 0
-    //   }, 5000)
-    // }, 8000)
+    this.init()
+    requestAnimationFrame(this.loop)
   },
   methods: {
     hide() {
@@ -121,7 +113,9 @@ export default {
       }
       this.camera = await setupCamera(document.getElementById('video'))
       // this.predictEmotion = await detectExpression(this.video);
-      // this.predictionHand = await detectHand();
+      console.log('camera success')
+      this.predictionHand = await detectHand();
+      console.log('detecthand success')
     },
     openGame() {
       console.log("进入游戏");
@@ -137,11 +131,32 @@ export default {
     closeMenu() {
       this.showMenu = !this.showMenu;
     },
-    initMessage() {
+    init() {
       this.img1 = document.getElementById('img1')
       this.img2 = document.getElementById('img2')
-
-      requestAnimationFrame(this.loop)
+      this.initGesture()
+    },
+    initGesture() {
+      this.gestureTotal = {
+        'victory': 0,
+        'zhan': 0,
+        'great': 0,
+        'fist': 0,
+        'point': 0,
+        'ok': 0,
+        'shoot': 0
+      }
+    },
+    getGesture() {
+      console.log(this.gestureTotal)
+      const item = Object.entries(this.gestureTotal).reduce((a, b) => {
+        if(a[1] > b[1]) {
+          return a
+        }
+        return b
+      })
+      console.log('最多的是：', item)
+      return item[1] > 0 ? item[0] : 'normal'
     },
     loop() {
       const DATE = new Date()
@@ -155,15 +170,25 @@ export default {
 
       this.date = this.year + '-' + this.month + '-' +  this.day    // 2021-10-20
       this.today = this.week > 0 && this.week < 6 ? 'workdays' : 'weekends' // 工作日or周末
- 
+      this.addGesture()
+      // this.hour = 12
+      // this.minute = 40
+
       requestAnimationFrame(this.loop)
-    }
+    },
+    addGesture() {
+      if(this.predictionHand) {
+        this.predictionHand()?.then(res => {
+          if(res !== 'normal') {
+            this.gestureTotal[res] = this.gestureTotal[res] + 1
+            console.log(res);
+          }
+        });
+      }
+    },
   },
   watch: {
     today: function() {
-      if(this.today == 'workdays') {
-        this.defaultPic = 'enen'
-      }
     },
     hour: function() {
       // 整点动作
@@ -176,52 +201,55 @@ export default {
         // 出自date
         if(this.today == 'workdays' && this.dateJson[this.today][this.date][time]) {
           this.action = this.dateJson[this.today][this.date][time]
-          if(this.hour === 14) {
-            this.show()
-          }
         }else if(this.today == 'weekends' && this.dateJson[this.today][time]) {
           this.action = this.dateJson[this.today][time]
         }
       } 
+      
       // else if (this.hour === this.emotionTime) {
       //   const emotion = (this.emotionList.reduce((maxItem, item) => item.value > maxItem ? item : maxItem)).name
       //   this.action = expressionJson[emotion][Math.floor(Math.random() * expressionJson[emotion].length)]
       // }
     },
     minute: function() {
+      const fillZero = (num) => {
+        const numStr = '0' + num
+        const r = numStr.slice(-2)
+        return r
+      }
+      this.hm = Number(fillZero(this.hour) + '' + fillZero(this.minute))
+      // console.log(this.hm)
+
       // 非整点 午睡动作
-      // this.today = 'workdays' //测试用
-      // this.date = '2021-11-25' //测试用
-      this.hm = Number(this.hour + '' + this.minute)
-      // this.hm = 1240 //测试用
-      if(this.today == 'workdays' && this.hm == this.sleep) {
+      if(this.today == 'workdays' && this.hm == 1240) {
         let time = '12:40:00'
         this.action = this.dateJson[this.today][this.date][time]
       }
+      
+      // 切换默认工作
+      if(this.today === 'workdays') {
+        if((this.hm >= 1000 && this.hm < 1240) || (this.hm >= 1400 && this.hm < 1900)) {
+          this.defaultPic = 'work'
+        } else if (this.hm >= 1240 && this.hm < 1400) {
+          this.defaultPic = 'zzz'  
+        } else {
+          this.defaultPic = 'enen' 
+        }
+      } else {
+        this.defaultPic = 'enen'  
+      }
+
+      if(this.hm === 1240) {
+        this.show()
+      }
     },
     second: async function() {
-      if((this.hour >= 11 && this.hour <= 12) || (this.hour >= 14 && this.hour < 17)) {
-        // console.log('到点了')
-        // if(this.predictEmotion) {
-        //   this.predictEmotion()?.then((res) => {
-        //     var emotion = res.expression ? res.expression : 'normal';
-        //     console.log(emotion)
-        //     if(emotion != 'normal'){
-        //       this.emotionList.forEach(item => {
-        //         if(item.name === emotion) {
-        //           item.value = item.value++
-        //         }
-        //       })
-        //     }
-        //   })
-        // }
-      }
-      // console.log("predict hand", this.predictionHand)
-      // if(this.predictionHand) {
-      //   this.predictionHand()?.then(res => {
-      //     this.handPose = res;
-      //   });
-      // }
+      const gest = this.getGesture()
+      
+      if(gest !== 'normal') {
+        this.handPose = gest
+        this.initGesture()
+      } 
     },
     action: {
       deep: true,
@@ -233,26 +261,27 @@ export default {
       this.img1.style.opacity = 0
       this.img2.style.opacity = 1
       this.activeTimer = setTimeout(() => {
-        if(this.hm === 1000) {
-          this.defaultPic = 'work'
-        } else if (this.hm === 1200) {
+        if (this.hm === 1200) {
           this.hide()
           return
-        } else if (this.hm === 1240) {
-          this.defaultPic = 'zzz'
-        } else if (this.hm === 1400) {
-          this.defaultPic = 'work'
-        } else if (this.hour === 1900) {
-          this.defaultPic = 'enen'
         }
         this.img1.style.opacity = 1
         this.img2.style.opacity = 0
       }, this.action.duration * 1000)
     }},
-    // handPose: function(val) {
-    //   const gestureList = gestureJson[val]
-    //   this.action = gestureList[Math.floor(Math.random() * gestureList.length)]
-    // }
+    handPose: function(val) {
+      const gestureList = gestureJson[val]
+      console.log(gestureList)
+      if(gestureList) {
+        this.action = gestureList[Math.floor(Math.random() * gestureList.length)]
+      }
+      if(val === 'zhan') {
+        this.show();
+      }
+      if(val === 'gist') {
+        this.hide();
+      }
+    }
   }
 };
 </script>
