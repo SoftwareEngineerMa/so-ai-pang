@@ -2,10 +2,11 @@ import * as THREE from 'three';
 import { generateSquareMaze } from './lib/maze'
 import Box2D from 'box2dweb/box2d.js';
 import { boardcast, bcType } from './subject';
-import { filter } from 'rxjs/operators';
+import { filter, delay } from 'rxjs/operators';
 import { isHit } from './utils';
-import setupCamera from '../utils/setCamera';
-import detectFace from '../utils/facedetect';
+import { from } from 'rxjs';
+// import setupCamera from '../utils/setCamera';
+// import detectFace from '../utils/facedetect';
 
 
 
@@ -31,12 +32,12 @@ const moveMap = new Map([
     [38, [0, 1]]
 ])
 
-const faceMap = new Map([
-    ['leanLeft', 'left'],
-    ['leanRight', 'right'],
-    ['top', 'top'],
-    ['bottom', 'bottom'],
-])
+// const faceMap = new Map([
+//     ['leanLeft', 'left'],
+//     ['leanRight', 'right'],
+//     ['top', 'top'],
+//     ['bottom', 'bottom'],
+// ])
 
 
 const floorPath = '/texture/concrete.png';
@@ -85,7 +86,12 @@ class Maze{
     lastx = null;
     lasty = null;
 
+    cameraDeep = 12;
+    cameraSpeed = 0.03;
+    moveStart = false;
+
     hxpSleep = false;
+
 
     constructor() {
         this.renderer = new THREE.WebGLRenderer();
@@ -100,25 +106,31 @@ class Maze{
     }
 
     async start(){
-        await setupCamera().then(async video => {
-            video.play();
-            // 调用人脸检测示例
-            const predictionFace = await detectFace();
-            setInterval(() => {
-                predictionFace().then((res) => {
-                    if (faceMap.has(res)) {
-                        this.onMoveKey(moveMap.get(faceMap.get(res)));
-                    }
-                });
+        // await setupCamera().then(async video => {
+        //     video.play();
+        //     // 调用人脸检测示例
+        //     const predictionFace = await detectFace();
+        //     setInterval(() => {
+        //         predictionFace().then((res) => {
+        //             if (faceMap.has(res)) {
+        //                 this.onMoveKey(moveMap.get(faceMap.get(res)));
+        //             }
+        //         });
 
-            }, 10);
-        });
+        //     }, 10);
+        // });
         boardcast
             .pipe(filter(data => data.type === bcType.HXP_REVIVE))
             .subscribe(() => {
                 this.hxpSleep = false;
             })
         requestAnimationFrame(() => {this.loop()});
+
+        boardcast
+            .pipe(filter(data => data.type === bcType.VICTORY))
+            .subscribe(() => {
+                this.cameraDeep += 1.5;
+            })
     }
 
 
@@ -148,18 +160,24 @@ class Maze{
         this.maze[this.mazeScale - 1][this.mazeScale - 2] = false;
         this.award = generateSquareMaze(this.mazeScale);
         this.scene = new THREE.Scene();
-        this.cameraPosition = {x: 1, y: 1, z: 15};
+        this.cameraPosition = {x: this.maze.dimension / 2, y: this.maze.dimension / 2, z: this.cameraDeep};
         this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
         this.camera.position.set(this.cameraPosition.x, this.cameraPosition.y, this.cameraPosition.z);
         this.scene.add(this.camera);
         this.light = new THREE.PointLight(0xffffff, 1);
-        this.light.position.set(1,1,1.3)
+        this.light.position.set(this.maze.dimension / 2,this.maze.dimension / 2,this.cameraDeep);
         this.scene.add(this.light);
         this.create3DWorld();
         this.createPhysicsWorld();
         this.keyboardControl();
         this.gameStatus = 'fadein';
         boardcast.next({type: bcType.SHADE_HIDE});
+        this.hxpSleep = true;
+        this.moveStart = false;
+        from([1]).pipe(delay(1000))
+            .subscribe(() => {
+                this.hxpSleep = false;
+            });
     }
 
     fadeIn() {
@@ -167,11 +185,12 @@ class Maze{
         this.renderer.render(this.scene, this.camera);
         if (Math.abs(this.light.intensity - 1.0) < 0.05) {
             this.light.intensity = 1.0;
+            if (this.hxpSleep) {
+                return 
+            }
             this.gameStatus = 'play';
-            boardcast.next({ type: bcType.HXP_SHOW});
             boardcast.next({ type: bcType.TIP_SHOW });
             boardcast.next({ type: bcType.LEVEL_SHOW });
-            console.log(this.maze);
             if (!this.maze[1][2]) {
                 boardcast.next({ type: bcType.HXP_TURE_TO, value: [0,1]});
             } else if (!this.maze[2][1]) {
@@ -320,9 +339,15 @@ class Maze{
         this.ballMesh.position.y += stepY;
 
         // 更新camera位置
-        this.cameraPosition.x += (this.ballMesh.position.x - this.camera.position.x) * 0.1;
-        this.cameraPosition.y += (this.ballMesh.position.y - this.camera.position.y) * 0.1;
-        this.cameraPosition.z += (5 - this.camera.position.z) * 0.1;
+        this.cameraPosition.x += (this.ballMesh.position.x - this.camera.position.x) * this.cameraSpeed;
+        this.cameraPosition.y += (this.ballMesh.position.y - this.camera.position.y) * this.cameraSpeed;
+        this.cameraPosition.z += (5 - this.camera.position.z) * this.cameraSpeed;
+
+        if (Math.abs(this.cameraPosition.x - 1) < 0.1) {
+            this.cameraSpeed = 0.1;
+            this.moveStart  = true;
+            boardcast.next({ type: bcType.HXP_SHOW});
+        }
 
         // 更新奖励转动与消失
         const awards = this.scene.getObjectByName('award');
@@ -485,6 +510,9 @@ class Maze{
     }
 
     onMoveKey(axis) {
+        if (!this.moveStart) {
+            return
+        }
         boardcast.next({ type: bcType.HXP_TURE_TO, value: axis })
         this.keyAxis = axis.slice(0);
     }
