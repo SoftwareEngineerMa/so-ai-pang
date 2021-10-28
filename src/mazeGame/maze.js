@@ -107,8 +107,7 @@ class Maze{
     }
 
     async start(){
-        await setupCamera().then(async video => {
-            video.play();
+        await setupCamera().then(async () => {
             // 调用人脸检测示例
             const predictionFace = await detectFace();
             setInterval(() => {
