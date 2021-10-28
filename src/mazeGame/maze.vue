@@ -7,6 +7,14 @@
     <maze-tip></maze-tip>
     <award-hint></award-hint>
     <hxp></hxp>
+    <audio ref="bgm"></audio>
+    <audio ref="coin"></audio>
+    <div v-show="bgmNShow" class="bgm-note">
+        <span>是否要播放声音？</span>
+        <br>
+        <button @click="bgmN">否</button>
+        <button @click="bgmY">是</button>
+    </div>
 </div>
 </template>
 
@@ -28,6 +36,8 @@ export default {
         return {
             level: 1,
             levelShow: false,
+            bgmNShow: false,
+            soundSwitch: true,
         }
     },
     components: {
@@ -54,7 +64,52 @@ export default {
             .subscribe(() => {
                 this.levelShow = false;
             }) 
+        boardcast 
+            .pipe(filter(data => data.type === bcType.HXP_SHOW))
+            .subscribe(() => {
+                console.log('hxpshow');
+                // 如果已经选择过否，则不会再弹出提示
+                if (!this.soundSwitch) {
+                    return;
+                }
+                this.bgmPlay().then(() => {
+                    console.log('bgm播放失败！');
+                    }).catch(() => {
+                    this.bgmNShow = true;
+                    });
+            })
+        boardcast
+            .pipe(filter(data => data.type === bcType.HINT_SHOW))
+            .subscribe(() => {
+                if (this.soundSwitch) {
+                    this.coinPlay();
+                }
+            })
         getMaze().start();
+    },
+    methods: {
+        bgmPlay() {
+            let audioPlay = this.$refs.bgm;
+            audioPlay.src = '/bgm.mp3';
+            return audioPlay.play();
+        },
+
+        coinPlay() {
+            let coinPlay = this.$refs.coin;
+            coinPlay.src = '/eat.mp3';
+            coinPlay.play();
+        },
+        
+        bgmN() {
+            this.bgmNShow = false;
+            this.soundSwitch = false;
+        },
+
+        bgmY() {
+            this.bgmPlay();
+            this.bgmNShow = false;
+            this.soundSwitch = true;
+        }
     }
 }
 
@@ -82,6 +137,26 @@ body{
     height: auto;
     display: none;
 }
+
+.bgm-note{
+    position: absolute;
+    width: 220px;
+    height: 100px;
+    border-radius: 10px;
+    text-align: center;
+    background-color: aliceblue;
+    top: 50%;
+    left: 50%;
+    padding-top: 20px;
+    transform: translate(-50%, -50%);
+}
+
+.bgm-note button {
+    margin-top: 20px;
+    margin: 20px;
+}
+
+
 
 
 </style>

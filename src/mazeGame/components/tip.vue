@@ -4,12 +4,6 @@
     <div>
         已获得奖励个数：{{ awardNum }}
     </div>
-    <audio ref="bgm"></audio>
-    <audio ref="coin"></audio>
-
-    <button @click="bgmPlay">
-        播放
-    </button>
 </div>
 </template>
 
@@ -51,8 +45,7 @@ export default {
         boardcast
             .pipe(filter(data => data.type === bcType.TIP_SHOW))
             .subscribe(() => {
-                // this.audioPlay();
-                this.tipShow = !this.tipShow;
+                // this.tipShow = !this.tipShow;
                 if (this.tipShow) {
                     if (timer) {
                         clearInterval(timer)
@@ -64,7 +57,6 @@ export default {
         boardcast
             .pipe(filter(data => data.type === bcType.HINT_SHOW))
             .subscribe(() => {
-                this.coinPlay();
                 this.awardNum += 1;
             })
         boardcast
@@ -92,18 +84,6 @@ export default {
                 this.minute += 1;
             }
         },
-
-        bgmPlay() {
-            let audioPlay = this.$refs.bgm;
-            audioPlay.src = '/bgm.mp3';
-            audioPlay.play();
-        },
-
-        coinPlay() {
-            let coinPlay = this.$refs.coin;
-            coinPlay.src = '/eat.mp3';
-            coinPlay.play();
-        }
     },
     watch: {
         // tipShow :function(val) {

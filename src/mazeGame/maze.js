@@ -5,8 +5,8 @@ import { boardcast, bcType } from './subject';
 import { filter, delay } from 'rxjs/operators';
 import { isHit } from './utils';
 import { from } from 'rxjs';
-// import setupCamera from '../utils/setCamera';
-// import detectFace from '../utils/facedetect';
+import setupCamera from '../utils/setCamera';
+import detectFace from '../utils/facedetect';
 
 
 
@@ -32,12 +32,12 @@ const moveMap = new Map([
     [38, [0, 1]]
 ])
 
-// const faceMap = new Map([
-//     ['leanLeft', 'left'],
-//     ['leanRight', 'right'],
-//     ['top', 'top'],
-//     ['bottom', 'bottom'],
-// ])
+const faceMap = new Map([
+    ['leanLeft', 'left'],
+    ['leanRight', 'right'],
+    ['top', 'top'],
+    ['bottom', 'bottom'],
+])
 
 
 const floorPath = '/texture/concrete.png';
@@ -90,6 +90,7 @@ class Maze{
     cameraSpeed = 0.03;
     moveStart = false;
 
+    
     hxpSleep = false;
 
 
@@ -106,19 +107,19 @@ class Maze{
     }
 
     async start(){
-        // await setupCamera().then(async video => {
-        //     video.play();
-        //     // 调用人脸检测示例
-        //     const predictionFace = await detectFace();
-        //     setInterval(() => {
-        //         predictionFace().then((res) => {
-        //             if (faceMap.has(res)) {
-        //                 this.onMoveKey(moveMap.get(faceMap.get(res)));
-        //             }
-        //         });
+        await setupCamera().then(async video => {
+            video.play();
+            // 调用人脸检测示例
+            const predictionFace = await detectFace();
+            setInterval(() => {
+                predictionFace().then((res) => {
+                    if (faceMap.has(res)) {
+                        this.onMoveKey(moveMap.get(faceMap.get(res)));
+                    }
+                });
 
-        //     }, 10);
-        // });
+            }, 10);
+        });
         boardcast
             .pipe(filter(data => data.type === bcType.HXP_REVIVE))
             .subscribe(() => {
@@ -343,7 +344,7 @@ class Maze{
         this.cameraPosition.y += (this.ballMesh.position.y - this.camera.position.y) * this.cameraSpeed;
         this.cameraPosition.z += (5 - this.camera.position.z) * this.cameraSpeed;
 
-        if (Math.abs(this.cameraPosition.x - 1) < 0.1) {
+        if (!this.moveStart && Math.abs(this.cameraPosition.x - 1) < 0.1) {
             this.cameraSpeed = 0.1;
             this.moveStart  = true;
             boardcast.next({ type: bcType.HXP_SHOW});
@@ -365,22 +366,20 @@ class Maze{
                 }
             })
         }
-
         this.updateCamera();
         this.updateLight();
-
     }
 
 
     // 创建地板
     createFloor(texture) {
         const floorGroup = new THREE.Group();
-        for (let i = 0; i < this.mazeScale * 2; i++){
-            for (let j = 0; j < this.mazeScale * 2; j++){
+        for (let i = 0; i < this.mazeScale * 3; i++){
+            for (let j = 0; j < this.mazeScale * 3; j++){
                 floorGroup.add(this.getFloorBlock(1, 1, texture, { x: i, y: j, z:0 }));
             }
         }
-        floorGroup.position.set(-5,-5,0);
+        floorGroup.position.set(-7,-7,0);
         return floorGroup;
     }
 
@@ -415,8 +414,8 @@ class Maze{
 
     // 创建奖励块
     getAwardBlock(texture, position) {
-        const awardG = new THREE.IcosahedronGeometry( 0.25 );
-        const awardM = new THREE.MeshPhongMaterial({ map: texture });
+        const awardG = new THREE.IcosahedronGeometry( 0.2 );
+        const awardM = new THREE.MeshPhongMaterial({ color: '#FFE459'});
         const award = new THREE.Mesh(awardG, awardM);
         award.position.set(position.x, position.y, position.z);
         return award;
