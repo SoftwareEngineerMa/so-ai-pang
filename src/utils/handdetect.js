@@ -16,14 +16,14 @@ const knownGestures = [
 ];
 const GE = new fp.GestureEstimator(knownGestures);
 
-export default async function main() {
+export default async function main(video) {
 
   const model = await handpose.load();
 
   // 返回值类型字符串
   // 'zhan'|'victory'|'great'|'fist'|'point'|'ok'|'shoot'|'normal'
   return async function () {
-    const predictions = await model.estimateHands(document.querySelector("video"), true);
+    const predictions = await model.estimateHands(video, true);
     if (predictions && predictions.length > 0) {
       let result = mzmJudge(predictions[0].landmarks, predictions[0].annotations);
       if (result) {

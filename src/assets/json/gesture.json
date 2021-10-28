@@ -8,9 +8,19 @@
     ],
     "zhan": [
         {
-            "action": "",
-            "duration": "",
-            "text": "唤起保留手势"
+            "action": "hi",
+            "duration": "3",
+            "text": "你好呀"
+        },
+        {
+            "action": "heart",
+            "duration": "3",
+            "text": "今天心情怎么样？"
+        },
+        {
+            "action": "heart",
+            "duration": "3",
+            "text": "放心，小胖一直在你身边哦！"
         }
     ],
     "shoot": [

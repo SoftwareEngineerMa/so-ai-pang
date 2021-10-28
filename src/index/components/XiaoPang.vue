@@ -63,12 +63,13 @@ export default {
       emotionTime: 17,
       showMenu: false,
       msg: ['哈喽呀，今天也是元气满满的一天呢！',5],
-      // msg: ['嘘，我刚刚听我的leader也就是你的leader的黄小胖说你的leader夸你有点优秀，不知道你听懂了没有？',5],
       action: ['enen', '你好呀，我是黄小胖~', 0],
+
       dateJson,
       randomJson,
       gestureJson,
       // expressionJson,
+
       activeTime: null,
       handPose: '',
       img1: null,
@@ -111,11 +112,18 @@ export default {
         console.log('不用重复开启摄像头')
         return
       }
-      this.camera = await setupCamera(document.getElementById('video'))
-      // this.predictEmotion = await detectExpression(this.video);
-      console.log('camera success')
-      this.predictionHand = await detectHand();
-      console.log('detecthand success')
+      const video = document.getElementById('video')
+      this.camera = await setupCamera(video)
+      console.log('camera ready')
+      // detectExpression(video).then((res) => {
+      //   this.predictEmotion = res
+      //   console.log('emotion detect ready')
+      // });
+      
+      detectHand(video).then((res) => {
+        this.predictionHand = res
+        console.log('hand detect ready')
+      });
     },
     openGame() {
       console.log("进入游戏");
@@ -170,11 +178,18 @@ export default {
 
       this.date = this.year + '-' + this.month + '-' +  this.day    // 2021-10-20
       this.today = this.week > 0 && this.week < 6 ? 'workdays' : 'weekends' // 工作日or周末
-      this.addGesture()
-      // this.hour = 12
-      // this.minute = 40
+      
+      this.hm = Number(this.fillZero(this.hour) + '' + this.fillZero(this.minute))
 
+      if(this.hm < 1240 || this.hm > 1400) {
+        this.addGesture()
+      }
       requestAnimationFrame(this.loop)
+    },
+    fillZero(num) {
+      const numStr = '0' + num
+      const r = numStr.slice(-2)
+      return r
     },
     addGesture() {
       if(this.predictionHand) {
@@ -212,14 +227,6 @@ export default {
       // }
     },
     minute: function() {
-      const fillZero = (num) => {
-        const numStr = '0' + num
-        const r = numStr.slice(-2)
-        return r
-      }
-      this.hm = Number(fillZero(this.hour) + '' + fillZero(this.minute))
-      // console.log(this.hm)
-
       // 非整点 午睡动作
       if(this.today == 'workdays' && this.hm == 1240) {
         let time = '12:40:00'
@@ -275,12 +282,12 @@ export default {
       if(gestureList) {
         this.action = gestureList[Math.floor(Math.random() * gestureList.length)]
       }
-      if(val === 'zhan') {
-        this.show();
-      }
-      if(val === 'gist') {
-        this.hide();
-      }
+      // if(val === 'zhan') {
+      //   this.show();
+      // }
+      // if(val === 'gist') {
+      //   this.hide();
+      // }
     }
   }
 };
@@ -312,7 +319,7 @@ export default {
 .xiao-pang > img {
   width: 150px;
   height: 150px;
-  transition: opacity 3s;
+  /* transition: opacity 1s; */
   /* border: 1px solid red; */
 }
 .xiao-pang #img1 {
@@ -330,7 +337,7 @@ export default {
   height: 150px;
   position: absolute;
   bottom: 0px;
-  right: 0px;
+  right: -15px;
   /* right: -20px; */
   /* border: 1px solid red; */
 }
