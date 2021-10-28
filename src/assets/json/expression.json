@@ -1,0 +1,94 @@
+{
+    "angry": [
+        {
+            "action": "angry",
+            "duration": 5,
+            "text": "是谁欺负你了！"
+        },
+        {
+            "action": "drink",
+            "duration": 5,
+            "text": "莫生气，人生就是一场戏~"
+        },
+        {
+            "action": "weiqu",
+            "duration": 5,
+            "text": "生气就是拥别人的错误惩罚自己"
+        }
+    ],
+    "disgusted": [
+        {
+            "action": "love",
+            "duration": 5,
+            "text": "抱抱~总有一些无法让人理解的人类存在，不要让它们影响了心情呦！"
+        },
+        {
+            "action": "enen",
+            "duration": 5,
+            "text": "做好自己就好~"
+        }
+    ],
+    "fearful": [
+        {
+            "action": "weiqu",
+            "duration": 5,
+            "text": "事情不要都放在心里，要懂得向家人朋友求助哦！"
+        },
+        {
+            "action": "wen",
+            "duration": 5,
+            "text": "什么事情让你如此恐惧，记得跟朋友探讨解决办法哦~"
+        }
+    ],
+    "happy": [
+        {
+            "action": "clap",
+            "duration": 5,
+            "text": "今天心情不错哦！"
+        },
+        {
+            "action": "clap",
+            "duration": 5,
+            "text": "今天的工作很轻松吧，你的快乐都从嘴角溢出来了呢~"
+        },
+        {
+            "action": "love",
+            "duration": 5,
+            "text": "这样就对了嘛，多开心一点"
+        },
+        {
+            "action": "clao",
+            "duration": 5,
+            "text": "你开心~小胖也开心~"
+        }
+    ],
+    "sad": [
+        {
+            "action": "weiqu",
+            "duration": 5,
+            "text": "怎么了，发生了什么？如此悲伤？"
+        },
+        {
+            "action": "weiqu",
+            "duration": 5,
+            "text": "答应我，下班了去跟朋友们倾诉下好吗"
+        },
+        {
+            "action": "weiqu",
+            "duration": 5,
+            "text": "受什么委屈了，不哭不哭~"
+        }
+    ],
+    "surprised": [
+        {
+            "action": "wen",
+            "duration": 5,
+            "text": "？？发生了什么？？"
+        },
+        {
+            "action": "wen",
+            "duration": 5,
+            "text": "好好奇发生了什么~"
+        }
+    ]
+}

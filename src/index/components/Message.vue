@@ -1,5 +1,5 @@
 <template>
-  <div class="message">
+  <div id="message" class="message">
       {{ message[0] }}
   </div>
 </template>
@@ -15,14 +15,14 @@ export default {
   },
   watch: {
     message() {
-        this.msgBox.style.opacity = '0.8'
+        this.msgBox.style.opacity = '1'
         setTimeout(() => {
           this.msgBox.style.opacity = '0'
         }, this.message[1] * 1000)
     }
   },
   mounted() {
-    this.msgBox = document.getElementsByClassName('message')[0]
+    this.msgBox = document.getElementById('message')
       setTimeout(() => {
         this.msgBox.style.opacity = '0'
       }, this.message[1] * 1000)
@@ -44,8 +44,8 @@ export default {
   bottom: 100px;
   border-radius: 10px;
   z-index: 99;
-  opacity: .8;
-  transition: opacity 3s;
+  opacity: 1;
+  /* transition: opacity 3s; */
 }
 .message::after {
   content: '';

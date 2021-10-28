@@ -1,0 +1,99 @@
+{
+    "ok": [
+        {
+            "action": "clap",
+            "duration": 3.0,
+            "text": "ok了啦"
+        }
+    ],
+    "zhan": [
+        {
+            "action": "hi",
+            "duration": "3",
+            "text": "你好呀"
+        },
+        {
+            "action": "heart",
+            "duration": "3",
+            "text": "今天心情怎么样？"
+        },
+        {
+            "action": "heart",
+            "duration": "3",
+            "text": "放心，小胖一直在你身边哦！"
+        }
+    ],
+    "shoot": [
+        {
+            "action": "angry",
+            "duration": 3.0,
+            "text": "你要上天吗，胆敢挑衅我"
+        },
+        {
+            "action": "work",
+            "duration": 3.0,
+            "text": "我在认真工作没时间理你"
+        }
+    ],
+    "great": [
+        {
+            "action": "great",
+            "duration": 3.0,
+            "text": "你也很棒哦！ "
+        },
+        {
+            "action": "love",
+            "duration": 3.0,
+            "text": "今天的你有点帅气哦！ "
+        },
+        {
+            "action": "great",
+            "duration": 5.0,
+            "text": "王菲口吻：好了啦，我很棒我自己知道的啦"
+        }
+    ],
+    "victory": [
+        {
+            "action": "Great",
+            "duration": 3.0,
+            "text": "棒棒哒，为你开心~"
+        },
+        {
+            "action": "great",
+            "duration": 3.0,
+            "text": "你太棒了吧"
+        },
+        {
+            "action": "great",
+            "duration": 3.0,
+            "text": "胜利了，可以适当的骄傲一下子的，嘘，别被敌人看到"
+        }
+    ],
+    "point": [
+        {
+            "action": "appear",
+            "duration": 3.0,
+            "text": "干嘛，再指我，我就把你吃掉！"
+        },
+        {
+            "action": "love",
+            "duration": 3.0,
+            "text": "爱你哦"
+        },
+        {
+            "action": "enen",
+            "duration": 3.0,
+            "text": "小胖一直都在"
+        },
+        {
+            "action": "cry",
+            "duration": 3.0,
+            "text": "唔~谁知道你一直指我是喜欢我还是挑衅我呀"
+        },
+        {
+            "action": "han",
+            "duration": 3.0,
+            "text": "又来"
+        }
+    ]
+}

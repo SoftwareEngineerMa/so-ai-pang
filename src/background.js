@@ -1,10 +1,10 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcMain, screen } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain, screen, Tray, Menu } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
-// const path = require('path')
+const path = require('path')
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -12,18 +12,19 @@ protocol.registerSchemesAsPrivileged([
 ])
 let win = null;
 let maze = null;
+let tray = null;
 async function createMainWindow() {
   let screenSize = screen.getPrimaryDisplay().workAreaSize;
   // Create the browser window.
   win = new BrowserWindow({
-    x: screenSize.width - 260,
-    y: screenSize.height - 210,
-    width: 250,
-    height: 210,
+    x: screenSize.width - 500,
+    y: screenSize.height - 500,
+    width: 300,
+    height: 300,
     frame: false,// 无边框
     transparent: true,  // 透明
+    skipTaskbar: true, // 取消默认任务栏展示，后面initTrayIcon设置了右侧任务栏图标展示
     webPreferences: {
-
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
@@ -40,7 +41,40 @@ async function createMainWindow() {
     win.loadURL('app://./index.html')
   }
   // win.setPosition(-100,0)  // 设置位置坐标
-  // win.setAlwaysOnTop(true);   // 窗口置顶
+  win.setAlwaysOnTop(true);   // 窗口置顶
+  win.on('ready-to-show',()=>{
+    win.show();
+  })
+  // 当点击关闭按钮
+  win.on('close', (e) => {
+    e.preventDefault();  // 阻止退出程序
+    win.hide();    // 隐藏主程序窗口
+  })
+}
+
+function initTrayIcon () {
+    // 创建任务栏图标
+  tray = new Tray(path.join(__dirname,  './bundled/favicon.ico'))
+  console.log("tray");
+  // 自定义托盘图标的内容菜单
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      // 点击退出菜单退出程序
+      label: '退出', click: function () {
+        console.log(123);
+        win.destroy()
+        app.quit()
+
+      }
+    }
+  ])
+
+  tray.setToolTip('demo')  // 设置鼠标指针在托盘图标上悬停时显示的文本
+  tray.setContextMenu(contextMenu)  // 设置图标的内容菜单
+  // 点击托盘图标，显示主窗口
+  tray.on("click", () => {
+    win.show();
+  })
 }
 
 function createMazeWindow() {
@@ -94,7 +128,8 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }
-  createMainWindow()
+  createMainWindow();
+  initTrayIcon();
 })
 
 // Exit cleanly on request from parent process in development mode.

@@ -1,7 +1,10 @@
 const handpose = require('@tensorflow-models/handpose');
 require('@tensorflow/tfjs-backend-webgl');
-// import * as THREE from 'three';
-import fp from '../fingerPose/fingerpose';
+
+// import fp from './../../public/static/fingerPose/fingerpose.js';
+// const fp = require('./../../public/static/fingerPose/fingerpose.js');
+
+import fp from '../../fingerpose/src/index';
 
 const knownGestures = [
   fp.Gestures.VictoryGesture,
@@ -13,22 +16,22 @@ const knownGestures = [
 ];
 const GE = new fp.GestureEstimator(knownGestures);
 
-export default async function main() {
+export default async function main(video) {
 
   const model = await handpose.load();
 
   // 返回值类型字符串
-  // 'zhan'|'victory'|'great'|'fist'|'index_up'|'ok'|'shoot'|'normal'
+  // 'zhan'|'victory'|'great'|'fist'|'point'|'ok'|'shoot'|'normal'
   return async function () {
-    const predictions = await model.estimateHands(document.querySelector("video"), true);
-    if (predictions.length > 0) {
+    const predictions = await model.estimateHands(video, true);
+    if (predictions && predictions.length > 0) {
       let result = mzmJudge(predictions[0].landmarks, predictions[0].annotations);
       if (result) {
         return result;
       }
 
       const est = GE.estimate(predictions[0].landmarks, 7.5);
-      if (est.gestures.length > 0) {
+      if (est.gestures && est.gestures.length > 0) {
         // find gesture with highest confidence
         const gest = est.gestures.reduce((p, c) => {
           return (p.confidence > c.confidence) ? p : c;
