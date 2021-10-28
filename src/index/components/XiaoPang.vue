@@ -93,7 +93,7 @@ export default {
   },
   components: { Message },
   async mounted() {
-    await this.openCamera()
+    // await this.openCamera()
     this.init()
     requestAnimationFrame(this.loop)
   },

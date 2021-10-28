@@ -8,6 +8,8 @@ import { from } from 'rxjs';
 import setupCamera from '../utils/setCamera';
 import detectFace from '../utils/facedetect';
 
+import Stats from 'stats.js';
+
 
 
 
@@ -93,11 +95,17 @@ class Maze{
     
     hxpSleep = false;
 
+    stats = null;
+
 
     constructor() {
+        this.stats = new Stats();
+        this.stats.showPanel(0);  //显示fps
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(this.renderer.domElement);
+        document.body.appendChild( this.stats.dom );
+
         this.scene = new THREE.Scene();
         this.gameStatus = 'init';
 
@@ -109,15 +117,37 @@ class Maze{
     async start(){
         await setupCamera().then(async () => {
             // 调用人脸检测示例
+            // eslint-disable-next-line no-unused-vars
             const predictionFace = await detectFace();
+            let axis = [0, 0];
+            // const faceControl = () => {
+            //     predictionFace().then((res) => {
+            //         if (res === 'normal') {
+            //             axis = [0, 0];
+            //         } else if (faceMap.has(res)){
+            //             axis = moveMap.get(faceMap.get(res));
+            //         }
+            //     });
+            //     requestAnimationFrame(faceControl);
+            // }
             setInterval(() => {
                 predictionFace().then((res) => {
-                    if (faceMap.has(res)) {
-                        this.onMoveKey(moveMap.get(faceMap.get(res)));
+                    if (res === 'normal') {
+                        axis = [0, 0];
+                    } else if (faceMap.has(res)){
+                        axis = moveMap.get(faceMap.get(res));
                     }
                 });
 
-            }, 10);
+            }, 100);
+
+            setInterval(() => {
+                if (axis[0] != 0 || axis[1] != 0) {
+                    this.onMoveKey(axis);
+                }
+            }, 1);
+
+            // requestAnimationFrame(faceControl);
         });
         boardcast
             .pipe(filter(data => data.type === bcType.HXP_REVIVE))
@@ -135,6 +165,7 @@ class Maze{
 
 
     loop() {
+        this.stats.begin();
         switch (this.gameStatus) {
             case 'init':
                 this.init();
@@ -152,6 +183,7 @@ class Maze{
                 this.fadeOut();
                 break;
         }
+        this.stats.end();
         requestAnimationFrame(() => { this.loop() });
     }
 

@@ -23,6 +23,7 @@
     "@vladmandic/face-api": "^1.5.4",
     "box2dweb": "^2.1.0-b",
     "rxjs": "^7.4.0",
+    "stats.js": "^0.17.0",
     "vue": "^2.6.11"
   },
   "devDependencies": {
