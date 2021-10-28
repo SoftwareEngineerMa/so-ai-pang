@@ -145,7 +145,7 @@ class Maze{
                 if (axis[0] != 0 || axis[1] != 0) {
                     this.onMoveKey(axis);
                 }
-            }, 1);
+            }, 10);
 
             // requestAnimationFrame(faceControl);
         });
