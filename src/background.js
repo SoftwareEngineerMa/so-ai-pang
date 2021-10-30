@@ -17,11 +17,11 @@ async function createMainWindow() {
   let screenSize = screen.getPrimaryDisplay().workAreaSize;
   // Create the browser window.
   win = new BrowserWindow({
-    x: screenSize.width - 500,
-    y: screenSize.height - 500,
-    width: 300,
-    height: 300,
-    frame: false,// 无边框
+    x: screenSize.width - 1300,
+    y: screenSize.height - 1000,
+    width: 1000,
+    height: 1000,
+    frame: true,// 无边框
     transparent: true,  // 透明
     skipTaskbar: true, // 取消默认任务栏展示，后面initTrayIcon设置了右侧任务栏图标展示
     webPreferences: {
@@ -35,14 +35,14 @@ async function createMainWindow() {
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    // if (!process.env.IS_TEST) win.webContents.openDevTools()
+    if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app')
     win.loadURL('app://./index.html')
   }
   // win.setPosition(-100,0)  // 设置位置坐标
   win.setAlwaysOnTop(true);   // 窗口置顶
-  win.on('ready-to-show',()=>{
+  win.on('ready-to-show',() => {
     win.show();
   })
   // 当点击关闭按钮
@@ -61,7 +61,6 @@ function initTrayIcon () {
     {
       // 点击退出菜单退出程序
       label: '退出', click: function () {
-        console.log(123);
         win.destroy()
         app.quit()
 
@@ -96,8 +95,9 @@ function createMazeWindow() {
     }
   })
   maze.loadURL('http://localhost:8080/maze.html');
-  maze.on('closed',()=>{
-        maze=null;
+  maze.on('closed',() => {
+    maze=null;
+    win.webContents.send('closedGame');
   })
 }
 
@@ -151,6 +151,9 @@ ipcMain.on("window-min", () => {
   win.minimize()
 })
 
+ipcMain.on("maze-open", () => {
+  createMazeWindow();
+})
 ipcMain.on("maze-open", () => {
   createMazeWindow();
 })

@@ -1,10 +1,10 @@
 // 将摄像头获取到的内容给到页面展示
-export default async function setupCamera() {
+export default async function setupCamera(video) {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         console.log('启动摄像头失败');
         return false;
     }
-    const video = document.getElementById('video');
+
     const VIDEO_SIZE = 500;
     const stream = await navigator.mediaDevices.getUserMedia({
     'audio': false,
@@ -16,9 +16,10 @@ export default async function setupCamera() {
         height: VIDEO_SIZE,
     },
     });
+    const mediaStreamTrack = typeof stream.stop === 'function' ? stream : stream.getTracks()[0];
     video.srcObject = stream;
     video.onloadedmetadata = () => {
         video.play();
     };
-    return true;
+    return mediaStreamTrack;
 }

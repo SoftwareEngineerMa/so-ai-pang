@@ -5,29 +5,20 @@
       <img id="img1" :src="`./static/actions/${defaultPic}.gif`" alt="">
       <img id="img2" :src="`./static/actions/${defaultPic2}.gif`" alt="">
     </div>
-    <div class="menu">
-      <div class="hide">
-        <img src="../../assets/icons/min-h.png" alt="" @click="hide">
-      </div>
-      <div class="menu-list" v-show="showMenu">
-        <ul class="list">
-          <li class="li-camera" @click="openCamera"></li>
-          <li class="li-game" @click="openGame"></li>
-          <li class="li-doc" @click="openDoc"></li>
-          <li class="li-close" @click="closeMenu"></li>
-        </ul>
-      </div>
-      <div class="open-menu" v-show="!showMenu" @click="openMenu">
-        <img src="../../assets/icons/up.png" alt="">
-      </div>
+    <div class="hide" @click="hide">
     </div>
-    <video id="video" playsinline style="
-      -webkit-transform: scaleX(-1);
-      transform: scaleX(-1);
-      width: auto;
-      height: auto;
-      display: none;
-      ">
+    <div class="menu-list" v-show="showMenu">
+      <ul class="list">
+        <li id="li-camera" @click="openCamera"></li>
+        <li id="li-game" @click="openGame"></li>
+        <li id="li-doc" @click="openDoc"></li>
+        <li id="li-close" @click="closeMenu"></li>
+      </ul>
+    </div>
+    <div class="open-menu" v-show="!showMenu" @click="openMenu">
+      <img src="../../assets/icons/up.png" alt="">
+    </div>
+    <video id="video" playsinline style="display: none;">
     </video>
   </div>
 </template>
@@ -49,8 +40,8 @@ export default {
   name: "XiaoPang",
   data() {
     return {
-      defaultPic: 'enen',
-      defaultPic2: 'enen',
+      defaultPic: 'think',
+      defaultPic2: 'think',
       random_time: [11, 15, 16, 18],  // 出随机文案的时间节点
       emotionList: [
         { name: 'happy', value: 0 },
@@ -62,8 +53,8 @@ export default {
       ],
       emotionTime: 17,
       showMenu: false,
-      msg: ['哈喽呀，今天也是元气满满的一天呢！',5],
-      action: ['enen', '你好呀，我是黄小胖~', 0],
+      msg: ['', 0],
+      action: ['hi', '你好呀，我是黄小胖~', 0],
 
       dateJson,
       randomJson,
@@ -85,15 +76,36 @@ export default {
       minute: null,
       second: null,
       
-      camera: false,
       hm: 0,
       predictionHand: null,
       gestureTotal: null,
+
+      inGame: false,
+      inCamera: false,
+      inDoc: false,
+      mediaStreamTrack: null,
+      video: null
     }
   },
   components: { Message },
   async mounted() {
+    const _this = this
+    ipcRenderer.on('closedGame', () => {
+      _this.inGame = false
+      console.log('退出游戏')
+    })
+
+    this.video = document.getElementById('video')
     await this.openCamera()
+    
+    detectHand(this.video).then((res) => {
+      this.predictionHand = res
+      console.log('hand detect ready')
+    }).catch(
+      console.log('hand detect fail')
+    )
+    this.closeMenu()
+      
     this.init()
     requestAnimationFrame(this.loop)
   },
@@ -108,34 +120,31 @@ export default {
       this.showMenu = true;
     },
     async openCamera() {
-      if(this.camera) {
-        console.log('不用重复开启摄像头')
-        return
-      }
-      const video = document.getElementById('video')
-      this.camera = await setupCamera(video)
-      console.log('camera ready')
-      // detectExpression(video).then((res) => {
-      //   this.predictEmotion = res
-      //   console.log('emotion detect ready')
-      // });
-      
-      detectHand(video).then((res) => {
-        this.predictionHand = res
-        console.log('hand detect ready')
-      });
+      if(this.inCamera) {
+        this.mediaStreamTrack.stop();
+        this.inCamera = false
+      } else {
+        const result = await setupCamera(this.video)
+        if(result) {
+          this.mediaStreamTrack = result
+          this.inCamera = true
+        } else {
+          this.inCamera = false
+        }
+        console.log('camera ready')
+      }      
+      this.closeMenu()
     },
     openGame() {
-      console.log("进入游戏");
+      console.log("进入游戏")
+      this.inGame = true
       // window.open('/maze.html')
-      ipcRenderer.send("maze-open");
+      ipcRenderer.send("maze-open")
+      this.closeMenu()
     },
     openDoc() {
       console.log("新手引导");
-    },
-    closeCamera() {
-      window.mediaStreamTrack.stop();
-      this.camera = false;
+      this.inDoc = true
     },
     closeMenu() {
       this.showMenu = !this.showMenu;
@@ -157,15 +166,18 @@ export default {
       }
     },
     getGesture() {
-      console.log(this.gestureTotal)
       const item = Object.entries(this.gestureTotal).reduce((a, b) => {
         if(a[1] > b[1]) {
           return a
         }
         return b
       })
-      console.log('最多的是：', item)
-      return item[1] > 0 ? item[0] : 'normal'
+      if(item[1] > 2 ) {
+        console.log(this.gestureTotal)
+        console.log('最多的是：', item)
+      }
+      
+      return item[1] > 2 ? item[0] : 'normal'
     },
     loop() {
       const DATE = new Date()
@@ -182,7 +194,7 @@ export default {
       
       this.hm = Number(this.fillZero(this.hour) + '' + this.fillZero(this.minute))
 
-      if(this.hm < 1240 || this.hm > 1400) {
+      if((this.hm < 1240 || this.hm > 1400) && !this.inGame && this.inCamera) {
         this.addGesture()
       }
       requestAnimationFrame(this.loop)
@@ -193,17 +205,37 @@ export default {
       return r
     },
     addGesture() {
-      if(this.predictionHand) {
+      if(this.video && this.predictionHand) {
         this.predictionHand()?.then(res => {
           if(res !== 'normal') {
             this.gestureTotal[res] = this.gestureTotal[res] + 1
-            console.log(res);
           }
         });
       }
     },
   },
   watch: {
+    inCamera: function(val) {
+      if(val) {
+        document.getElementById('li-camera').style.backgroundImage = "url('./static/icons/camera-h.png')"
+      } else {
+        document.getElementById('li-camera').style.backgroundImage = "url('./static/icons/camera.png')"
+      }
+    },
+    inGame: function(val) {
+      if(val) {
+        document.getElementById('li-game').style.backgroundImage = "url('./static/icons/game-h.png')"
+      } else {
+        document.getElementById('li-game').style.backgroundImage = "url('./static/icons/game.png')"
+      }
+    },
+    inDoc: function(val) {
+      if(val) {
+        document.getElementById('li-doc').style.backgroundImage = "url('./static/assets/icons/doc-h.png')"
+      } else {
+        document.getElementById('li-doc').style.backgroundImage = "url('./static/assets/icons/doc.png')"
+      }
+    },
     today: function() {
     },
     hour: function() {
@@ -241,10 +273,10 @@ export default {
         } else if (this.hm >= 1240 && this.hm < 1400) {
           this.defaultPic = 'zzz'  
         } else {
-          this.defaultPic = 'enen' 
+          this.defaultPic = 'think' 
         }
       } else {
-        this.defaultPic = 'enen'  
+        this.defaultPic = 'think'  
       }
 
       if(this.hm === 1240) {
@@ -253,7 +285,6 @@ export default {
     },
     second: async function() {
       const gest = this.getGesture()
-      
       if(gest !== 'normal') {
         this.handPose = gest
         this.initGesture()
@@ -263,7 +294,7 @@ export default {
       deep: true,
       handler: function() {
       clearTimeout(this.activeTimer)
-      this.action.action = this.action.action || 'enen'
+      this.action.action = this.action.action || 'think'
       this.msg = [this.action.text, this.action.duration]
       this.img2.src = `./static/actions/${this.action.action}.gif`
       this.img1.style.opacity = 0
@@ -279,19 +310,13 @@ export default {
     }},
     handPose: function(val) {
       const gestureList = gestureJson[val]
-      console.log(gestureList)
       if(gestureList) {
         this.action = gestureList[Math.floor(Math.random() * gestureList.length)]
       }
-      // if(val === 'zhan') {
-      //   this.show();
-      // }
-      // if(val === 'gist') {
-      //   this.hide();
-      // }
     }
   }
 };
+
 </script>
 
 <style>
@@ -300,26 +325,23 @@ export default {
   padding: 0;
 }
 #xiaopang {
-  width: 150px;
-  height: 150px;
+  width: 283px;
+  height: 283px;
   position: relative;
   cursor: pointer;
   -webkit-app-region: drag;
   /* border: 1px solid red; */
 }
 .xiao-pang {
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  width: 150px;
-  height: 150px;
+  width: 283px;
+  height: 283px;
   opacity: 1;
   /* border: 1px solid red; */
 
 }
 .xiao-pang > img {
-  width: 150px;
-  height: 150px;
+  width: 283px;
+  height: 283px;
   /* transition: opacity 1s; */
   /* border: 1px solid red; */
 }
@@ -331,76 +353,87 @@ export default {
   top: 0px;
   left: 0px;
   opacity: 0;
-  /* border: 1px solid red; */
 }
-.menu {
-  width: 30px;
-  height: 150px;
-  position: absolute;
-  bottom: 0px;
-  right: -15px;
-  /* right: -20px; */
-  /* border: 1px solid red; */
-}
+/* 菜单 */
 .hide, .menu-list, .open-menu {
   position: absolute;
-  right: 0px;
-  width: 30px;
 }
 .hide {
-  top: 7px;
-  left: 0px;
-  height: 25px;
-  -webkit-app-region: no-drag;
-}
-.hide > img {
+  top: 60px;
+  right: 30px;
   width: 30px;
   height: 30px;
-}
-.menu-list {
-  bottom: -10px;
-  height: 125px;
-  /* background: url('../assets/icons/menu-list.png'); */
-  background-size: 110%;
-}
-.list {
-  height: 125px;
-}
-.list > li {
-  list-style: none;
-  width: 28px;
-  height: 28px;
+  background-image: url('../../assets/icons/min.png');
   background-size: 100%;
   -webkit-app-region: no-drag;
 }
-.li-camera {
-  background: url('../../assets/icons/camera-h.png');
-  /* background-position: -14px -10px; */
+
+.hide:hover {
+  background-image: url('../../assets/icons/min-h.png');
 }
-.li-game {
-  background: url('../../assets/icons/game-h.png');
-  /* background-position: -5px -10px; */
-}
-.li-doc {
-  background: url('../../assets/icons/doc-h.png');
-  /* background-position: -5px -10px; */
-}
-.li-close {
-  background: url('../../assets/icons/close-h.png');
-  /* background-position: -15px -10px; */
-}
-/* .list > li > img {
-  width: 20px;
-  height: 20px;
-  border: 1px solid #000;
-} */
 .open-menu {
-  bottom: -2px;
-  left: 0px;
+  bottom: 25px;
+  right: 15px;
   -webkit-app-region: no-drag;
 }
 .open-menu > img {
-  width: 30px;
-  height: 30px;
+  width: 48px;
+  height: 48px;
 }
+.menu-list {
+  bottom: 20px;
+  right: 0;
+  height: 180px;
+  width: 65px;
+}
+.list {
+  height: 180px;
+  width: 65px;
+  background-image: url('../../assets/icons/menu-list.png');
+  background-size: 65px 180px;
+  background-repeat: no-repeat;
+  position: relative;
+  padding: 6px 6px;
+}
+.list > li {
+  list-style: none;
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
+  position: relative;
+  -webkit-app-region: no-drag;
+}
+#li-camera {
+  background-image: url('../../assets/icons/camera.png');
+  margin-top: 4px;
+  margin-left: 4px;
+}
+#li-game {
+  background-image: url('../../assets/icons/game.png');
+  margin-top: 8px;
+  margin-left: 15px;
+}
+#li-doc {
+  background-image: url('../../assets/icons/doc.png');
+  margin-top: 8px;
+  margin-left: 16px;
+}
+#li-close {
+  background-image: url('../../assets/icons/close.png');
+  margin-top: 8px;
+  margin-left: 6px;
+}
+#li-camera:hover {
+  background-image: url('../../assets/icons/camera-h.png');
+}
+#li-game:hover {
+  background-image: url('../../assets/icons/game-h.png');
+}
+#li-doc:hover {
+  background-image: url('../../assets/icons/doc-h.png');
+}
+#li-close:hover {
+  background-image: url('../../assets/icons/close-h.png');
+}
+
 </style>
