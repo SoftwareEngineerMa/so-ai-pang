@@ -15,6 +15,7 @@
         <button @click="bgmN">否</button>
         <button @click="bgmY">是</button>
     </div>
+    <div id="face"></div>
 </div>
 </template>
 
@@ -26,7 +27,7 @@ import AwardHint from './components/awardHint.vue';
 import Hxp from './components/hxp.vue';
 import Shade from './components/shade.vue'
 import { bcType, boardcast } from './subject';
-import { filter } from 'rxjs/operators'
+import { filter } from 'rxjs/operators';
 
 
 
@@ -156,7 +157,13 @@ body{
     margin: 20px;
 }
 
-
+#face {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 200px;
+    width: 200px;
+}
 
 
 </style>

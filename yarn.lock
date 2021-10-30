@@ -8506,6 +8506,13 @@ sax@^1.2.4, sax@~1.2.4:
   resolved "https://registry.npm.taobao.org/sax/download/sax-1.2.4.tgz"
   integrity sha1-KBYjTiN4vdxOU1T6tcqold9xANk=
 
+scatter-gl@^0.0.11:
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/scatter-gl/-/scatter-gl-0.0.11.tgz#4a707f68a96b5cd5d166822c09116ac90e030dff"
+  integrity sha512-gJkTe1UbkFRMiOh+YyAG4TCnTN46vlnqOOJaPD9WDVDEuZOMjSnpwAXmSvg1tMtIRNRYJvOV1b9ru3xuIZC3Lg==
+  dependencies:
+    three "0.125"
+
 schema-utils@^1.0.0:
   version "1.0.0"
   resolved "https://registry.nlark.com/schema-utils/download/schema-utils-1.0.0.tgz"
@@ -9329,6 +9336,11 @@ thread-loader@^2.1.3:
     loader-runner "^2.3.1"
     loader-utils "^1.1.0"
     neo-async "^2.6.0"
+
+three@0.125:
+  version "0.125.2"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.125.2.tgz#dcba12749a2eb41522e15212b919cd3fbf729b12"
+  integrity sha512-7rIRO23jVKWcAPFdW/HREU2NZMGWPBZ4XwEMt0Ak0jwLUKVJhcKM55eCBWyGZq/KiQbeo1IeuAoo/9l2dzhTXA==
 
 three@^0.133.1:
   version "0.133.1"

@@ -7,9 +7,7 @@ import { isHit } from './utils';
 import { from } from 'rxjs';
 import setupCamera from '../utils/setCamera';
 import detectFace from '../utils/facedetect';
-
-
-
+import { ipcRenderer } from "electron";
 
 export default function getInstance() {
     if (!mazeInstance) {
@@ -108,7 +106,10 @@ class Maze{
 
     async start(){
         const video = document.getElementById('video')
-        await setupCamera(video).then(async () => {
+        const stream = await setupCamera(video)
+        if(stream) {
+            ipcRenderer.send('openCamera')
+ 
             // 调用人脸检测示例
             const predictionFace = await detectFace(video);
             setInterval(() => {
@@ -119,7 +120,10 @@ class Maze{
                 });
 
             }, 10);
-        });
+        } else {
+            console.log('game: start camera fail')
+        }
+        
         boardcast
             .pipe(filter(data => data.type === bcType.HXP_REVIVE))
             .subscribe(() => {

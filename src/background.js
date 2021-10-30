@@ -157,4 +157,9 @@ ipcMain.on("maze-open", () => {
   createMazeWindow();
 })
 
+ipcMain.on("openCamera", () => {
+  win.webContents.send('openCamera');
+})
+
+
 

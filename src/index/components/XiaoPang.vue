@@ -94,6 +94,12 @@ export default {
       _this.inGame = false
       console.log('退出游戏')
     })
+    ipcRenderer.on('openCamera', () => {
+      // if(stream && !this.inCamera) {
+      //   this.mediaStreamTrack = stream
+      //   this.inCamera = true
+      // }
+    })
 
     this.video = document.getElementById('video')
     await this.openCamera()
@@ -128,10 +134,11 @@ export default {
         if(result) {
           this.mediaStreamTrack = result
           this.inCamera = true
+          console.log('camera ready')
         } else {
           this.inCamera = false
+          console.log('camera fail')
         }
-        console.log('camera ready')
       }      
       this.closeMenu()
     },
