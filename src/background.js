@@ -21,7 +21,7 @@ async function createMainWindow() {
     y: screenSize.height - 1000,
     width: 1000,
     height: 1000,
-    frame: true,// 无边框
+    frame: false,// 无边框  （当前设置有边框时不可拖动，无边框时可拖动）
     transparent: true,  // 透明
     skipTaskbar: true, // 取消默认任务栏展示，后面initTrayIcon设置了右侧任务栏图标展示
     webPreferences: {
