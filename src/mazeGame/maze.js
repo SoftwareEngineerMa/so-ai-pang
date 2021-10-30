@@ -107,9 +107,10 @@ class Maze{
     }
 
     async start(){
-        await setupCamera().then(async () => {
+        const video = document.getElementById('video')
+        await setupCamera(video).then(async () => {
             // 调用人脸检测示例
-            const predictionFace = await detectFace();
+            const predictionFace = await detectFace(video);
             setInterval(() => {
                 predictionFace().then((res) => {
                     if (faceMap.has(res)) {

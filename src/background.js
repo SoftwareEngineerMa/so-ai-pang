@@ -88,6 +88,7 @@ function createMazeWindow() {
     transparent: false,  // 透明
     titleBarStyle: 'hidden',
     webPreferences: {
+      debug: true,
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
@@ -95,6 +96,7 @@ function createMazeWindow() {
     }
   })
   maze.loadURL('http://localhost:8080/maze.html');
+  if (!process.env.IS_TEST) maze.webContents.openDevTools()
   maze.on('closed',() => {
     maze=null;
     win.webContents.send('closedGame');
@@ -154,7 +156,5 @@ ipcMain.on("window-min", () => {
 ipcMain.on("maze-open", () => {
   createMazeWindow();
 })
-ipcMain.on("maze-open", () => {
-  createMazeWindow();
-})
+
 
