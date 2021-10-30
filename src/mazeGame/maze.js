@@ -117,19 +117,8 @@ class Maze{
     async start(){
         await setupCamera().then(async () => {
             // 调用人脸检测示例
-            // eslint-disable-next-line no-unused-vars
             const predictionFace = await detectFace();
             let axis = [0, 0];
-            // const faceControl = () => {
-            //     predictionFace().then((res) => {
-            //         if (res === 'normal') {
-            //             axis = [0, 0];
-            //         } else if (faceMap.has(res)){
-            //             axis = moveMap.get(faceMap.get(res));
-            //         }
-            //     });
-            //     requestAnimationFrame(faceControl);
-            // }
             setInterval(() => {
                 predictionFace().then((res) => {
                     if (res === 'normal') {
@@ -289,6 +278,10 @@ class Maze{
         const wall = this.createWall(wallTexture);
         this.scene.add(wall);
 
+        // 贴图
+        const chartlet = this.createChartlet();
+        this.scene.add(chartlet);
+
         // 奖励
         const awardTexture = new THREE.TextureLoader().load(awardPath);
         const award = this.createAward(awardTexture);
@@ -428,6 +421,23 @@ class Maze{
         return wallGroup;
     }
 
+    // 创建贴图
+    createChartlet() {
+        const chartletGroup = new THREE.Group();
+        const t = new THREE.TextureLoader().load('/texture/culture.png');
+        // t.repeat.set(4,4);
+        const c = this.getChartletBlock(this.maze.dimension * 1, this.maze.dimension * 1, t, {x:this.maze.dimension / 2, y:this.maze.dimension / 2, z:0});
+
+
+        // const t_ = new THREE.TextureLoader().load('/texture/culture.png');
+
+        // const c_ = this.getChartletBlock(1, 1, t_, {x:3, y:1, z:0});
+        // chartletGroup.add(c_);
+
+        chartletGroup.add(c);
+        return chartletGroup;
+    }
+
     // 创建奖励
     createAward(texture) {
         const awardGroup = new THREE.Group();
@@ -466,6 +476,16 @@ class Maze{
         const floor = new THREE.PlaneGeometry(width, height);
         const floorMaterial = new THREE.MeshPhongMaterial({ map: texture });
         const mesh = new THREE.Mesh(floor, floorMaterial);
+        mesh.position.set(x, y, z);
+        return mesh;
+    }
+
+    // 创建贴图块
+    getChartletBlock(width, height,texture, {x, y, z}) {
+        console.log(texture);
+        const chartlet = new THREE.PlaneGeometry(width, height);
+        const chartletM = new THREE.MeshPhongMaterial({ map: texture, transparent:true, opacity:1});
+        const mesh = new THREE.Mesh(chartlet, chartletM);
         mesh.position.set(x, y, z);
         return mesh;
     }
