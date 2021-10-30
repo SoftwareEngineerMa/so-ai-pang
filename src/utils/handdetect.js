@@ -23,24 +23,27 @@ export default async function main(video) {
   // 返回值类型字符串
   // 'zhan'|'victory'|'great'|'fist'|'point'|'ok'|'shoot'|'normal'
   return async function () {
-    const predictions = await model.estimateHands(video, true);
-    if (predictions && predictions.length > 0) {
-      let result = mzmJudge(predictions[0].landmarks, predictions[0].annotations);
-      if (result) {
-        return result;
+    if(!video.paused && !video.ended) {
+      const predictions = await model.estimateHands(video, true);
+      if (predictions && predictions.length > 0) {
+        let result = mzmJudge(predictions[0].landmarks, predictions[0].annotations);
+        if (result) {
+          return result;
+        }
+
+        const est = GE.estimate(predictions[0].landmarks, 7.5);
+        if (est.gestures && est.gestures.length > 0) {
+          // find gesture with highest confidence
+          const gest = est.gestures.reduce((p, c) => {
+            return (p.confidence > c.confidence) ? p : c;
+          });
+
+          return gest.name;
+        }
+
       }
-
-      const est = GE.estimate(predictions[0].landmarks, 7.5);
-      if (est.gestures && est.gestures.length > 0) {
-        // find gesture with highest confidence
-        const gest = est.gestures.reduce((p, c) => {
-          return (p.confidence > c.confidence) ? p : c;
-        });
-
-        return gest.name;
-      }
-
     }
+    
     return 'normal';
   }
 }

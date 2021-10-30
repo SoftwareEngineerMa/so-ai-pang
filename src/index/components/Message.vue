@@ -33,18 +33,18 @@ export default {
 <style>
 .message {
   /* border: 1px solid red; */
-  padding: 5px;
-  width: 120px;
-  /* height: 60px; */
-  font-size: 11px;
-  color: #000;
-  background: #fff;
-  position: absolute;
-  right: 110px;
-  bottom: 100px;
+  padding: 10px;
+  max-width: 124px;
+  font-size: 12px;
+  color: #333;
+  background-color: #FFF2BB;
   border-radius: 10px;
+  position: absolute;
+  right: 170px;
+  top: 10px;
   z-index: 99;
   opacity: 1;
+  text-align: left;
   /* transition: opacity 3s; */
 }
 .message::after {
@@ -52,7 +52,7 @@ export default {
   display: block;
   width: 10px;
   height: 10px;
-  background: #fff;
+  background-color: #FFF2BB;
   position: absolute;
   right: 20px;
   bottom: -4px;

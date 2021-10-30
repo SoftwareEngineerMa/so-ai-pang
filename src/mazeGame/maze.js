@@ -12,6 +12,7 @@ import Stats from 'stats.js';
 
 
 
+import { ipcRenderer } from "electron";
 
 export default function getInstance() {
     if (!mazeInstance) {
@@ -115,10 +116,14 @@ class Maze{
     }
 
     async start(){
-        await setupCamera().then(async () => {
+        const video = document.getElementById('video')
+        const stream = await setupCamera(video)
+        if(stream) {
+            ipcRenderer.send('openCamera')
+ 
             // 调用人脸检测示例
-            const predictionFace = await detectFace();
             let axis = [0, 0];
+            const predictionFace = await detectFace(video);
             setInterval(() => {
                 predictionFace().then((res) => {
                     if (res === 'normal') {
@@ -137,7 +142,10 @@ class Maze{
             }, 10);
 
             // requestAnimationFrame(faceControl);
-        });
+        } else {
+            console.log('game: start camera fail')
+        }
+        
         boardcast
             .pipe(filter(data => data.type === bcType.HXP_REVIVE))
             .subscribe(() => {
