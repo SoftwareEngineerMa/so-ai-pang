@@ -20,6 +20,7 @@ export const bcType = {
     LEVEL_SHOW: 'level: show',
     LEVEL_HIDE: 'level: hide',
     VICTORY: 'victory',
+    MAZE_CLOSING: 'maze: closing'
 }
 
 

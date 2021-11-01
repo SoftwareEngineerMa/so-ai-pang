@@ -125,9 +125,11 @@ body{
 
 .level {
     position: absolute;
-    top: 25px;
-    left: 30px;
-    font-size: 25px;
+    top: 20px;
+    right: 9%;
+    transform: translateX(-50%);
+    font-size: 27px;
+    z-index: 100;
     color: aliceblue;
 }
 

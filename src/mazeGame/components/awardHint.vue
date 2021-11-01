@@ -1,6 +1,6 @@
 <template>
     <div :class='pos' :show='show'>
-        +1
+        {{ cultureSrc.src[cultureSrc.index] }}
     </div>
 </template>
 
@@ -14,7 +14,17 @@ export default {
         return {
             pos: 'left',
             show: 'false',
-            hideSwitch: true
+            hideSwitch: true,
+            cultureSrc: {
+                index: 0,
+                src: [
+                    '用户至上',
+                    '使命必达',
+                    '创新突破',
+                    '开放协作',
+                    '诚信正直' 
+                ] 
+            }
         }
     },
     mounted: function() {
@@ -30,6 +40,8 @@ export default {
                     this.hideSwitch = false;
                 }
                 this.show = 'true';
+                const i = this.cultureSrc.index;
+                this.cultureSrc.index = i === 4 ? 0 : i+1; 
                 boardcast.next({type: bcType.HINT_HIDE, value: 99})
             })
         boardcast
@@ -49,14 +61,15 @@ export default {
 <style scoped>
 div{
     position: absolute;
-    width: 30px;
+    width: 100px;
     height: 30px;
     top: 50%;
     left: 50%;
     color: aliceblue;
     transform: translate(-50%, -50%);
-    font-size: 30px;
+    font-size: 20px;
     font-weight: bold;
+    letter-spacing: 4px;
     transition: opacity 0.7s, transform 0.7s;
 }
 
@@ -70,6 +83,8 @@ div[show='true'] {
 
 .left{
     padding-right: 10%;
+    width: 30px;
+    height: 100px;
 }
 
 .left[show='false'] {
@@ -97,6 +112,8 @@ div[show='true'] {
 
 .right {
     padding-left: 10%;
+    width: 30px;
+    height: 100px;
 }
 
 .right[show='false'] {

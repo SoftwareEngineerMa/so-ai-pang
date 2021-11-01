@@ -2,11 +2,11 @@ import { ScatterGL } from 'scatter-gl';
 const NUM_KEYPOINTS = 468;
 const NUM_IRIS_KEYPOINTS = 5;
 const RED = '#FF2C35';
-const BLUE = '#157AB3';
+const BLUE = '#72B8FF';
 
 export default function() {
     let scatterGLHasInitialized = false
-    let scatterGL = new ScatterGL(document.querySelector('#face'),{'rotateOnStart': false, 'selectEnabled': false, 'styles': { point: { scaleDefault: 0.5 }, axesVisible: false, backgroundColor: '#fff'}});
+    let scatterGL = new ScatterGL(document.querySelector('#face'),{'rotateOnStart': false, 'selectEnabled': false, 'styles': { point: { scaleDefault: 0.5 }, axesVisible: false, backgroundColor: '#373736'}});
 
     return function drawFace (predictions) {
         if (scatterGL != null) {

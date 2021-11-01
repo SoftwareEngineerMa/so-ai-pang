@@ -1,9 +1,7 @@
 <template>
 <div class="score" :show='`${tipShow}`' >
-    {{ time }} | 01:00:00
-    <div>
-        已获得奖励个数：{{ awardNum }}
-    </div>
+    <div class="aw"></div><span id='aw-num'>{{ awardNum }}</span>
+    <div id='time'>{{ time }}</div>
 </div>
 </template>
 
@@ -38,14 +36,14 @@ export default {
             if (!millisecondeS) {
                 millisecondeS = this.millisecond < 10 ? `0${this.millisecond}` : `${this.millisecond}`;
             }
-            return `${minuteS}:${secondS}:${millisecondeS}`;
+            return `${minuteS} : ${secondS} : ${millisecondeS}`;
         }
     },
     mounted: function(){
         boardcast
             .pipe(filter(data => data.type === bcType.TIP_SHOW))
             .subscribe(() => {
-                // this.tipShow = !this.tipShow;
+                this.tipShow = !this.tipShow;
                 if (this.tipShow) {
                     if (timer) {
                         clearInterval(timer)
@@ -67,6 +65,7 @@ export default {
         boardcast
             .pipe(filter(data => data.type === bcType.TIP_UPDATE))
             .subscribe(() => {
+                boardcast.next({ type: bcType.MAZE_CLOSING, value: { awardNum: this.awardNum, time: this.minute * 60 + this.second }});
                 clearInterval(this.timer);
                 this.minute = this.second = this.millisecond = 0;
                 this.awardNum = 0;
@@ -101,11 +100,13 @@ export default {
     border-top-left-radius: 15px;
     border-bottom-left-radius: 15px;
     text-align: center;
+    font-size: 27px;
+    color: aliceblue;
+    /* padding-top: 10px; */
     right: 0;
-    top: 21px;
-    height: 18%;
-    width: 30%;
-    background-color:aliceblue;
+    width: 24%;
+    height: 16%;
+    background-color:rgba(51, 51, 51,0.7);
     transition: transform 1s;
 }
 
@@ -115,6 +116,32 @@ export default {
 
 .score[show='true'] {
     transform: translateX(0);
+}
+
+.score #time {
+    margin-top: 21%;
+    margin-right: 5%;
+    font-size: 32px;
+    color: aliceblue;
+}
+
+.score #aw-num {
+    position: absolute;
+    font-size: 27px;
+    font-weight: bold;
+    top: 20px;
+    right: 21%;
+}
+
+.aw {
+    position: absolute;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    top: 24px;
+    right: 31%;
+    background-image: url('../../../public/img/aw.png');
+    background-size: cover;
 }
 
 </style>

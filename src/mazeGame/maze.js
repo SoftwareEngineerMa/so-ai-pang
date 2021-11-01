@@ -5,14 +5,14 @@ import { boardcast, bcType } from './subject';
 import { filter, delay } from 'rxjs/operators';
 import { isHit } from './utils';
 import { from } from 'rxjs';
-import setupCamera from '../utils/setCamera';
-import detectFace from '../utils/facedetect';
+// import setupCamera from '../utils/setCamera';
+// import detectFace from '../utils/facedetect';
 
 import Stats from 'stats.js';
 
 
 
-import { ipcRenderer } from "electron";
+// import { ipcRenderer } from "electron";
 
 export default function getInstance() {
     if (!mazeInstance) {
@@ -35,12 +35,12 @@ const moveMap = new Map([
     [38, [0, 1]]
 ])
 
-const faceMap = new Map([
-    ['leanLeft', 'left'],
-    ['leanRight', 'right'],
-    ['top', 'top'],
-    ['bottom', 'bottom'],
-])
+// const faceMap = new Map([
+//     ['leanLeft', 'left'],
+//     ['leanRight', 'right'],
+//     ['top', 'top'],
+//     ['bottom', 'bottom'],
+// ])
 
 
 const floorPath = '/texture/concrete.png';
@@ -98,10 +98,13 @@ class Maze{
 
     stats = null;
 
+    awardNum = 0;
+
 
     constructor() {
         this.stats = new Stats();
         this.stats.showPanel(0);  //显示fps
+        this.stats.domElement.style.left= '200px';
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(this.renderer.domElement);
@@ -116,35 +119,35 @@ class Maze{
     }
 
     async start(){
-        const video = document.getElementById('video')
-        const stream = await setupCamera(video)
-        if(stream) {
-            ipcRenderer.send('openCamera')
+        // const video = document.getElementById('video')
+        // const stream = await setupCamera(video)
+        // if(stream) {
+        //     ipcRenderer.send('openCamera')
  
-            // 调用人脸检测示例
-            let axis = [0, 0];
-            const predictionFace = await detectFace(video);
-            setInterval(() => {
-                predictionFace().then((res) => {
-                    if (res === 'normal') {
-                        axis = [0, 0];
-                    } else if (faceMap.has(res)){
-                        axis = moveMap.get(faceMap.get(res));
-                    }
-                });
+        //     // 调用人脸检测示例
+        //     let axis = [0, 0];
+        //     const predictionFace = await detectFace(video);
+        //     setInterval(() => {
+        //         predictionFace().then((res) => {
+        //             if (res === 'normal') {
+        //                 axis = [0, 0];
+        //             } else if (faceMap.has(res)){
+        //                 axis = moveMap.get(faceMap.get(res));
+        //             }
+        //         });
 
-            }, 100);
+        //     }, 100);
 
-            setInterval(() => {
-                if (axis[0] != 0 || axis[1] != 0) {
-                    this.onMoveKey(axis);
-                }
-            }, 10);
+        //     setInterval(() => {
+        //         if (axis[0] != 0 || axis[1] != 0) {
+        //             this.onMoveKey(axis);
+        //         }
+        //     }, 10);
 
-            // requestAnimationFrame(faceControl);
-        } else {
-            console.log('game: start camera fail')
-        }
+        //     // requestAnimationFrame(faceControl);
+        // } else {
+        //     console.log('game: start camera fail')
+        // }
         
         boardcast
             .pipe(filter(data => data.type === bcType.HXP_REVIVE))
@@ -238,13 +241,12 @@ class Maze{
         let mazeY = Math.floor(this.ballMesh.position.y + 0.5);
         if (mazeX == this.mazeScale && mazeY == this.mazeScale - 2) {
             this.hxpSleep = true;
-            // 小胖阻塞，通知弹出modal
-            boardcast.next({ type: bcType.HXP_SLEEP })
             // 通知隐藏tip
             boardcast.next({ type: bcType.TIP_SHOW })
             // 通知更新tip
             boardcast.next({ type: bcType.TIP_UPDATE })
-            // this.resetTime();
+            // 小胖阻塞，通知弹出modal
+            boardcast.next({ type: bcType.HXP_SLEEP, value: this.awardNum })
             this.mazeScale += 2;
             this.gameStatus = 'fadeout';
         }
@@ -432,17 +434,28 @@ class Maze{
     // 创建贴图
     createChartlet() {
         const chartletGroup = new THREE.Group();
-        const t = new THREE.TextureLoader().load('/texture/culture.png');
-        // t.repeat.set(4,4);
-        const c = this.getChartletBlock(this.maze.dimension * 1, this.maze.dimension * 1, t, {x:this.maze.dimension / 2, y:this.maze.dimension / 2, z:0});
+        // 文化价值观
+        // const t = new THREE.TextureLoader().load('/texture/culture.png');
+        // // t.repeat.set(4,4);
+        // const c = this.getChartletBlock(this.maze.dimension * 1, this.maze.dimension * 1, t, {x:this.maze.dimension / 2, y:this.maze.dimension / 2, z:0});
 
+        const logo = new THREE.TextureLoader().load('/texture/logo2.png');
+        const logoMaze = generateSquareMaze(this.mazeScale);
+        for (let i=0; i < logoMaze.dimension; i++) {
+            for (let j=0; j < logoMaze.dimension; j++) {
+                if (!this.maze[i][j] && logoMaze[i][j]) {
+                    const block = this.getChartletBlock(0.8, 0.8, logo, {x: i, y: j, z: 0});
+                    chartletGroup.add(block);
+                } 
+            }
+        }
 
         // const t_ = new THREE.TextureLoader().load('/texture/culture.png');
 
         // const c_ = this.getChartletBlock(1, 1, t_, {x:3, y:1, z:0});
         // chartletGroup.add(c_);
 
-        chartletGroup.add(c);
+        // chartletGroup.add(c);
         return chartletGroup;
     }
 
@@ -458,6 +471,7 @@ class Maze{
                 }
             }
         }
+        this.awardNum = awardGroup.children.length;
         return awardGroup;
     }
 
