@@ -100,12 +100,13 @@ export default {
     border-top-left-radius: 15px;
     border-bottom-left-radius: 15px;
     text-align: center;
-    font-size: 27px;
+    font-size: 2.2vw;
     color: aliceblue;
     /* padding-top: 10px; */
     right: 0;
     width: 24%;
-    height: 16%;
+    height: 0;
+    padding-bottom: 9%;
     background-color:rgba(51, 51, 51,0.7);
     transition: transform 1s;
 }
@@ -120,14 +121,14 @@ export default {
 
 .score #time {
     margin-top: 21%;
-    margin-right: 5%;
-    font-size: 32px;
+    margin-right: 4%;
+    font-size: 2.2vw;
     color: aliceblue;
 }
 
 .score #aw-num {
     position: absolute;
-    font-size: 27px;
+    font-size: 1.8vw;
     font-weight: bold;
     top: 20px;
     right: 21%;
@@ -136,8 +137,9 @@ export default {
 .aw {
     position: absolute;
     display: inline-block;
-    width: 30px;
-    height: 30px;
+    width: 10%;
+    height: 0;
+    padding-bottom: 10%;
     top: 24px;
     right: 31%;
     background-image: url('../../../public/img/aw.png');

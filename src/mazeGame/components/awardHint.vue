@@ -61,15 +61,16 @@ export default {
 <style scoped>
 div{
     position: absolute;
-    width: 100px;
+    width: 10%;
     height: 30px;
     top: 50%;
     left: 50%;
     color: aliceblue;
     transform: translate(-50%, -50%);
-    font-size: 20px;
+    font-size: 1.6vw;
     font-weight: bold;
     letter-spacing: 4px;
+    text-align: center;
     transition: opacity 0.7s, transform 0.7s;
 }
 
@@ -82,9 +83,9 @@ div[show='true'] {
 }
 
 .left{
-    padding-right: 10%;
+    padding-right: 8%;
     width: 30px;
-    height: 100px;
+    height: 15%;
 }
 
 .left[show='false'] {
@@ -97,7 +98,7 @@ div[show='true'] {
 }
 
 .top {
-    padding-bottom: 10%;
+    padding-bottom: 8%;
 }
 
 .top[show='false'] {
@@ -111,9 +112,9 @@ div[show='true'] {
 
 
 .right {
-    padding-left: 10%;
+    padding-left: 8%;
     width: 30px;
-    height: 100px;
+    height: 15%;
 }
 
 .right[show='false'] {
@@ -127,7 +128,7 @@ div[show='true'] {
 
 
 .bottom {
-    padding-top: 10%;
+    padding-top: 8%;
 }
 
 .bottom[show='false'] {
