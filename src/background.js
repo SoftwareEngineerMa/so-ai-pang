@@ -17,11 +17,11 @@ async function createMainWindow() {
   let screenSize = screen.getPrimaryDisplay().workAreaSize;
   // Create the browser window.
   win = new BrowserWindow({
-    x: screenSize.width - 1300,
-    y: screenSize.height - 1000,
-    width: 1000,
-    height: 1000,
-    frame: true,// 无边框
+    x: screenSize.width - 400,
+    y: screenSize.height - 400,
+    width: 400,
+    height: 400,
+    frame: false,// 无边框
     transparent: true,  // 透明
     skipTaskbar: true, // 取消默认任务栏展示，后面initTrayIcon设置了右侧任务栏图标展示
     webPreferences: {
@@ -35,7 +35,7 @@ async function createMainWindow() {
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
+    // if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app')
     win.loadURL('app://./index.html')
@@ -54,7 +54,7 @@ async function createMainWindow() {
 
 function initTrayIcon () {
     // 创建任务栏图标
-  tray = new Tray(path.join(__dirname,  './bundled/favicon.ico'))
+  tray = new Tray(path.join(__dirname,  './favicon.ico'))
   console.log("tray");
   // 自定义托盘图标的内容菜单
   const contextMenu = Menu.buildFromTemplate([
@@ -88,15 +88,15 @@ function createMazeWindow() {
     transparent: false,  // 透明
     titleBarStyle: 'hidden',
     webPreferences: {
-      debug: true,
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
       enableRemoteModule: true
     }
   })
-  maze.loadURL('http://localhost:8080/maze.html');
-  if (!process.env.IS_TEST) maze.webContents.openDevTools()
+  maze.loadURL('app://./maze.html');
+  // maze.loadURL('http://localhost:8080/maze.html');
+  // if (!process.env.IS_TEST) maze.webContents.openDevTools()
   maze.on('closed',() => {
     maze=null;
     win.webContents.send('closedGame');

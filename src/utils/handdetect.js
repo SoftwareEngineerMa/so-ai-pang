@@ -9,9 +9,9 @@ import fp from '../../fingerpose/src/index';
 const knownGestures = [
   fp.Gestures.VictoryGesture,
   fp.Gestures.ThumbsUpGesture,
-  fp.Gestures.IndexUpGesture,
+  // fp.Gestures.IndexUpGesture,
   fp.Gestures.OKGesture,
-  fp.Gestures.FistGesture,
+  // fp.Gestures.FistGesture,
   fp.Gestures.ShootGesture,
 ];
 const GE = new fp.GestureEstimator(knownGestures);
@@ -21,7 +21,8 @@ export default async function main(video) {
   const model = await handpose.load();
 
   // 返回值类型字符串
-  // 'zhan'|'victory'|'great'|'fist'|'point'|'ok'|'shoot'|'normal'
+  // 'zhan'|'victory'|'great'|'ok'|'shoot'|'normal'
+  // 已关闭：|'fist'|'point'
   return async function () {
     if(!video.paused && !video.ended) {
       const predictions = await model.estimateHands(video, true);

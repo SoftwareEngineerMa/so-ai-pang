@@ -1,15 +1,15 @@
 import VictoryGesture from './Victory';
 import ThumbsUpGesture from './ThumbsUp';
-import IndexUpGesture from './IndexUp';
+// import IndexUpGesture from './IndexUp';
 import OKGesture from './OK';
 import ShootGesture from './Shoot';
-import FistGesture from './Fist';
+// import FistGesture from './Fist';
 
 export {
   VictoryGesture,
   ThumbsUpGesture,
-  IndexUpGesture,
+  // IndexUpGesture,
   OKGesture,
   ShootGesture,
-  FistGesture
+  // FistGesture
 }
