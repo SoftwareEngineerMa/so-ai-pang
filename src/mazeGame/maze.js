@@ -112,6 +112,7 @@ class Maze{
 
         this.scene = new THREE.Scene();
         this.gameStatus = 'init';
+        this.mediaStreamTrack = null;
 
         window.onresize = () => {
             this.onResize();
@@ -119,10 +120,19 @@ class Maze{
     }
 
     async start(){
+        ipcRenderer.on('openGameCamera', async () => {
+            this.mediaStreamTrack = await setupCamera(video)
+        })
+        ipcRenderer.on('closeGameCamera', async () => {
+            if(this.mediaStreamTrack) {
+                this.mediaStreamTrack.stop()
+            }
+        })
+
         const video = document.getElementById('video')
-        const stream = await setupCamera(video)
-        if(stream) {
-            ipcRenderer.send('openCamera')
+        this.mediaStreamTrack = await setupCamera(video)
+        if(this.mediaStreamTrack) {
+            ipcRenderer.send('gameHasOpenCamera')
  
             // 调用人脸检测示例
             let axis = [0, 0];

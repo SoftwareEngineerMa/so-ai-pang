@@ -157,9 +157,18 @@ ipcMain.on("maze-open", () => {
   createMazeWindow();
 })
 
-ipcMain.on("openCamera", () => {
-  win.webContents.send('openCamera');
+ipcMain.on("gameHasOpenCamera", () => {
+  win.webContents.send('gameHasOpenCamera');
 })
+
+ipcMain.on("openGameCamera", () => {
+  maze.webContents.send('openGameCamera');
+})
+
+ipcMain.on("closeGameCamera", () => {
+  maze.webContents.send('closeGameCamera');
+})
+
 
 
 

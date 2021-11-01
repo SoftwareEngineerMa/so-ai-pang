@@ -94,11 +94,10 @@ export default {
       _this.inGame = false
       console.log('退出游戏')
     })
-    ipcRenderer.on('openCamera', () => {
-      // if(stream && !this.inCamera) {
-      //   this.mediaStreamTrack = stream
-      //   this.inCamera = true
-      // }
+    ipcRenderer.on('gameHasOpenCamera', () => {
+      if(!this.inCamera) {
+        this.openCamera()
+      }
     })
 
     this.video = document.getElementById('video')
@@ -127,11 +126,18 @@ export default {
     },
     async openCamera() {
       if(this.inCamera) {
+        if(this.inGame) {
+          ipcRenderer.send('closeGameCamera')
+        }
         this.mediaStreamTrack.stop();
         this.inCamera = false
+        
       } else {
         const result = await setupCamera(this.video)
         if(result) {
+          if(this.inGame) {
+            ipcRenderer.send('openGameCamera')
+          }
           this.mediaStreamTrack = result
           this.inCamera = true
           console.log('camera ready')
@@ -151,7 +157,7 @@ export default {
     },
     openDoc() {
       console.log("新手引导");
-      this.inDoc = true
+      // this.inDoc = true
     },
     closeMenu() {
       this.showMenu = !this.showMenu;
