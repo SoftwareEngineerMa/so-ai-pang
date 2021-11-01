@@ -5,14 +5,14 @@ import { boardcast, bcType } from './subject';
 import { filter, delay } from 'rxjs/operators';
 import { isHit } from './utils';
 import { from } from 'rxjs';
-// import setupCamera from '../utils/setCamera';
-// import detectFace from '../utils/facedetect';
+import setupCamera from '../utils/setCamera';
+import detectFace from '../utils/facedetect';
 
 import Stats from 'stats.js';
 
 
 
-// import { ipcRenderer } from "electron";
+import { ipcRenderer } from "electron";
 
 export default function getInstance() {
     if (!mazeInstance) {
@@ -35,12 +35,12 @@ const moveMap = new Map([
     [38, [0, 1]]
 ])
 
-// const faceMap = new Map([
-//     ['leanLeft', 'left'],
-//     ['leanRight', 'right'],
-//     ['top', 'top'],
-//     ['bottom', 'bottom'],
-// ])
+const faceMap = new Map([
+    ['leanLeft', 'left'],
+    ['leanRight', 'right'],
+    ['top', 'top'],
+    ['bottom', 'bottom'],
+])
 
 
 const floorPath = '/texture/concrete.png';
@@ -119,35 +119,35 @@ class Maze{
     }
 
     async start(){
-        // const video = document.getElementById('video')
-        // const stream = await setupCamera(video)
-        // if(stream) {
-        //     ipcRenderer.send('openCamera')
+        const video = document.getElementById('video')
+        const stream = await setupCamera(video)
+        if(stream) {
+            ipcRenderer.send('openCamera')
  
-        //     // 调用人脸检测示例
-        //     let axis = [0, 0];
-        //     const predictionFace = await detectFace(video);
-        //     setInterval(() => {
-        //         predictionFace().then((res) => {
-        //             if (res === 'normal') {
-        //                 axis = [0, 0];
-        //             } else if (faceMap.has(res)){
-        //                 axis = moveMap.get(faceMap.get(res));
-        //             }
-        //         });
+            // 调用人脸检测示例
+            let axis = [0, 0];
+            const predictionFace = await detectFace(video);
+            setInterval(() => {
+                predictionFace().then((res) => {
+                    if (res === 'normal') {
+                        axis = [0, 0];
+                    } else if (faceMap.has(res)){
+                        axis = moveMap.get(faceMap.get(res));
+                    }
+                });
 
-        //     }, 100);
+            }, 100);
 
-        //     setInterval(() => {
-        //         if (axis[0] != 0 || axis[1] != 0) {
-        //             this.onMoveKey(axis);
-        //         }
-        //     }, 10);
+            setInterval(() => {
+                if (axis[0] != 0 || axis[1] != 0) {
+                    this.onMoveKey(axis);
+                }
+            }, 10);
 
-        //     // requestAnimationFrame(faceControl);
-        // } else {
-        //     console.log('game: start camera fail')
-        // }
+            // requestAnimationFrame(faceControl);
+        } else {
+            console.log('game: start camera fail')
+        }
         
         boardcast
             .pipe(filter(data => data.type === bcType.HXP_REVIVE))
