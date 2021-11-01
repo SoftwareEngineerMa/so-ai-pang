@@ -189,7 +189,7 @@ export default {
     loop() {
       const DATE = new Date()
       this.year = DATE.getFullYear()  //  年
-      this.month = DATE.getMonth() + 2  // 月
+      this.month = DATE.getMonth() + 1  // 月
       this.day = DATE.getDate()         // 日
       this.week = DATE.getDay()     // 周几
       this.hour = DATE.getHours()    //  时
@@ -220,6 +220,19 @@ export default {
         });
       }
     },
+    initDefault() {
+      if(this.today === 'workdays') {
+        if((this.hm >= 1000 && this.hm < 1240) || (this.hm >= 1400 && this.hm < 1900)) {
+          this.defaultPic = 'work'
+        } else if (this.hm >= 1240 && this.hm < 1400) {
+          this.defaultPic = 'zzz'  
+        } else {
+          this.defaultPic = 'think' 
+        }
+      } else {
+        this.defaultPic = 'think'  
+      }
+    }
   },
   watch: {
     inCamera: function(val) {
@@ -274,17 +287,7 @@ export default {
       }
       
       // 切换默认工作
-      if(this.today === 'workdays') {
-        if((this.hm >= 1000 && this.hm < 1240) || (this.hm >= 1400 && this.hm < 1900)) {
-          this.defaultPic = 'work'
-        } else if (this.hm >= 1240 && this.hm < 1400) {
-          this.defaultPic = 'zzz'  
-        } else {
-          this.defaultPic = 'think' 
-        }
-      } else {
-        this.defaultPic = 'think'  
-      }
+      this.initDefault()
 
       if(this.hm === 1240) {
         this.show()
@@ -300,26 +303,33 @@ export default {
     action: {
       deep: true,
       handler: function() {
-      clearTimeout(this.activeTimer)
-      this.action.action = this.action.action || 'think'
-      this.msg = [this.action.text, this.action.duration]
-      this.img2.src = `./static/actions/${this.action.action}.gif`
-      this.img1.style.opacity = 0
-      this.img2.style.opacity = 1
-      this.activeTimer = setTimeout(() => {
-        if (this.hm === 1200) {
-          this.hide()
-          return
+        if(this.action && this.action.action) {
+          clearTimeout(this.activeTimer)
+          this.action.action = this.action.action || 'think'
+          this.msg = [this.action.text, this.action.duration]
+          this.img2.src = `./static/actions/${this.action.action}.gif`
+          this.img1.style.opacity = 0
+          this.img2.style.opacity = 1
+          this.activeTimer = setTimeout(() => {
+            if (this.hm === 1200) {
+              this.hide()
+              return
+            }
+            this.img1.style.opacity = 1
+            this.img2.style.opacity = 0
+            this.action = []
+          }, this.action.duration * 1000)
         }
-        this.img1.style.opacity = 1
-        this.img2.style.opacity = 0
-      }, this.action.duration * 1000)
     }},
     handPose: function(val) {
-      const gestureList = gestureJson[val]
-      if(gestureList) {
-        this.action = gestureList[Math.floor(Math.random() * gestureList.length)]
+      if(this.handPose !== 'normal') {
+        const gestureList = gestureJson[val]
+        if(gestureList) {
+          this.action = gestureList[Math.floor(Math.random() * gestureList.length)]
+        }
       }
+      
+      this.handPose = 'normal'
     }
   }
 };
@@ -376,7 +386,7 @@ export default {
 }
 
 .hide:hover {
-  background-image: url('../../assets/icons/min-h.png');
+  background-image: url('../../assets/icons/min-h.png') !important;
 }
 .open-menu {
   bottom: 25px;
@@ -431,16 +441,16 @@ export default {
   margin-left: 6px;
 }
 #li-camera:hover {
-  background-image: url('../../assets/icons/camera-h.png');
+  background-image: url('../../assets/icons/camera-h.png') !important;
 }
 #li-game:hover {
-  background-image: url('../../assets/icons/game-h.png');
+  background-image: url('../../assets/icons/game-h.png') !important;
 }
 #li-doc:hover {
-  background-image: url('../../assets/icons/doc-h.png');
+  background-image: url('../../assets/icons/doc-h.png') !important;
 }
 #li-close:hover {
-  background-image: url('../../assets/icons/close-h.png');
+  background-image: url('../../assets/icons/close-h.png') !important;
 }
 
 </style>
