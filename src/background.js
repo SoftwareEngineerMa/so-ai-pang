@@ -13,6 +13,7 @@ protocol.registerSchemesAsPrivileged([
 let win = null;
 let maze = null;
 let tray = null;
+let guide = null;
 async function createMainWindow() {
   let screenSize = screen.getPrimaryDisplay().workAreaSize;
   // Create the browser window.
@@ -108,6 +109,35 @@ function createMazeWindow() {
   })
 }
 
+function createGuideWindow() {
+  let screenSize = screen.getPrimaryDisplay().workAreaSize;
+  console.log(screenSize);
+  console.log(screenSize.width * 0.5, screenSize.width * 0.3675);
+  guide = new BrowserWindow({
+    x: screenSize.width * 0.1,
+    y: screenSize.height * 0.1,
+    width: screenSize.width * 0.5,
+    height: screenSize.width * 0.5,
+    frame: false,// 无边框
+    transparent: true,  // 透明
+    titleBarStyle: 'hidden',
+    skipTaskbar: true, // 取消默认任务栏展示，后面initTrayIcon设置了右侧任务栏图标展示
+    webPreferences: {
+      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+      // preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+      enableRemoteModule: true
+    }
+  })
+  // guide.loadURL('app://./guide.html');
+  guide.loadURL('http://localhost:8080/guide.html');
+  if (!process.env.IS_TEST) guide.webContents.openDevTools()
+  guide.on('closed',() => {
+    guide=null;
+    win.webContents.send('closedGuide');
+  })
+}
+
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
@@ -164,6 +194,14 @@ ipcMain.on("maze-open", () => {
 
 ipcMain.on("gameHasOpenCamera", () => {
   win.webContents.send('gameHasOpenCamera');
+})
+
+ipcMain.on("guide-open", () => {
+  createGuideWindow();
+})
+
+ipcMain.on("openCamera", () => {
+  win.webContents.send('openCamera');
 })
 
 ipcMain.on("openGameCamera", () => {
