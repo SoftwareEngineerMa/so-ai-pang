@@ -24,7 +24,17 @@ module.exports = {
     },
     pluginOptions: {
         electronBuilder: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            builderOptions: {
+                appId: 'hxppet',
+                productName: '黄小胖',
+                win: {
+                    icon: './public/favicon256.ico'
+                },
+                mac: {
+                    icon: './public/favicon256.ico'
+                }
+           }
         }
     }
 }
