@@ -118,9 +118,8 @@ function createGuideWindow() {
     y: screenSize.height * 0.1,
     width: screenSize.width * 0.5,
     height: screenSize.width * 0.5,
-    frame: true,// 无边框
+    frame: false,// 无边框
     transparent: true,  // 透明
-    titleBarStyle: 'hidden',
     skipTaskbar: true, // 取消默认任务栏展示，后面initTrayIcon设置了右侧任务栏图标展示
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
@@ -210,6 +209,10 @@ ipcMain.on("openGameCamera", () => {
 
 ipcMain.on("closeGameCamera", () => {
   maze.webContents.send('closeGameCamera');
+})
+
+ipcMain.on("guide-close", () => {
+  guide.close();
 })
 
 

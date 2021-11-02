@@ -1,10 +1,13 @@
 <template>
     <div class="guide" :style="{ width: width + 'px', height: height + 'px' }">
+        <div class="close" @click="closeClick"></div>
     </div>
 </template>
 
 
 <script>
+import { ipcRenderer } from "electron";
+
 export default {
     name: 'Guide',
     data() {
@@ -22,6 +25,10 @@ export default {
         onResize() {
             this.width = window.innerWidth;
             this.height = window.innerWidth * 0.7359
+        },
+
+        closeClick() {
+            ipcRenderer.send('guide-close');
         }
     }
 
@@ -37,5 +44,15 @@ body {
     border-radius: 20px;
     background-image: url('/img/guide.png');
     background-size: cover;
+}
+
+.close {
+    position: absolute;
+    right: 2px;
+    width: 30px;
+    height: 30px;
+    background-image: url('../../public/img/close.png');
+    background-size: cover;
+    cursor: pointer;
 }
 </style>
