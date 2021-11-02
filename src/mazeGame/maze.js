@@ -170,7 +170,6 @@ class Maze{
 
 
     loop() {
-        this.stats.begin();
         switch (this.gameStatus) {
             case 'init':
                 this.init();
@@ -188,7 +187,6 @@ class Maze{
                 this.fadeOut();
                 break;
         }
-        this.stats.end();
         requestAnimationFrame(() => { this.loop() });
     }
 
