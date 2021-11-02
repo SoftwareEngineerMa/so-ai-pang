@@ -50,6 +50,10 @@ async function createMainWindow() {
     e.preventDefault();  // 阻止退出程序
     win.hide();    // 隐藏主程序窗口
   })
+
+  if (process.platform === 'darwin') {
+    app.dock.setIcon(path.join(__dirname, './favicon.ico'));
+  }
 }
 
 function initTrayIcon () {
@@ -68,7 +72,7 @@ function initTrayIcon () {
     }
   ])
 
-  tray.setToolTip('demo')  // 设置鼠标指针在托盘图标上悬停时显示的文本
+  // tray.setToolTip('demo')  // 设置鼠标指针在托盘图标上悬停时显示的文本
   tray.setContextMenu(contextMenu)  // 设置图标的内容菜单
   // 点击托盘图标，显示主窗口
   tray.on("click", () => {
@@ -87,6 +91,7 @@ function createMazeWindow() {
     frame: true,// 无边框
     transparent: false,  // 透明
     titleBarStyle: 'hidden',
+    icon: path.join(__dirname, './favicon.ico'),
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),
