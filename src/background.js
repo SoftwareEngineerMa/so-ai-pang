@@ -121,7 +121,7 @@ function createGuideWindow() {
     frame: false,// 无边框
     transparent: true,  // 透明
     titleBarStyle: 'hidden',
-    skipTaskbar: true, // 取消默认任务栏展示，后面initTrayIcon设置了右侧任务栏图标展示
+    icon: path.join(__dirname, './favicon.ico'),
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),
@@ -131,7 +131,7 @@ function createGuideWindow() {
   })
   // guide.loadURL('app://./guide.html');
   guide.loadURL('http://localhost:8080/guide.html');
-  if (!process.env.IS_TEST) guide.webContents.openDevTools()
+  // if (!process.env.IS_TEST) guide.webContents.openDevTools()
   guide.on('closed',() => {
     guide=null;
     win.webContents.send('closedGuide');
