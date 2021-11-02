@@ -43,7 +43,7 @@
             "text": "hi，放心，小胖一直在你身边哦！"
         },
         {
-            "action": "love",
+            "action": "heart",
             "duration": 3.0,
             "text": "hi,今天的你有点帅气哦！"
         },
@@ -232,7 +232,7 @@
             "text": "干嘛，再指我，我就把你吃掉！"
         },
         {
-            "action": "love",
+            "action": "heart",
             "duration": 3.0,
             "text": "爱你哦"
         },

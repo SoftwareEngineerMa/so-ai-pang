@@ -402,11 +402,13 @@ export default {
       }
     },
     second: async function() {
-      const gest = this.getGesture()
-      if(gest !== 'normal') {
-        this.handPose = gest
-        this.initGesture()
-      } 
+      if(this.second % 3 === 0) {
+        const gest = this.getGesture()
+        if(gest !== 'normal') {
+          this.handPose = gest
+          this.initGesture()
+        } 
+      }
     },
     action: {
       deep: true,
