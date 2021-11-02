@@ -273,7 +273,6 @@ class Maze{
             this.renderer.render(this.scene, this.camera);
             this.gameStatus = 'init';
             boardcast.next({ type: bcType.HXP_HIDE});
-            boardcast.next({ type: bcType.SHADE_SHOW });
         }
     }
 

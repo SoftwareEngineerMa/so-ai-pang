@@ -212,6 +212,10 @@ ipcMain.on("closeGameCamera", () => {
   maze.webContents.send('closeGameCamera');
 })
 
+ipcMain.on("guide-close", () => {
+  guide.close();
+})
+
 
 
 
