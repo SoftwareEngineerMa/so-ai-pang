@@ -47,13 +47,13 @@ async function createMainWindow() {
     win.show();
   })
   // 当点击关闭按钮
-  win.on('close', (e) => {
-    e.preventDefault();  // 阻止退出程序
-    win.hide();    // 隐藏主程序窗口
+  win.on('close', () => {
+    // e.preventDefault();  // 阻止退出程序
+    // win.hide();    // 隐藏主程序窗口
   })
 
   if (process.platform === 'darwin') {
-    app.dock.setIcon(path.join(__dirname, './favicon.ico'));
+    app.dock.setIcon(path.join(__dirname, './Icon.icns'));
   }
 }
 
@@ -100,9 +100,9 @@ function createMazeWindow() {
       enableRemoteModule: true
     }
   })
-  // maze.loadURL('app://./maze.html');
-  maze.loadURL('http://localhost:8080/maze.html');
-  if (!process.env.IS_TEST) maze.webContents.openDevTools()
+  maze.loadURL('app://./maze.html');
+  // maze.loadURL('http://localhost:8080/maze.html');
+  // if (!process.env.IS_TEST) maze.webContents.openDevTools()
   maze.on('closed',() => {
     maze=null;
     win.webContents.send('closedGame');
@@ -128,9 +128,9 @@ function createGuideWindow() {
       enableRemoteModule: true
     }
   })
-  // guide.loadURL('app://./guide.html');
-  guide.loadURL('http://localhost:8080/guide.html');
-  if (!process.env.IS_TEST) guide.webContents.openDevTools()
+  guide.loadURL('app://./guide.html');
+  // guide.loadURL('http://localhost:8080/guide.html');
+  // if (!process.env.IS_TEST) guide.webContents.openDevTools()
   guide.on('closed',() => {
     guide=null;
     win.webContents.send('closedGuide');
