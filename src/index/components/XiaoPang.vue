@@ -4,6 +4,7 @@
     <div class="xiao-pang">
       <img id="img1" :src="`./static/actions/${defaultPic}.gif`" alt="">
       <img id="img2" :src="`./static/actions/${defaultPic2}.gif`" alt="">
+      <div id="eyes" @mousemove="eyeRotate" @mouseout="eyeOut" :style="{ width: eyesWidth +'px', height: eyesHeight + 'px' }"></div>
     </div>
     <div class="hide" @click="hide">
     </div>
@@ -36,6 +37,11 @@ import dateJson from '../../assets/json/date.json'
 import randomJson from '../../assets/json/random.json'
 // import expressionJson from '../../assets/json/expression.json'
 
+
+// 修改眼球转动图片大小
+const eyeWidth = 145;
+const eyeHeight = eyeWidth * 278 / 174;
+
 export default {
   name: "XiaoPang",
   data() {
@@ -65,6 +71,25 @@ export default {
       handPose: '',
       img1: null,
       img2: null,
+      eyes: null,
+      eyesWidth: eyeWidth,
+      eyesHeight: eyeHeight,
+      eyeCenter: {x: 88, y: 68},
+      eyePosMap: new Map([
+        [1, {x: 0, y: 0}],
+        [2, {x: eyeWidth * -1,y: 0}],
+        [3, {x: eyeWidth * -2, y: 0}],
+        [4, {x: eyeWidth * -3, y: 0}],
+        [5, {x: eyeWidth * -4, y: 0}],
+        [6, {x: 0, y: eyeHeight * -1}],
+        [7, {x: eyeWidth * -1, y: eyeHeight * -1}],
+        [8, {x: eyeWidth * -2, y: eyeHeight * -1}],
+        [9, {x: eyeWidth * -3, y: eyeHeight * -1}],
+        [10,{x: eyeWidth * -4, y: eyeHeight * -1}],
+        [11,{x: 0, y:eyeHeight * -2}],
+        [12,{x: eyeWidth * -1, y:eyeHeight * -2}],
+        [13, {x: eyeWidth * -2, y: eyeHeight * -2}]
+      ]),
 
       year: null,
       month: null,
@@ -165,6 +190,7 @@ export default {
     init() {
       this.img1 = document.getElementById('img1')
       this.img2 = document.getElementById('img2')
+      this.eyes = document.getElementById('eyes')
       this.initGesture()
     },
     initGesture() {
@@ -238,6 +264,82 @@ export default {
       } else {
         this.defaultPic = 'think'  
       }
+    },
+
+    // 根据正切值求角度
+    getTanDeg(tan) {
+      return Math.round(Math.atan(tan) / (Math.PI / 180));
+    },
+
+    // 眼球转动逻辑
+    eyesMoveHandle(ev) {
+      let offX = ev.offsetX - this.eyeCenter.x;
+      let offY = ev.offsetY - this.eyeCenter.y;
+      const tan = Math.abs(offX) / Math.abs(offY);
+      const angle = this.getTanDeg(tan);
+      if (offX < 0) {
+          if (offY < 0) {
+              console.log('第二象限');
+              if (angle < 15) {
+                  this.eyes.style.backgroundPosition = `${this.eyePosMap.get(1).x}px ${this.eyePosMap.get(1).y}px`;
+              } else if (angle < 30) {
+                  this.eyes.style.backgroundPosition = `${this.eyePosMap.get(2).x}px ${this.eyePosMap.get(2).y}px`;
+              } else if (angle < 45) {
+                  this.eyes.style.backgroundPosition = `${this.eyePosMap.get(3).x}px ${this.eyePosMap.get(3).y}px`;
+              } else if (angle < 60) {
+                  this.eyes.style.backgroundPosition = `${this.eyePosMap.get(4).x}px ${this.eyePosMap.get(4).y}px`;
+              } else {
+                  this.eyes.style.backgroundPosition = `${this.eyePosMap.get(5).x}px ${this.eyePosMap.get(5).y}px`;
+              }
+          } else {
+              console.log('第三象限');
+              if (angle < 30) {
+                  this.eyes.style.backgroundPosition = `${this.eyePosMap.get(7).x}px ${this.eyePosMap.get(7).y}px`;
+              } else if (angle < 60) {
+                  this.eyes.style.backgroundPosition = `${this.eyePosMap.get(6).x}px ${this.eyePosMap.get(6).y}px`;
+              } else {
+                  this.eyes.style.backgroundPosition = `${this.eyePosMap.get(5).x}px ${this.eyePosMap.get(5).y}px`;
+              }
+          }
+      } else {
+          if (offY < 0){
+              console.log('第一象限');
+              if (angle < 15) {
+                  this.eyes.style.backgroundPosition = `${this.eyePosMap.get(1).x}px ${this.eyePosMap.get(1).y}px`;
+              } else if (angle < 30) {
+                  this.eyes.style.backgroundPosition = `${this.eyePosMap.get(13).x}px ${this.eyePosMap.get(13).y}px`;
+              } else if (angle < 45) {
+                  this.eyes.style.backgroundPosition = `${this.eyePosMap.get(12).x}px ${this.eyePosMap.get(12).y}px`;
+              } else {
+                  this.eyes.style.backgroundPosition = `${this.eyePosMap.get(11).x}px ${this.eyePosMap.get(11).y}px`;
+              }
+
+          } else {
+              console.log('第四象限');
+              if (angle < 15) {
+                  this.eyes.style.backgroundPosition = `${this.eyePosMap.get(7).x}px ${this.eyePosMap.get(7).y}px`;
+              } else if (angle < 30) {
+                  this.eyes.style.backgroundPosition = `${this.eyePosMap.get(8).x}px ${this.eyePosMap.get(8).y}px`;
+              } else if (angle < 45) {
+                  this.eyes.style.backgroundPosition = `${this.eyePosMap.get(9).x}px ${this.eyePosMap.get(9).y}px`;
+              } else {
+                  this.eyes.style.backgroundPosition = `${this.eyePosMap.get(10).x}px ${this.eyePosMap.get(10).y}px`;
+              }
+          }
+      }
+    },
+
+    eyeRotate(ev) {
+      this.img1.style.display = 'none';
+      this.img2.style.display = 'none';
+      this.eyes.style.opacity = '1';
+      this.eyesMoveHandle(ev);
+    },
+
+    eyeOut() {
+      this.eyes.style.opacity = '0';
+      this.img1.style.display = 'block';
+      this.img2.style.display = 'block';
     }
   },
   watch: {
@@ -457,6 +559,18 @@ export default {
 }
 #li-close:hover {
   background-image: url('../../assets/icons/close-h.png') !important;
+}
+
+#eyes {
+  position: absolute;
+  opacity: 0;
+  background-image: url('../../assets/eye/eye.png');
+  background-size: 500% 300%;
+  top: 50%;
+  left:50%;
+  transform: translate(-50%, -50%);
+  /* width: 174px;
+  height: 278px; */
 }
 
 </style>

@@ -38,6 +38,8 @@ const moveMap = new Map([
 const faceMap = new Map([
     ['leanLeft', 'left'],
     ['leanRight', 'right'],
+    ['turnRight', 'right'],
+    ['turnLeft', 'left'],
     ['top', 'top'],
     ['bottom', 'bottom'],
 ])

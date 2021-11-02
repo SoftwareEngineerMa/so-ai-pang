@@ -128,7 +128,7 @@ body{
     top: 20px;
     right: 9%;
     transform: translateX(-50%);
-    font-size: 27px;
+    font-size: 1.8vw;
     z-index: 100;
     color: aliceblue;
 }
