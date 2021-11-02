@@ -14,6 +14,12 @@ module.exports = {
             template: 'public/maze.html',
             filename: 'maze.html',
             title: 'maze'
+        },
+        guide: {
+            entry: 'src/guide.js',
+            template: 'public/guide.html',
+            filename: 'guide.html',
+            title: 'guide'
         }
     },
     pluginOptions: {

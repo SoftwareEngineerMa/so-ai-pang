@@ -152,7 +152,11 @@ export default {
     },
     openDoc() {
       console.log("新手引导");
-      this.inDoc = true
+      this.inDoc = true;
+      ipcRenderer.send("guide-open")
+      ipcRenderer.on("closedGuide", () => {
+        this.inDoc = false;
+      })
     },
     closeMenu() {
       this.showMenu = !this.showMenu;
@@ -253,9 +257,9 @@ export default {
     },
     inDoc: function(val) {
       if(val) {
-        document.getElementById('li-doc').style.backgroundImage = "url('./static/assets/icons/doc-h.png')"
+        document.getElementById('li-doc').style.backgroundImage = "url('./static/icons/doc-h.png')"
       } else {
-        document.getElementById('li-doc').style.backgroundImage = "url('./static/assets/icons/doc.png')"
+        document.getElementById('li-doc').style.backgroundImage = "url('./static/icons/doc.png')"
       }
     },
     today: function() {
