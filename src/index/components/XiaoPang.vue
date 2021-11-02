@@ -4,7 +4,7 @@
     <div class="xiao-pang">
       <img id="img1" :src="`./static/actions/${defaultPic}.gif`" alt="">
       <img id="img2" :src="`./static/actions/${defaultPic2}.gif`" alt="">
-      <div id="eyes" @mousemove="eyeRotate" @mouseout="eyeOut"></div>
+      <div id="eyes" @mousemove="eyeRotate" @mouseout="eyeOut" :style="{ width: eyesWidth +'px', height: eyesHeight + 'px' }"></div>
     </div>
     <div class="hide" @click="hide">
     </div>
@@ -37,6 +37,11 @@ import dateJson from '../../assets/json/date.json'
 import randomJson from '../../assets/json/random.json'
 // import expressionJson from '../../assets/json/expression.json'
 
+
+// 修改眼球转动图片大小
+const eyeWidth = 145;
+const eyeHeight = eyeWidth * 278 / 174;
+
 export default {
   name: "XiaoPang",
   data() {
@@ -67,21 +72,23 @@ export default {
       img1: null,
       img2: null,
       eyes: null,
+      eyesWidth: eyeWidth,
+      eyesHeight: eyeHeight,
       eyeCenter: {x: 88, y: 68},
       eyePosMap: new Map([
         [1, {x: 0, y: 0}],
-        [2, {x: -174,y: 0}],
-        [3, {x: -348, y: 0}],
-        [4, {x: -522, y: 0}],
-        [5, {x: -696, y: 0}],
-        [6, {x: 0, y: -278}],
-        [7, {x: -174, y: -278}],
-        [8, {x: -348, y: -278}],
-        [9, {x: -522, y: -278}],
-        [10,{x: -696, y: -278}],
-        [11,{x: 0, y:-556}],
-        [12,{x: -174, y:-556}],
-        [13, {x: -348, y: -556}]
+        [2, {x: eyeWidth * -1,y: 0}],
+        [3, {x: eyeWidth * -2, y: 0}],
+        [4, {x: eyeWidth * -3, y: 0}],
+        [5, {x: eyeWidth * -4, y: 0}],
+        [6, {x: 0, y: eyeHeight * -1}],
+        [7, {x: eyeWidth * -1, y: eyeHeight * -1}],
+        [8, {x: eyeWidth * -2, y: eyeHeight * -1}],
+        [9, {x: eyeWidth * -3, y: eyeHeight * -1}],
+        [10,{x: eyeWidth * -4, y: eyeHeight * -1}],
+        [11,{x: 0, y:eyeHeight * -2}],
+        [12,{x: eyeWidth * -1, y:eyeHeight * -2}],
+        [13, {x: eyeWidth * -2, y: eyeHeight * -2}]
       ]),
 
       year: null,
@@ -553,11 +560,11 @@ export default {
   opacity: 0;
   background-image: url('../../assets/eye/eye.png');
   background-size: 500% 300%;
-  top: 0;
+  top: 50%;
   left:50%;
-  transform: translateX(-50%);
-  width: 174px;
-  height: 278px;
+  transform: translate(-50%, -50%);
+  /* width: 174px;
+  height: 278px; */
 }
 
 </style>
