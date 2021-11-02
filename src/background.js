@@ -113,7 +113,7 @@ function createGuideWindow() {
     y: screenSize.height * 0.1,
     width: screenSize.width * 0.5,
     height: screenSize.width * 0.5,
-    frame: false,// 无边框
+    frame: true,// 无边框
     transparent: true,  // 透明
     titleBarStyle: 'hidden',
     skipTaskbar: true, // 取消默认任务栏展示，后面initTrayIcon设置了右侧任务栏图标展示
