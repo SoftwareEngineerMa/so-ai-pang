@@ -8,7 +8,6 @@ import { from } from 'rxjs';
 import setupCamera from '../utils/setCamera';
 import detectFace from '../utils/facedetect';
 
-import Stats from 'stats.js';
 
 
 
@@ -98,19 +97,13 @@ class Maze{
     
     hxpSleep = false;
 
-    stats = null;
-
     awardNum = 0;
 
 
     constructor() {
-        this.stats = new Stats();
-        this.stats.showPanel(0);  //显示fps
-        this.stats.domElement.style.left= '200px';
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(this.renderer.domElement);
-        document.body.appendChild( this.stats.dom );
 
         this.scene = new THREE.Scene();
         this.gameStatus = 'init';
