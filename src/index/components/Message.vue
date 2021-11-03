@@ -14,11 +14,13 @@ export default {
     }
   },
   watch: {
-    message() {
+    message(val) {
+      if(val) {
         this.msgBox.style.opacity = '1'
         setTimeout(() => {
           this.msgBox.style.opacity = '0'
         }, this.message[1] * 1000)
+      }
     }
   },
   mounted() {
@@ -34,7 +36,7 @@ export default {
 .message {
   /* border: 1px solid red; */
   padding: 10px;
-  max-width: 124px;
+  max-width: 140px;
   font-size: 12px;
   color: #333;
   background-color: #FFF2BB;
