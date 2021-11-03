@@ -466,7 +466,7 @@ export default {
 .xiao-pang {
   width: 283px;
   height: 283px;
-  opacity: 1;
+  /* opacity: 1; */
   /* border: 1px solid red; */
 
 }
