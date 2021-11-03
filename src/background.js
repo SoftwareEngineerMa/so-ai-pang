@@ -85,10 +85,8 @@ function createMazeWindow() {
   let screenSize = screen.getPrimaryDisplay().workAreaSize;
   console.log(screenSize);
   maze = new BrowserWindow({
-    x: screenSize.width * 0.1,
-    y: screenSize.height * 0.1,
-    width: screenSize.width * 0.9,
-    height: screenSize.height * 1,
+    width: screenSize.width,
+    height: screenSize.height,
     frame: true,// 无边框
     transparent: false,  // 透明
     titleBarStyle: 'hidden',
@@ -111,13 +109,11 @@ function createMazeWindow() {
 
 function createGuideWindow() {
   let screenSize = screen.getPrimaryDisplay().workAreaSize;
-  console.log(screenSize);
-  console.log(screenSize.width * 0.5, screenSize.width * 0.3675);
   guide = new BrowserWindow({
-    x: screenSize.width * 0.1,
-    y: screenSize.height * 0.1,
-    width: screenSize.width * 0.5,
-    height: screenSize.width * 0.5,
+    x: screenSize.width * 0.3,
+    y: screenSize.height * 0.5 - screenSize.width * 0.2,
+    width: screenSize.width * 0.4,
+    height: screenSize.width * 0.4,
     frame: false,// 无边框
     transparent: true,  // 透明
     skipTaskbar: true, // 取消默认任务栏展示，后面initTrayIcon设置了右侧任务栏图标展示

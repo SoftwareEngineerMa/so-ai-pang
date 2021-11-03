@@ -423,15 +423,15 @@ export default {
           this.action.action = this.action.action || 'think'
           this.msg = [this.action.text, this.action.duration]
           this.img2.src = `./static/actions/${this.action.action}.gif`
-          this.img1.style.opacity = 0
-          this.img2.style.opacity = 1
+          this.img1.style.display = 'none'
+          this.img2.style.display = 'block'
           this.activeTimer = setTimeout(() => {
             if (this.hm === 1200) {
               this.hide()
               return
             }
-            this.img1.style.opacity = 1
-            this.img2.style.opacity = 0
+            this.img1.style.display = 'block'
+            this.img2.style.display = 'none'
             this.action = []
           }, this.action.duration * 1000)
         }
@@ -477,15 +477,7 @@ export default {
   /* transition: opacity 1s; */
   /* border: 1px solid red; */
 }
-.xiao-pang #img1 {
-  opacity: 1;
-}
-.xiao-pang #img2 {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  opacity: 0;
-}
+
 /* 菜单 */
 .hide, .menu-list, .open-menu {
   position: absolute;
