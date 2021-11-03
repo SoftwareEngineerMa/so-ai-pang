@@ -36,7 +36,7 @@ async function createMainWindow() {
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
+    // if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app')
     win.loadURL('app://./index.html')
@@ -53,7 +53,7 @@ async function createMainWindow() {
   })
 
   if (process.platform === 'darwin') {
-    app.dock.setIcon(path.join(__dirname, './favicon.ico'));
+    app.dock.setIcon(path.join(__dirname, './favicon.icns'));
   }
 }
 
@@ -68,7 +68,6 @@ function initTrayIcon () {
       label: '退出', click: function () {
         win.destroy()
         app.quit()
-
       }
     }
   ])
@@ -102,7 +101,7 @@ function createMazeWindow() {
   })
   // maze.loadURL('app://./maze.html');
   maze.loadURL('http://localhost:8080/maze.html');
-  if (!process.env.IS_TEST) maze.webContents.openDevTools()
+  // if (!process.env.IS_TEST) maze.webContents.openDevTools()
   maze.on('closed',() => {
     maze=null;
     win.webContents.send('closedGame');
