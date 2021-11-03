@@ -85,10 +85,8 @@ function createMazeWindow() {
   let screenSize = screen.getPrimaryDisplay().workAreaSize;
   console.log(screenSize);
   maze = new BrowserWindow({
-    x: screenSize.width * 0.1,
-    y: screenSize.height * 0.1,
-    width: screenSize.width * 0.9,
-    height: screenSize.height * 1,
+    width: screenSize.width,
+    height: screenSize.height,
     frame: true,// 无边框
     transparent: false,  // 透明
     titleBarStyle: 'hidden',
