@@ -109,8 +109,6 @@ function createMazeWindow() {
 
 function createGuideWindow() {
   let screenSize = screen.getPrimaryDisplay().workAreaSize;
-  console.log(screenSize);
-  console.log(screenSize.width * 0.5, screenSize.width * 0.3675);
   guide = new BrowserWindow({
     x: screenSize.width * 0.1,
     y: screenSize.height * 0.1,
