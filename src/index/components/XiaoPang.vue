@@ -344,7 +344,6 @@ export default {
     eyeOut() {
       this.eyes.style.opacity = '0';
       this.img1.style.display = 'block';
-      this.img2.style.display = 'block';
     }
   },
   watch: {
