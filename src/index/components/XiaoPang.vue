@@ -3,8 +3,7 @@
     <Message :message="msg"/>
     <div class="xiao-pang">
       <img id="img1" :src="`./static/actions/${defaultPic}.gif`" alt="">
-      <img id="img2" :src="`./static/actions/${defaultPic2}.gif`" alt="">
-      <div id="eyes" @mousemove="eyeRotate" @mouseout="eyeOut" :style="{ width: eyesWidth +'px', height: eyesHeight + 'px' }"></div>
+      <div v-if="eyeShow" id="eyes" @mousemove="eyeRotate" @mouseout="eyeOut" :style="{ width: eyesWidth +'px', height: eyesHeight + 'px' }"></div>
     </div>
     <div class="hide" @click="hide">
     </div>
@@ -41,14 +40,14 @@ import gestureJson from '../../assets/json/gesture';
 import dateJson from '../../assets/json/date.json'
 import randomJson from '../../assets/json/random.json'
 // import expressionJson from '../../assets/json/expression.json'
-
+// import Vue from 'vue'
 
 export default {
   name: "XiaoPang",
   data() {
     return {
       defaultPic: 'think',
-      defaultPic2: 'think',
+      // defaultPic2: 'think',
       random_time: [11, 15, 16, 18],  // 出随机文案的时间节点
       emotionList: [
         { name: 'happy', value: 0 },
@@ -71,7 +70,7 @@ export default {
       activeTime: null,
       handPose: '',
       img1: null,
-      img2: null,
+
       eyes: null,
       eyesWidth: eyeWidth,
       eyesHeight: eyeHeight,
@@ -110,7 +109,11 @@ export default {
       inCamera: false,
       inDoc: false,
       mediaStreamTrack: null,
-      video: null
+      video: null,
+
+      dayJsonList: [],
+      dayJsonListLength: 0,
+      keydownIndex: 0
     }
   },
   components: { Message },
@@ -123,6 +126,17 @@ export default {
     ipcRenderer.on('gameHasOpenCamera', () => {
       if(!this.inCamera) {
         this.openCamera()
+      }
+    })
+
+    // 快捷键M 设置了循环播放一天的交互动作，展示用
+    this.initDateJsonList()
+    document.addEventListener('keydown', (e) => {
+      if(e.code === 'KeyM' && _this.dayJsonList) {
+        _this.action = _this.dayJsonList[_this.keydownIndex++]
+        if(_this.keydownIndex >= _this.dayJsonListLength) {
+          _this.keydownIndex = 0
+        }
       }
     })
 
@@ -141,6 +155,14 @@ export default {
     requestAnimationFrame(this.loop)
   },
   methods: {
+    initDateJsonList() {
+      const DATE = new Date()
+      this.date = DATE.getFullYear() + '-' + this.fillZero(DATE.getMonth() + 1) + '-' +  this.fillZero(DATE.getDate())    // 2021-10-20
+      this.today = DATE.getDay() > 0 && DATE.getDay() < 6 ? 'workdays' : 'weekends' // 工作日or周末
+      console.log('this.date:', this.date)
+      this.dayJsonList = Object.values(this.dateJson[this.today][this.date])
+      this.dayJsonListLength = this.dayJsonList.length
+    },
     hide() {
       ipcRenderer.send("window-min");
     },
@@ -194,7 +216,7 @@ export default {
     },
     init() {
       this.img1 = document.getElementById('img1')
-      this.img2 = document.getElementById('img2')
+      // this.img2 = document.getElementById('img2')
       this.eyes = document.getElementById('eyes')
       this.initGesture()
     },
@@ -336,7 +358,6 @@ export default {
 
     eyeRotate(ev) {
       this.img1.style.display = 'none';
-      this.img2.style.display = 'none';
       this.eyes.style.opacity = '1';
       this.eyesMoveHandle(ev);
     },
@@ -416,23 +437,31 @@ export default {
     },
     action: {
       deep: true,
+      immediate: true,
       handler: function() {
         if(this.action && this.action.action) {
           clearTimeout(this.activeTimer)
           this.action.action = this.action.action || 'think'
-          this.msg = [this.action.text, this.action.duration]
-          this.img2.src = `./static/actions/${this.action.action}.gif`
-          this.img1.style.display = 'none'
-          this.img2.style.display = 'block'
-          this.activeTimer = setTimeout(() => {
-            if (this.hm === 1200) {
-              this.hide()
-              return
-            }
-            this.img1.style.display = 'block'
-            this.img2.style.display = 'none'
-            this.action = []
-          }, this.action.duration * 1000)
+          this.img1.src = `./static/actions/${this.action.action}.gif`
+          // 图片加载需要时间，不用onload的话，文本和图片显示有时间差
+          this.img1.onload = () => {
+            this.msg = [this.action.text, this.action.duration];
+            // this.img1.style.display = 'none'
+            // this.img2.style.display = 'block'
+            this.activeTimer = setTimeout(() => {
+              if (this.hm === 1200) {
+                this.hide()
+                return
+              }
+              // this.img1.style.display = 'block'
+              // this.img2.style.display = 'none'
+              this.img1.src = `./static/actions/${this.defaultPic}.gif`
+              this.msg = []
+              this.action = []
+            }, this.action.duration * 1000)
+
+            this.img1.onload = null
+          }
         }
     }},
     handPose: function(val) {

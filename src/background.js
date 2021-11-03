@@ -36,7 +36,7 @@ async function createMainWindow() {
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
+    // if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app')
     win.loadURL('app://./index.html')
@@ -68,7 +68,6 @@ function initTrayIcon () {
       label: '退出', click: function () {
         win.destroy()
         app.quit()
-
       }
     }
   ])
@@ -116,7 +115,8 @@ function createGuideWindow() {
     height: screenSize.width * 0.4,
     frame: false,// 无边框
     transparent: true,  // 透明
-    skipTaskbar: true, // 取消默认任务栏展示，后面initTrayIcon设置了右侧任务栏图标展示
+    titleBarStyle: 'hidden',
+    icon: path.join(__dirname, './favicon.ico'),
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),
