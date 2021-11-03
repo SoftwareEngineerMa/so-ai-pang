@@ -110,10 +110,10 @@ function createMazeWindow() {
 function createGuideWindow() {
   let screenSize = screen.getPrimaryDisplay().workAreaSize;
   guide = new BrowserWindow({
-    x: screenSize.width * 0.1,
-    y: screenSize.height * 0.1,
-    width: screenSize.width * 0.5,
-    height: screenSize.width * 0.5,
+    x: screenSize.width * 0.3,
+    y: screenSize.height * 0.5 - screenSize.width * 0.2,
+    width: screenSize.width * 0.4,
+    height: screenSize.width * 0.4,
     frame: false,// 无边框
     transparent: true,  // 透明
     skipTaskbar: true, // 取消默认任务栏展示，后面initTrayIcon设置了右侧任务栏图标展示
