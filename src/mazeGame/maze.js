@@ -8,10 +8,6 @@ import { from } from 'rxjs';
 import setupCamera from '../utils/setCamera';
 import detectFace from '../utils/facedetect';
 
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 
 
 import { ipcRenderer } from "electron";
@@ -100,10 +96,6 @@ class Maze{
     
     hxpSleep = false;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> master
     awardNum = 0;
 
     constructor() {
