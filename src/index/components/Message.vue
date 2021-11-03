@@ -16,9 +16,9 @@ export default {
   watch: {
     message(val) {
       if(val) {
-        this.msgBox.style.opacity = '1'
+        this.msgBox.style.display = 'block'
         setTimeout(() => {
-          this.msgBox.style.opacity = '0'
+          this.msgBox.style.display = 'none'
         }, this.message[1] * 1000)
       }
     }
@@ -26,7 +26,7 @@ export default {
   mounted() {
     this.msgBox = document.getElementById('message')
       setTimeout(() => {
-        this.msgBox.style.opacity = '0'
+        this.msgBox.style.display = 'none'
       }, this.message[1] * 1000)
   }
 }
@@ -45,7 +45,6 @@ export default {
   right: 170px;
   top: 10px;
   z-index: 99;
-  opacity: 1;
   text-align: left;
   /* transition: opacity 3s; */
 }

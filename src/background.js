@@ -20,8 +20,8 @@ async function createMainWindow() {
   win = new BrowserWindow({
     x: screenSize.width - 400,
     y: screenSize.height - 400,
-    width: 400,
-    height: 400,
+    width: 300,
+    height: 300,
     frame: false,// 无边框
     transparent: true,  // 透明
     skipTaskbar: true, // 取消默认任务栏展示，后面initTrayIcon设置了右侧任务栏图标展示
