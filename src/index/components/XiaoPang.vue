@@ -3,7 +3,7 @@
     <Message :message="msg"/>
     <div class="xiao-pang">
       <img id="img1" :src="`./static/actions/${defaultPic}.gif`" alt="">
-      <div v-if="eyeShow" id="eyes" @mousemove="eyeRotate" @mouseout="eyeOut" :style="{ width: eyesWidth +'px', height: eyesHeight + 'px' }"></div>
+      <div id="eyes" @mousemove="eyeRotate" @mouseout="eyeOut" :style="{ width: eyesWidth +'px', height: eyesHeight + 'px' }"></div>
     </div>
     <div class="hide" @click="hide">
     </div>
@@ -216,7 +216,6 @@ export default {
     },
     init() {
       this.img1 = document.getElementById('img1')
-      // this.img2 = document.getElementById('img2')
       this.eyes = document.getElementById('eyes')
       this.initGesture()
     },
