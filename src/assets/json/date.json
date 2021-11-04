@@ -5,25 +5,15 @@
             "duration": 20,
             "text": "你也太敬业了吧！周末还来加班！让小胖陪着你吧"
         },
-        "12:00:00-13:00:00": {
+        "12:00:00": {
             "action": "enen",
             "duration": 360,
             "text": "周末更要好好吃饭哦"
-        },
-        "15:00:00": {
-            "action": "",
-            "duration": "",
-            "text": "random.json"
         },
         "17:00:00": {
             "action": "great",
             "duration": 60,
             "text": "今天就早点回去休息吧~"
-        },
-        "others": {
-            "action": "enen",
-            "duration": "",
-            "text": "幸苦了！"
         }
     },
     "workdays": {
@@ -304,7 +294,7 @@
                 "text": "呼，我爬楼上来的，勇敢胖胖，不怕困难！早上好！"
             },
             "12:00:00": {
-                "action": "",
+                "action": "enen",
                 "duration": 10,
                 "text": "小胖说：只有填满肚子，人才不会空虚。"
             },
