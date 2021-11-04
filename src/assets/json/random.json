@@ -1,5 +1,5 @@
 {
-    "total": 97,
+    "total": 96,
     "data": [
         {
             "action": "drink",
@@ -127,8 +127,8 @@
             "text": "肥宅快乐水也是水嘛～"
         },
         {
-            "action": "",
-            "duration": "",
+            "action": "drink",
+            "duration": 5.0,
             "text": "朋克养生别学我哦！"
         },
         {
@@ -162,8 +162,8 @@
             "text": "Sorry~"
         },
         {
-            "action": "",
-            "duration": "",
+            "action": "drink",
+            "duration": 3.0,
             "text": "忘记提醒你喝水了"
         },
         {
@@ -309,11 +309,11 @@
         {
             "action": "heart",
             "duration": 5.0,
-            "text": "你为什么携带易燃易爆品啊！"
+            "text": "你为什么携带易燃易爆品啊！你每爆了！"
         },
         {
-            "action": "",
-            "duration": "",
+            "action": "love",
+            "duration": 3.0,
             "text": "你美炸了你知道嘛？"
         },
         {
@@ -329,7 +329,7 @@
         {
             "action": "tired",
             "duration": 4.0,
-            "text": "Respect,你都不累的嘛？休息一下嘛~"
+            "text": "Respect，你都不累的嘛？休息一下嘛~"
         },
         {
             "action": "clap",
@@ -339,12 +339,7 @@
         {
             "action": "hehe",
             "duration": 5.0,
-            "text": "你知道我做饭用什么油嘛？——爱老虎油（I love you）"
-        },
-        {
-            "action": "",
-            "duration": "",
-            "text": "对不起，土到你了..."
+            "text": "你知道我做饭用什么油嘛？爱老虎油（I love you），土到你了吗"
         },
         {
             "action": "heart",
@@ -389,7 +384,7 @@
         {
             "action": "appear",
             "duration": 2.0,
-            "text": "-"
+            "text": "你在干嘛呢？"
         },
         {
             "action": "appear",
@@ -424,12 +419,12 @@
         {
             "action": "appear",
             "duration": 4.0,
-            "text": "3点钟方向有人偷瞄你，别问我怎么知道的~"
+            "text": "5点钟方向有人偷瞄你，别问我怎么知道的~"
         },
         {
             "action": "tired",
             "duration": 10.0,
-            "text": "-"
+            "text": "好累~~~"
         },
         {
             "action": "hi",

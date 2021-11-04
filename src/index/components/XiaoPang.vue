@@ -43,7 +43,7 @@ export default {
     return {
       defaultPic: 'think',
       // defaultPic2: 'think',
-      random_time: [11, 15, 16, 18],  // 出随机文案的时间节点
+      random_time: ['11:00:00', '15:00:00', '16:00:00', '18:00:00'],  // 出随机文案的时间节点
       emotionList: [
         { name: 'happy', value: 0 },
         { name: 'sad', value: 0 },
@@ -88,8 +88,11 @@ export default {
       video: null,
 
       dayJsonList: [],
-      dayJsonListLength: 0,
-      keydownIndex: 0
+      dayTimeIndex: 0,
+      lastIndex: null,
+
+      handPoseList: ['ok', 'shoot', 'great', 'victory', 'zhan'],
+      handPoseIndex: 0,
     }
   },
   components: { Message },
@@ -105,13 +108,30 @@ export default {
       }
     })
 
-    // 快捷键M 设置了循环播放一天的交互动作，展示用
+    // 快捷键
     this.initDateJsonList()
     document.addEventListener('keydown', (e) => {
-      if(e.code === 'KeyM' && _this.dayJsonList) {
-        _this.action = _this.dayJsonList[_this.keydownIndex++]
-        if(_this.keydownIndex >= _this.dayJsonListLength) {
-          _this.keydownIndex = 0
+      // 快捷键H 设置了循环播放一天的交互动作
+      if(e.code === 'KeyH' && _this.dayJsonList) {
+        _this.action = _this.dayJsonList[_this.dayTimeIndex++]
+        if(_this.dayTimeIndex >= _this.dayJsonList.length) {
+          _this.dayTimeIndex = 0
+        }
+      }
+      // 快捷键X 设置了循环播放一天的交互动作，展示用
+      if(e.code === 'KeyX' && _this.randomJson) {
+        let index = null
+        while(!index || index === this.lastIndex) {
+          index = Math.floor(Math.random() * this.randomJson.data.length)
+        }
+        this.lastIndex = index
+        this.action = this.randomJson.data[index]
+      }
+      // 快捷键P 设置了手势动作，展示用
+      if(e.code === 'KeyP' && _this.randomJson) {
+        this.handPose = this.handPoseList[this.handPoseIndex++]
+        if(this.handPoseIndex >= this.handPoseList.length) {
+          this.handPoseIndex = 0
         }
       }
     })
@@ -137,7 +157,6 @@ export default {
       this.today = DATE.getDay() > 0 && DATE.getDay() < 6 ? 'workdays' : 'weekends' // 工作日or周末
       console.log('this.date:', this.date)
       this.dayJsonList = Object.values(this.dateJson[this.today][this.date])
-      this.dayJsonListLength = this.dayJsonList.length
     },
     hide() {
       ipcRenderer.send("window-min");
@@ -268,6 +287,21 @@ export default {
         this.defaultPic = 'think'  
       }
     },
+    hourAction(hour) {
+      let time = hour ? hour:this.hour + ':' + '00' + ':' + '00'
+      if(this.random_time.indexOf(time) > -1) {
+        // 出自random
+        let index = Math.floor(Math.random() * this.randomJson.data.length)
+        this.action = this.randomJson.data[index]
+      } else if (this.dateJson[this.today][this.date]) {
+        // 出自date
+        if(this.today == 'workdays' && this.dateJson[this.today][this.date][time]) {
+          this.action = this.dateJson[this.today][this.date][time]
+        }else if(this.today == 'weekends' && this.dateJson[this.today][time]) {
+          this.action = this.dateJson[this.today][time]
+        }
+      } 
+    }
   },
   watch: {
     inCamera: function(val) {
@@ -295,19 +329,7 @@ export default {
     },
     hour: function() {
       // 整点动作
-      let time = this.hour + ':' + '00' + ':' + '00'
-      if(this.random_time.indexOf(Number(this.hour)) > -1) {
-        // 出自random
-        let index = Math.floor(Math.random() * this.randomJson.data.length)
-        this.action = this.randomJson.data[index]
-      } else if (this.dateJson[this.today][this.date]) {
-        // 出自date
-        if(this.today == 'workdays' && this.dateJson[this.today][this.date][time]) {
-          this.action = this.dateJson[this.today][this.date][time]
-        }else if(this.today == 'weekends' && this.dateJson[this.today][time]) {
-          this.action = this.dateJson[this.today][time]
-        }
-      } 
+      this.hourAction()
       
       // else if (this.hour === this.emotionTime) {
       //   const emotion = (this.emotionList.reduce((maxItem, item) => item.value > maxItem ? item : maxItem)).name
