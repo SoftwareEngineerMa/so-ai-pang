@@ -1075,26 +1075,6 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@tensorflow-models/blazeface@0.0.7":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@tensorflow-models/blazeface/-/blazeface-0.0.7.tgz#0a16499a0cc97fc87e11ae1f78140731c5f63bf2"
-  integrity sha512-+hInPkvHJoubfiXlmNuF3SCucZvU6W1PMC25IV99NSAftJUpKvLokfF93iX8UkOFQCXkPFbnLKacGfGlbjgvMw==
-
-"@tensorflow-models/face-landmarks-detection@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@tensorflow-models/face-landmarks-detection/-/face-landmarks-detection-0.0.3.tgz#6fdf3b49a50796acf08b7ea350f8ea5a5a45eca1"
-  integrity sha512-WFzoknHev00yEVDFDk55eKBnRDEo9EAzfi7IxxIpm+31TJfj0TX6soQPiAE/qQGoHo9MnD6CkFH189ZZuwQblw==
-  dependencies:
-    "@tensorflow-models/blazeface" "0.0.7"
-    rimraf "^3.0.2"
-
-"@tensorflow-models/handpose@^0.0.7":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@tensorflow-models/handpose/-/handpose-0.0.7.tgz#553d1bdc05dd437f6f24ea94373ec03267cb6e21"
-  integrity sha512-1JRxE2cWlxgbFogZDhqnHn1RUVsyfpAJXP6wEcO+VZ+PIllHq9eut7Ecqgs2QlsI8Tjp8V0e8VYvePV+Toln0A==
-  dependencies:
-    rimraf "^3.0.2"
-
 "@tensorflow/tfjs-backend-cpu@3.9.0":
   version "3.9.0"
   resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-backend-cpu/-/tfjs-backend-cpu-3.9.0.tgz#27ee581a4765039eb0e84d9d473b6d5f2769c813"
@@ -1372,9 +1352,9 @@
     "@types/yargs-parser" "*"
 
 "@vladmandic/face-api@^1.5.4":
-  version "1.5.4"
-  resolved "https://registry.yarnpkg.com/@vladmandic/face-api/-/face-api-1.5.4.tgz#1b3e6f0f5e4e79f7e876d5ae32703ec811952e76"
-  integrity sha512-c7JUioHosPfkDKpj6mciYCrksSokmGCuAInzG6nC94bD5PtxgWFoVHiZpgdmwgX6IIBuXWoJMA2S4IJi9SYbtw==
+  version "1.5.7"
+  resolved "https://registry.yarnpkg.com/@vladmandic/face-api/-/face-api-1.5.7.tgz#46956ff82a5f31e9d4962fefe797e614ac488455"
+  integrity sha512-qzx2yqxathsqhC6/3EjJVT4CKNW/159xsDluCK7zp5SoR5o8Ze3/uappFRaj6ityrAcpB1bsmf/OfFgPpLjUjw==
 
 "@vue/babel-helper-vue-jsx-merge-props@^1.2.1":
   version "1.2.1"
