@@ -1,4 +1,4 @@
-const faceLandmarksDetection = require('@tensorflow-models/face-landmarks-detection');
+const faceLandmarksDetection = require('../../face-landmarks-detection/dist/face-landmarks-detection.esm');
 require('@tensorflow/tfjs-backend-webgl');
 import faceshow from './faceShow';
 

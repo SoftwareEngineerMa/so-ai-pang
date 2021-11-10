@@ -1,4 +1,4 @@
-const handpose = require('@tensorflow-models/handpose');
+const handpose = require('../../handpose/dist/handpose.esm.js');
 require('@tensorflow/tfjs-backend-webgl');
 
 // import fp from './../../public/static/fingerPose/fingerpose.js';

@@ -148,7 +148,10 @@ export default {
     this.closeMenu()
       
     this.init()
-    requestAnimationFrame(this.loop)
+
+    setInterval(() => {
+      this.loop();
+    }, 100)
   },
   methods: {
     initDateJsonList() {
@@ -258,7 +261,7 @@ export default {
       if((this.hm < 1240 || this.hm > 1400) && !this.inGame && this.inCamera) {
         this.addGesture()
       }
-      requestAnimationFrame(this.loop)
+      // requestAnimationFrame(this.loop)
     },
     fillZero(num) {
       const numStr = '0' + num
@@ -351,7 +354,7 @@ export default {
       }
     },
     second: async function() {
-      if(this.second % 3 === 0) {
+      if(this.second % 2 === 0) {
         const gest = this.getGesture()
         if(gest !== 'normal') {
           this.handPose = gest

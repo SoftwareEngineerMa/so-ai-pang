@@ -1,3 +1,5 @@
 src/**/lib/*.js
-src/fingerPose/
+fingerPose/
+handpose/
+face-landmarks-detection/
 public/
