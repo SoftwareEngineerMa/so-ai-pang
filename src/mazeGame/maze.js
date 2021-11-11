@@ -10,7 +10,6 @@ import detectFace from '../utils/facedetect';
 
 
 
-
 import { ipcRenderer } from "electron";
 
 export default function getInstance() {
@@ -98,7 +97,6 @@ class Maze{
     hxpSleep = false;
 
     awardNum = 0;
-
 
     constructor() {
         this.renderer = new THREE.WebGLRenderer();
@@ -201,6 +199,9 @@ class Maze{
         this.scene.add(this.camera);
         this.light = new THREE.PointLight(0xffffff, 1);
         this.light.position.set(this.maze.dimension / 2,this.maze.dimension / 2,this.cameraDeep);
+        // 添加环境光
+        let ambLight = new THREE.AmbientLight(0xffffff, 0.3);
+        this.scene.add(ambLight);
         this.scene.add(this.light);
         this.create3DWorld();
         this.createPhysicsWorld();
@@ -410,9 +411,12 @@ class Maze{
     // 创建地板
     createFloor(texture) {
         const floorGroup = new THREE.Group();
+        const block = this.getFloorBlock(1, 1, texture, { x: 0, y: 0, z:0 });
         for (let i = 0; i < this.mazeScale * 3; i++){
             for (let j = 0; j < this.mazeScale * 3; j++){
-                floorGroup.add(this.getFloorBlock(1, 1, texture, { x: i, y: j, z:0 }));
+                const b = block.clone();
+                b.position.set(i, j, 0);
+                floorGroup.add(b);
             }
         }
         floorGroup.position.set(-7,-7,0);
@@ -422,11 +426,13 @@ class Maze{
     // 创建墙壁
     createWall(texture) {
         const wallGroup = new THREE.Group();
+        const block = this.getBoxWallBlock(1, 1, 1,texture,{ x: 0,y: 0, z: 0.5 })
         for (let i=0; i < this.maze.dimension; i++){
             for(let j=0; j < this.maze.dimension; j++){
                 if (this.maze[i][j]){
-                    const block = this.getBoxWallBlock(1, 1, 1,texture,{ x: i,y: j,z: 0.5 })
-                    wallGroup.add(block);
+                    const b = block.clone();
+                    b.position.set(i, j, 0.5);
+                    wallGroup.add(b);
                 }
             }
         }
@@ -443,11 +449,13 @@ class Maze{
 
         const logo = new THREE.TextureLoader().load('/texture/logo2.png');
         const logoMaze = generateSquareMaze(this.mazeScale);
+        const block = this.getChartletBlock(0.8, 0.8, logo, {x: 0, y: 0, z: 0});
         for (let i=0; i < logoMaze.dimension; i++) {
             for (let j=0; j < logoMaze.dimension; j++) {
                 if (!this.maze[i][j] && logoMaze[i][j]) {
-                    const block = this.getChartletBlock(0.8, 0.8, logo, {x: i, y: j, z: 0});
-                    chartletGroup.add(block);
+                    const b = block.clone();
+                    b.position.set(i, j, 0);
+                    chartletGroup.add(b);
                 } 
             }
         }
@@ -464,12 +472,14 @@ class Maze{
     // 创建奖励
     createAward(texture) {
         const awardGroup = new THREE.Group();
+        const block = this.getAwardBlock(texture, { x: 0, y: 0, z: 0.7});
         awardGroup.name = 'award';
         for (let i=0; i < this.award.dimension; i++) {
             for(let j=0; j < this.award.dimension; j++) {
                 if (!this.maze[i][j] && this.award[i][j]) {
-                    const block = this.getAwardBlock(texture, { x: i, y: j, z: 0.7});
-                    awardGroup.add(block);
+                    const b = block.clone();
+                    b.position.set(i, j, 0.7);
+                    awardGroup.add(b);
                 }
             }
         }
@@ -506,7 +516,7 @@ class Maze{
 
     // 创建贴图块
     getChartletBlock(width, height,texture, {x, y, z}) {
-        console.log(texture);
+        // console.log(texture);
         const chartlet = new THREE.PlaneGeometry(width, height);
         const chartletM = new THREE.MeshPhongMaterial({ map: texture, transparent:true, opacity:1});
         const mesh = new THREE.Mesh(chartlet, chartletM);

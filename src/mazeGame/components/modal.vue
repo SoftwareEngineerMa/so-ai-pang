@@ -53,6 +53,11 @@ export default {
                 }
                 this.modalShow = true;
             })
+
+        document.addEventListener('keydown', (ev) => {
+            this.keyNext(ev);
+        })
+        
     },
     methods: {
         nextClick() {
@@ -60,6 +65,12 @@ export default {
             boardcast.next({type: bcType.HXP_REVIVE});
             boardcast.next({type: bcType.LEVEL_HIDE});
             boardcast.next({ type: bcType.VICTORY });
+        },
+
+        keyNext(ev) {
+            if (ev.keyCode === 13 && this.modalShow) {
+                this.nextClick();
+            }
         }
     }
 
@@ -85,7 +96,7 @@ export default {
 .score{
     position: absolute;
     font-family: 'Aroal Black';
-    font-size: 60px;
+    font-size: 4.5vw;
     font-weight: bolder;
     color: #f5a000;
     top: 55%;

@@ -9,13 +9,14 @@
     <hxp></hxp>
     <audio ref="bgm"></audio>
     <audio ref="coin"></audio>
+    <audio ref="footstep"></audio>
     <div v-show="bgmNShow" class="bgm-note">
         <span>是否要播放声音？</span>
         <br>
         <button @click="bgmN">否</button>
         <button @click="bgmY">是</button>
     </div>
-    <div id="face"></div>
+    <div id="face" ref="face"></div>
 </div>
 </template>
 
@@ -49,6 +50,12 @@ export default {
         Shade,
     },
     mounted: function(){
+        this.onResize();
+        window.addEventListener('resize', () => {
+            console.log('oooooo');
+            this.onResize();
+        })
+
         boardcast
             .pipe(filter(data => data.type === bcType.VICTORY))
             .subscribe(() => {
@@ -73,11 +80,11 @@ export default {
                 if (!this.soundSwitch) {
                     return;
                 }
-                this.bgmPlay().then(() => {
-                    console.log('bgm播放失败！');
-                    }).catch(() => {
-                    this.bgmNShow = true;
-                    });
+                // this.bgmPlay().then(() => {
+                //     console.log('bgm播放失败！');
+                //     }).catch(() => {
+                //     this.bgmNShow = true;
+                //     });
             })
         boardcast
             .pipe(filter(data => data.type === bcType.HINT_SHOW))
@@ -86,12 +93,29 @@ export default {
                     this.coinPlay();
                 }
             })
+        // boardcast
+        //     .pipe(filter(data => data.type === bcType.HXP_TURE_TO))
+        //     .subscribe(() => {
+        //         this.footPlay();
+        //     })
         getMaze().start();
     },
     methods: {
+        onResize() {
+            const w = window.innerHeight * 0.2;
+            if ( w < 110 ) {
+                this.$refs.face.style.display = 'none';
+                return;
+            } else {
+                this.$refs.face.style.display = 'block';
+            }
+            this.$refs.face.style.width = w + 'px';
+            this.$refs.face.style.height = w + 'px';
+        },
         bgmPlay() {
             let audioPlay = this.$refs.bgm;
-            audioPlay.src = '/bgm.mp3';
+            audioPlay.crossOrigin = 'anonymous';
+            audioPlay.src = '/bgm_.mp3';
             return audioPlay.play();
         },
 
@@ -99,6 +123,12 @@ export default {
             let coinPlay = this.$refs.coin;
             coinPlay.src = '/eat.mp3';
             coinPlay.play();
+        },
+
+        footPlay() {
+            let footstepPlay = this.$refs.footstep;
+            footstepPlay.src = '/footstep.mp3';
+            footstepPlay.play();
         },
         
         bgmN() {
