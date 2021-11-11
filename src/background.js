@@ -97,6 +97,8 @@ function createMazeWindow() {
       enableRemoteModule: true
     }
   })
+  maze.setMenu(null);  //关闭窗体顶部菜单栏
+  
   // maze.loadURL('app://./maze.html');
   maze.loadURL('http://localhost:8080/maze.html');
   if (!process.env.IS_TEST) maze.webContents.openDevTools()
