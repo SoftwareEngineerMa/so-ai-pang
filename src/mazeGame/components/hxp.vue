@@ -35,8 +35,10 @@ export default {
     },
     mounted: function() {
         this.onResize();
-        const el = document.querySelector('.hxp');
-        this.animation = new Animation(el, window.innerWidth * 0.11 * 2, 5, 6);
+        window.addEventListener('resize', () => {
+            this.onResize()
+        })
+        
         boardcast
             .pipe(filter(data => data.type === bcType.HXP_RUN))
             .subscribe(this.animation.draw);
@@ -56,8 +58,17 @@ export default {
     },
     methods: {
         onResize(){
-            this.width = window.innerWidth * 0.11 + 'px';
-            this.height = window.innerWidth * 0.11 + 'px';
+            const w = Math.floor(window.innerHeight * 0.15);
+            this.width = w + 'px';
+            this.height = w + 'px';
+            const el = document.querySelector('.hxp');
+            el.style.backgroundPosition = '0';
+            if (!this.animation) {
+                this.animation = new Animation(el, w, 5, 6);
+            } else {
+                this.animation.animationWidth = w;
+                this.animation.xpos = 0;
+            }
         },
         dealTowards(axis) {
             if (this.toward === 'top') {

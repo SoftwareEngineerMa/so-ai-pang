@@ -97,9 +97,9 @@ function createMazeWindow() {
       enableRemoteModule: true
     }
   })
-  maze.loadURL('app://./maze.html');
-  // maze.loadURL('http://localhost:8080/maze.html');
-  // if (!process.env.IS_TEST) maze.webContents.openDevTools()
+  // maze.loadURL('app://./maze.html');
+  maze.loadURL('http://localhost:8080/maze.html');
+  if (!process.env.IS_TEST) maze.webContents.openDevTools()
   maze.on('closed',() => {
     maze=null;
     win.webContents.send('closedGame');

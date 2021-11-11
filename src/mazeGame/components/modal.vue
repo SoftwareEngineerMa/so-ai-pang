@@ -96,7 +96,7 @@ export default {
 .score{
     position: absolute;
     font-family: 'Aroal Black';
-    font-size: 60px;
+    font-size: 4.5vw;
     font-weight: bolder;
     color: #f5a000;
     top: 55%;
