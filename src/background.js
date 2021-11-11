@@ -115,7 +115,7 @@ function createGuideWindow() {
     height: screenSize.width * 0.4,
     frame: false,// 无边框
     transparent: true,  // 透明
-    titleBarStyle: 'hidden',
+    // titleBarStyle: 'hidden', 
     icon: path.join(__dirname, './favicon.ico'),
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
@@ -124,8 +124,8 @@ function createGuideWindow() {
       enableRemoteModule: true
     }
   })
-  guide.loadURL('app://./guide.html');
-  // guide.loadURL('http://localhost:8080/guide.html');
+  // guide.loadURL('app://./guide.html');
+  guide.loadURL('http://localhost:8080/guide.html');
   // if (!process.env.IS_TEST) guide.webContents.openDevTools()
   guide.on('closed',() => {
     guide=null;
@@ -180,11 +180,15 @@ if (isDevelopment) {
 }
 
 ipcMain.on("window-min", () => {
-  win.minimize()
+  win.minimize();
 })
 
 ipcMain.on("maze-open", () => {
-  createMazeWindow();
+  if (maze) {
+    maze.show();
+  } else {
+    createMazeWindow();
+  }
 })
 
 ipcMain.on("gameHasOpenCamera", () => {
@@ -192,7 +196,11 @@ ipcMain.on("gameHasOpenCamera", () => {
 })
 
 ipcMain.on("guide-open", () => {
-  createGuideWindow();
+  if (guide) {
+    guide.show();
+  } else {
+    createGuideWindow();
+  }
 })
 
 ipcMain.on("openCamera", () => {
