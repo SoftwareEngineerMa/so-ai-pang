@@ -1,5 +1,5 @@
 <template>
-    <div v-show="show" class="hxp" :style="{ transform: transform, width: width, height: height }"></div>
+    <div v-show="show" class="hxp" :style="{ transform: transform, width: width + 'px', height: height + 'px' }"></div>
 </template>
 
 <script>
@@ -26,6 +26,7 @@ export default {
             animation: null,
             width: 0,
             height:0,
+            winResize: true
         }
     },
     computed: {
@@ -36,7 +37,10 @@ export default {
     mounted: function() {
         this.onResize();
         window.addEventListener('resize', () => {
-            this.onResize()
+            // 如果 camera 视角高度发生变化，不允许窗口自适应
+            if (this.winResize) {
+                this.onResize();
+            }
         })
         
         boardcast
@@ -55,12 +59,21 @@ export default {
             .subscribe(() => {
                 this.show = false;
             })
+        boardcast
+            .pipe(filter(data => data.type === bcType.MAZE_SCROLL), map(data => data.value))
+            .subscribe((value) => {
+                this.onResize(Math.floor(window.innerHeight * 0.15) * 5 / value);
+                if (value !== 5) {
+                    this.winResize = false;
+                }
+            })
+
     },
     methods: {
-        onResize(){
-            const w = Math.floor(window.innerHeight * 0.15);
-            this.width = w + 'px';
-            this.height = w + 'px';
+        onResize(width){
+            const w = width ?? Math.floor(window.innerHeight * 0.15);
+            this.width = w;
+            this.height = w;
             const el = document.querySelector('.hxp');
             el.style.backgroundPosition = '0';
             if (!this.animation) {
