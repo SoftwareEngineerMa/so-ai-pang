@@ -8,7 +8,7 @@ const path = require('path')
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'app', privileges: { secure: true, standard: true } }
+  { scheme: 'app', privileges: { secure: true, standard: true, supportFetchAPI: true } }
 ])
 let win = null;
 let maze = null;
@@ -126,8 +126,8 @@ function createGuideWindow() {
       enableRemoteModule: true
     }
   })
-  // guide.loadURL('app://./guide.html');
-  guide.loadURL('http://localhost:8080/guide.html');
+  guide.loadURL('app://./guide.html');
+  // guide.loadURL('http://localhost:8080/guide.html');
   // if (!process.env.IS_TEST) guide.webContents.openDevTools()
   guide.on('closed',() => {
     guide=null;
