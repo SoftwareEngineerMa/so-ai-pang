@@ -8,7 +8,7 @@ const path = require('path')
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'app', privileges: { secure: true, standard: true } }
+  { scheme: 'app', privileges: { secure: true, standard: true, supportFetchAPI: true } }
 ])
 let win = null;
 let maze = null;
@@ -97,6 +97,8 @@ function createMazeWindow() {
       enableRemoteModule: true
     }
   })
+  maze.setMenu(null);  //关闭窗体顶部菜单栏
+  
   // maze.loadURL('app://./maze.html');
   maze.loadURL('http://localhost:8080/maze.html');
   // if (!process.env.IS_TEST) maze.webContents.openDevTools()
@@ -115,7 +117,7 @@ function createGuideWindow() {
     height: screenSize.width * 0.4,
     frame: false,// 无边框
     transparent: true,  // 透明
-    titleBarStyle: 'hidden',
+    // titleBarStyle: 'hidden', 
     icon: path.join(__dirname, './favicon.ico'),
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
@@ -124,8 +126,8 @@ function createGuideWindow() {
       enableRemoteModule: true
     }
   })
-  // guide.loadURL('app://./guide.html');
-  guide.loadURL('http://localhost:8080/guide.html');
+  guide.loadURL('app://./guide.html');
+  // guide.loadURL('http://localhost:8080/guide.html');
   // if (!process.env.IS_TEST) guide.webContents.openDevTools()
   guide.on('closed',() => {
     guide=null;
@@ -180,11 +182,15 @@ if (isDevelopment) {
 }
 
 ipcMain.on("window-min", () => {
-  win.minimize()
+  win.minimize();
 })
 
 ipcMain.on("maze-open", () => {
-  createMazeWindow();
+  if (maze) {
+    maze.show();
+  } else {
+    createMazeWindow();
+  }
 })
 
 ipcMain.on("gameHasOpenCamera", () => {
@@ -192,7 +198,11 @@ ipcMain.on("gameHasOpenCamera", () => {
 })
 
 ipcMain.on("guide-open", () => {
-  createGuideWindow();
+  if (guide) {
+    guide.show();
+  } else {
+    createGuideWindow();
+  }
 })
 
 ipcMain.on("openCamera", () => {

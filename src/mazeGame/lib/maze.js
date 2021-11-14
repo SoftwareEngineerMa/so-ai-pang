@@ -1,4 +1,5 @@
-export function generateSquareMaze(dimension) {
+// start : 小胖起点
+export function generateSquareMaze(dimension, start = {x: 1, y: 1}) {
 
     function iterate(field, x, y) {
         field[x][y] = false;
@@ -36,7 +37,7 @@ export function generateSquareMaze(dimension) {
     }
 
     // Gnerate the maze recursively.
-    field = iterate(field, 1, 1);
+    field = iterate(field, start.x, start.y);
     
     return field;
 

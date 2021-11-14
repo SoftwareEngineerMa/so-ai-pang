@@ -10,7 +10,6 @@ import detectFace from '../utils/facedetect';
 
 
 
-
 import { ipcRenderer } from "electron";
 
 export default function getInstance() {
@@ -62,7 +61,6 @@ class Maze{
 
     light;
 
-    maze;
 
     // 物理引擎
     b2World = Box2D.Dynamics.b2World;
@@ -92,6 +90,8 @@ class Maze{
 
     cameraDeep = 12;
     cameraSpeed = 0.03;
+    cameraScroll = false;
+
     moveStart = false;
 
     
@@ -99,6 +99,7 @@ class Maze{
 
     awardNum = 0;
 
+    mazeStartEnd = null;
 
     constructor() {
         this.renderer = new THREE.WebGLRenderer();
@@ -112,6 +113,10 @@ class Maze{
         window.onresize = () => {
             this.onResize();
         }
+
+        document.addEventListener('mousewheel', (ev) => {
+            this.onMouseScroll(ev);
+        })
     }
 
     async start(){
@@ -191,8 +196,30 @@ class Maze{
     }
 
     init() {
-        this.maze = generateSquareMaze(this.mazeScale);
-        this.maze[this.mazeScale - 1][this.mazeScale - 2] = false;
+        const startList = [
+            {
+                start: {x: 1, y: 1},
+                end: {x: this.mazeScale - 1, y: this.mazeScale - 2}
+            },
+            {
+                start: {x: this.mazeScale - 2, y: 1},
+                end: {x: 0, y: this.mazeScale - 2}
+            },
+            {
+                start: {x: this.mazeScale - 2, y: this.mazeScale - 2},
+                end: {x: 0, y: 1}
+            },
+            {
+                start: {x: 1, y: this.mazeScale - 2},
+                end: {x: this.mazeScale - 1, y: 1}
+            }
+        ];
+
+        const index = Math.floor((Math.random() * startList.length));
+        this.mazeStartEnd = startList[index];
+
+        this.maze = generateSquareMaze(this.mazeScale, this.mazeStartEnd.start);
+        this.maze[this.mazeStartEnd.end.x][this.mazeStartEnd.end.y] = false;
         this.award = generateSquareMaze(this.mazeScale);
         this.scene = new THREE.Scene();
         this.cameraPosition = {x: this.maze.dimension / 2, y: this.maze.dimension / 2, z: this.cameraDeep};
@@ -201,7 +228,11 @@ class Maze{
         this.scene.add(this.camera);
         this.light = new THREE.PointLight(0xffffff, 1);
         this.light.position.set(this.maze.dimension / 2,this.maze.dimension / 2,this.cameraDeep);
+        // 添加环境光
+        let ambLight = new THREE.AmbientLight(0xffffff, 0.3);
+        this.scene.add(ambLight);
         this.scene.add(this.light);
+        this.cameraScroll = false;
         this.create3DWorld();
         this.createPhysicsWorld();
         this.keyboardControl();
@@ -242,7 +273,21 @@ class Maze{
         // 判定是否胜利
         let mazeX = Math.floor(this.ballMesh.position.x + 0.5);
         let mazeY = Math.floor(this.ballMesh.position.y + 0.5);
-        if (mazeX == this.mazeScale && mazeY == this.mazeScale - 2) {
+        let endX, endY;
+        if (this.mazeStartEnd.start.x === 1 && this.mazeStartEnd.start.y === 1) {
+            endX = this.mazeStartEnd.end.x + 1;
+            endY = this.mazeStartEnd.end.y;
+        } else if (this.mazeStartEnd.start.x === this.mazeScale - 2 && this.mazeStartEnd.start.y === 1) {
+            endX = this.mazeStartEnd.end.x - 1;
+            endY = this.mazeStartEnd.end.y;
+        } else if (this.mazeStartEnd.start.x === this.mazeScale - 2 && this.mazeStartEnd.start.y === this.mazeScale - 2) {
+            endX = this.mazeStartEnd.end.x - 1;
+            endY = this.mazeStartEnd.end.y;
+        } else if (this.mazeStartEnd.start.x === 1 && this.mazeStartEnd.start.y === this.mazeScale - 2) {
+            endX = this.mazeStartEnd.end.x + 1;
+            endY = this.mazeStartEnd.end.y;
+        }
+        if (mazeX == endX && mazeY == endY) {
             this.hxpSleep = true;
             // 通知隐藏tip
             boardcast.next({ type: bcType.TIP_SHOW })
@@ -305,7 +350,7 @@ class Maze{
         const t = new THREE.TextureLoader().load('../static/img/ball.png');
         let m = new THREE.MeshPhongMaterial({ map: t });
         this.ballMesh = new THREE.Mesh(g,m);
-        this.ballMesh.position.set(1, 1, 0.25);
+        this.ballMesh.position.set(this.mazeStartEnd.start.x, this.mazeStartEnd.start.y, 0.25);
         this.scene.add(this.ballMesh);
         this.ballMesh.visible = false;
     }
@@ -318,7 +363,7 @@ class Maze{
         // Create the ball.
         let bodyDef = new this.b2BodyDef();
         bodyDef.type = this.b2Body.b2_dynamicBody;
-        bodyDef.position.Set(1, 1);
+        bodyDef.position.Set(this.mazeStartEnd.start.x, this.mazeStartEnd.start.y);
         this.wBall = this.wWorld.CreateBody(bodyDef);
         let fixDef = new this.b2FixtureDef();
         fixDef.density = 1.0;
@@ -378,9 +423,15 @@ class Maze{
         // 更新camera位置
         this.cameraPosition.x += (this.ballMesh.position.x - this.camera.position.x) * this.cameraSpeed;
         this.cameraPosition.y += (this.ballMesh.position.y - this.camera.position.y) * this.cameraSpeed;
-        this.cameraPosition.z += (5 - this.camera.position.z) * this.cameraSpeed;
+        if (!this.cameraScroll && this.cameraPosition.z - 5 > 0.00001) {
+            this.cameraPosition.z += (5 - this.camera.position.z) * this.cameraSpeed;
+        }
+        if (this.cameraPosition.z - 5 < 0.00001) {
+            this.cameraPosition.z = 5;
+            this.cameraScroll = true;
+        }
 
-        if (!this.moveStart && Math.abs(this.cameraPosition.x - 1) < 0.1) {
+        if (!this.moveStart && Math.abs(this.cameraPosition.x - this.mazeStartEnd.start.x) < 0.1) {
             this.cameraSpeed = 0.1;
             this.moveStart  = true;
             boardcast.next({ type: bcType.HXP_SHOW});
@@ -410,23 +461,28 @@ class Maze{
     // 创建地板
     createFloor(texture) {
         const floorGroup = new THREE.Group();
+        const block = this.getFloorBlock(1, 1, texture, { x: 0, y: 0, z:0 });
         for (let i = 0; i < this.mazeScale * 3; i++){
             for (let j = 0; j < this.mazeScale * 3; j++){
-                floorGroup.add(this.getFloorBlock(1, 1, texture, { x: i, y: j, z:0 }));
+                const b = block.clone();
+                b.position.set(i, j, 0);
+                floorGroup.add(b);
             }
         }
-        floorGroup.position.set(-7,-7,0);
+        floorGroup.position.set(this.mazeScale * -1,this.mazeScale * -1,0);
         return floorGroup;
     }
 
     // 创建墙壁
     createWall(texture) {
         const wallGroup = new THREE.Group();
+        const block = this.getBoxWallBlock(1, 1, 1,texture,{ x: 0,y: 0, z: 0.5 })
         for (let i=0; i < this.maze.dimension; i++){
             for(let j=0; j < this.maze.dimension; j++){
                 if (this.maze[i][j]){
-                    const block = this.getBoxWallBlock(1, 1, 1,texture,{ x: i,y: j,z: 0.5 })
-                    wallGroup.add(block);
+                    const b = block.clone();
+                    b.position.set(i, j, 0.5);
+                    wallGroup.add(b);
                 }
             }
         }
@@ -443,11 +499,13 @@ class Maze{
 
         const logo = new THREE.TextureLoader().load('/texture/logo2.png');
         const logoMaze = generateSquareMaze(this.mazeScale);
+        const block = this.getChartletBlock(0.8, 0.8, logo, {x: 0, y: 0, z: 0});
         for (let i=0; i < logoMaze.dimension; i++) {
             for (let j=0; j < logoMaze.dimension; j++) {
                 if (!this.maze[i][j] && logoMaze[i][j]) {
-                    const block = this.getChartletBlock(0.8, 0.8, logo, {x: i, y: j, z: 0});
-                    chartletGroup.add(block);
+                    const b = block.clone();
+                    b.position.set(i, j, 0);
+                    chartletGroup.add(b);
                 } 
             }
         }
@@ -464,12 +522,14 @@ class Maze{
     // 创建奖励
     createAward(texture) {
         const awardGroup = new THREE.Group();
+        const block = this.getAwardBlock(texture, { x: 0, y: 0, z: 0.7});
         awardGroup.name = 'award';
         for (let i=0; i < this.award.dimension; i++) {
             for(let j=0; j < this.award.dimension; j++) {
                 if (!this.maze[i][j] && this.award[i][j]) {
-                    const block = this.getAwardBlock(texture, { x: i, y: j, z: 0.7});
-                    awardGroup.add(block);
+                    const b = block.clone();
+                    b.position.set(i, j, 0.7);
+                    awardGroup.add(b);
                 }
             }
         }
@@ -506,7 +566,7 @@ class Maze{
 
     // 创建贴图块
     getChartletBlock(width, height,texture, {x, y, z}) {
-        console.log(texture);
+        // console.log(texture);
         const chartlet = new THREE.PlaneGeometry(width, height);
         const chartletM = new THREE.MeshPhongMaterial({ map: texture, transparent:true, opacity:1});
         const mesh = new THREE.Mesh(chartlet, chartletM);
@@ -597,6 +657,19 @@ class Maze{
             this.renderer.setSize(window.innerWidth, window.innerHeight);
             this.camera.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
+        }
+    }
+
+    onMouseScroll(ev) {
+        if (!this.cameraScroll) {
+            return 
+        }
+        if (ev.deltaY > 0 && this.cameraPosition.z < this.cameraDeep) {
+            this.cameraPosition.z += 1;
+            boardcast.next({ type: bcType.MAZE_SCROLL, value: this.cameraPosition.z })
+        } else if (ev.deltaY < 0 && this.cameraPosition.z >= 6) {
+            this.cameraPosition.z -= 1;
+            boardcast.next({ type: bcType.MAZE_SCROLL, value: this.cameraPosition.z })
         }
     }
 

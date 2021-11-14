@@ -32,7 +32,7 @@ module.exports = {
                     icon: './public/favicon256.ico'
                 },
                 mac: {
-                    icon: './public/favicon256.icns'
+                    icon: './public/Icon512.icns'
                 }
            }
         }
