@@ -29,7 +29,7 @@ module.exports = {
                 appId: 'hxppet',
                 productName: '黄小胖',
                 win: {
-                    icon: './public/favicon256.ico'
+                    icon: './public/favicon256new.ico'
                 },
                 mac: {
                     icon: './public/Icon512.icns'
