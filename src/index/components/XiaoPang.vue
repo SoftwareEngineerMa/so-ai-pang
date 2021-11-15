@@ -109,33 +109,8 @@ export default {
     })
 
     // 快捷键
-    this.initDateJsonList()
-    document.addEventListener('keydown', (e) => {
-      // 快捷键H 设置了循环播放一天的交互动作
-      if(e.code === 'KeyH' && _this.dayJsonList) {
-        _this.action = _this.dayJsonList[_this.dayTimeIndex++]
-        if(_this.dayTimeIndex >= _this.dayJsonList.length) {
-          _this.dayTimeIndex = 0
-        }
-      }
-      // 快捷键X 设置了循环播放一天的交互动作，展示用
-      if(e.code === 'KeyX' && _this.randomJson) {
-        let index = null
-        while(!index || index === this.lastIndex) {
-          index = Math.floor(Math.random() * this.randomJson.data.length)
-        }
-        this.lastIndex = index
-        this.action = this.randomJson.data[index]
-      }
-      // 快捷键P 设置了手势动作，展示用
-      if(e.code === 'KeyP' && _this.randomJson) {
-        this.handPose = this.handPoseList[this.handPoseIndex++]
-        if(this.handPoseIndex >= this.handPoseList.length) {
-          this.handPoseIndex = 0
-        }
-      }
-    })
-
+    this.initQuickKey()
+ 
     this.video = document.getElementById('video')
     await this.openCamera()
     
@@ -154,12 +129,41 @@ export default {
     }, 100)
   },
   methods: {
-    initDateJsonList() {
+    initQuickKey() {
       const DATE = new Date()
       this.date = DATE.getFullYear() + '-' + this.fillZero(DATE.getMonth() + 1) + '-' +  this.fillZero(DATE.getDate())    // 2021-10-20
       this.today = DATE.getDay() > 0 && DATE.getDay() < 6 ? 'workdays' : 'weekends' // 工作日or周末
       console.log('this.date:', this.date)
-      this.dayJsonList = Object.values(this.dateJson[this.today][this.date])
+      if(this.today === 'workdays') {
+        this.dayJsonList = Object.values(this.dateJson[this.today][this.date])
+    
+        const _this = this
+        document.addEventListener('keydown', (e) => {
+          // 快捷键H 设置了循环播放一天的交互动作
+          if(e.code === 'KeyH' && _this.dayJsonList) {
+            _this.action = _this.dayJsonList[_this.dayTimeIndex++]
+            if(_this.dayTimeIndex >= _this.dayJsonList.length) {
+              _this.dayTimeIndex = 0
+            }
+          }
+          // 快捷键X 设置了循环播放一天的交互动作，展示用
+          if(e.code === 'KeyX' && _this.randomJson) {
+            let index = null
+            while(!index || index === this.lastIndex) {
+              index = Math.floor(Math.random() * this.randomJson.data.length)
+            }
+            this.lastIndex = index
+            this.action = this.randomJson.data[index]
+          }
+          // 快捷键P 设置了手势动作，展示用
+          if(e.code === 'KeyP' && _this.randomJson) {
+            this.handPose = this.handPoseList[this.handPoseIndex++]
+            if(this.handPoseIndex >= this.handPoseList.length) {
+              this.handPoseIndex = 0
+            }
+          }
+        })
+      }
     },
     hide() {
       ipcRenderer.send("window-min");

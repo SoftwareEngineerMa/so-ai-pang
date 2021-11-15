@@ -89,7 +89,7 @@ function createMazeWindow() {
     frame: true,// 无边框
     transparent: false,  // 透明
     titleBarStyle: 'hidden',
-    icon: path.join(__dirname, './favicon.ico'),
+    icon: path.join(__dirname, './favicon256new.ico'),
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),
@@ -118,7 +118,7 @@ function createGuideWindow() {
     frame: false,// 无边框
     transparent: true,  // 透明
     // titleBarStyle: 'hidden', 
-    icon: path.join(__dirname, './favicon.ico'),
+    icon: path.join(__dirname, './favicon256new.ico'),
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),
@@ -126,8 +126,8 @@ function createGuideWindow() {
       enableRemoteModule: true
     }
   })
-  guide.loadURL('app://./guide.html');
-  // guide.loadURL('http://localhost:8080/guide.html');
+  // guide.loadURL('app://./guide.html');
+  guide.loadURL('http://localhost:8080/guide.html');
   // if (!process.env.IS_TEST) guide.webContents.openDevTools()
   guide.on('closed',() => {
     guide=null;
