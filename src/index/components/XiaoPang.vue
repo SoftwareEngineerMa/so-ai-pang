@@ -1,22 +1,24 @@
 <template>
   <div id="xiaopang">
     <Message :message="msg"/>
-    <div class="xiao-pang">
-      <img id="img1" :src="`./static/actions/${defaultPic}.gif`" alt="">
-      <div id="eyes" @mousemove="eyeRotate" @mouseout="eyeOut" :style="{ width: eyesWidth +'px', height: eyesHeight + 'px' }"></div>
-    </div>
-    <div class="hide" @click="hide">
-    </div>
-    <div class="menu-list" v-show="showMenu">
-      <ul class="list">
-        <li id="li-camera" @click="openCamera"></li>
-        <li id="li-game" @click="openGame"></li>
-        <li id="li-doc" @click="openDoc"></li>
-        <li id="li-close" @click="closeMenu"></li>
-      </ul>
-    </div>
-    <div class="open-menu" v-show="!showMenu" @click="openMenu">
-      <img src="../../assets/icons/up.png" alt="">
+    <div class="wrap">
+      <div class="xiao-pang">
+        <img id="img1" :src="`./static/actions/${defaultPic}.gif`" alt="">
+        <div id="eyes" @mousemove="eyeRotate" @mouseout="eyeOut" :style="{ width: eyesWidth +'px', height: eyesHeight + 'px' }"></div>
+      </div>
+      <div class="hide" @click="hide">
+      </div>
+      <div class="menu-list" v-show="showMenu">
+        <ul class="list">
+          <li id="li-camera" @click="openCamera"></li>
+          <li id="li-game" @click="openGame"></li>
+          <li id="li-doc" @click="openDoc"></li>
+          <li id="li-close" @click="closeMenu"></li>
+        </ul>
+      </div>
+      <div class="open-menu" v-show="!showMenu" @click="openMenu">
+        <img src="../../assets/icons/up.png" alt="">
+      </div>
     </div>
     <video id="video" playsinline style="display: none;">
     </video>
@@ -26,7 +28,7 @@
 <script>
 
 // 修改眼球转动图片大小
-const eyeWidth = 130;
+const eyeWidth = 90;
 const eyeHeight = eyeWidth * 278 / 174;
 
 import { ipcRenderer } from "electron";
