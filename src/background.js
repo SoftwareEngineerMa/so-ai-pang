@@ -37,7 +37,7 @@ async function createMainWindow() {
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
+    // if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app')
     win.loadURL('app://./index.html')
@@ -129,7 +129,7 @@ function createGuideWindow() {
   })
   guide.loadURL('app://./guide.html');
   // guide.loadURL('http://localhost:8080/guide.html');
-  // if (!process.env.IS_TEST) guide.webContents.openDevTools()
+  if (!process.env.IS_TEST) guide.webContents.openDevTools()
   guide.on('closed',() => {
     guide=null;
     win.webContents.send('closedGuide');
