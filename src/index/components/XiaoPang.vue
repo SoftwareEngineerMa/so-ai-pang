@@ -510,23 +510,35 @@ export default {
   padding: 0;
 }
 #xiaopang {
-  width: 283px;
-  height: 283px;
-  position: relative;
+  /* width: 283px;
+  height: 283px; */
+  width: 250px;
+  height: 250px;
   cursor: pointer;
+  position: relative;
   -webkit-app-region: drag;
   /* border: 1px solid red; */
 }
+.wrap {
+  width: 200px;
+  height: 200px;
+  margin: 50px 0 0 50px;
+  position: relative;
+}
 .xiao-pang {
-  width: 283px;
-  height: 283px;
-  /* opacity: 1; */
+  opacity: 1;
+  /* width: 283px;
+  height: 283px; */
+  width: 200px;
+  height: 200px;
   /* border: 1px solid red; */
 
 }
 .xiao-pang > img {
-  width: 283px;
-  height: 283px;
+  /* width: 283px;
+  height: 283px; */
+  width: 200px;
+  height: 200px;
   /* transition: opacity 1s; */
   /* border: 1px solid red; */
 }
@@ -536,10 +548,14 @@ export default {
   position: absolute;
 }
 .hide {
-  top: 60px;
+  /* top: 60px;
   right: 30px;
   width: 30px;
-  height: 30px;
+  height: 30px; */
+  top: 40px;
+  right: 20px;
+  width: 20px;
+  height: 20px;
   background-image: url('../../assets/icons/min.png');
   background-size: 100%;
   -webkit-app-region: no-drag;
@@ -549,56 +565,79 @@ export default {
   background-image: url('../../assets/icons/min-h.png') !important;
 }
 .open-menu {
-  bottom: 25px;
-  right: 15px;
+  /* bottom: 25px;
+  right: 15px; */
+  bottom: 16px;
+  right: 10px;
   -webkit-app-region: no-drag;
 }
 .open-menu > img {
-  width: 48px;
-  height: 48px;
+  /* width: 48px;
+  height: 48px; */
+  width: 30px;
+  height: 30px;
 }
 .menu-list {
-  bottom: 20px;
+  /* bottom: 20px;
   right: 0;
   height: 180px;
-  width: 65px;
+  width: 65px; */
+  bottom: 18px;
+  right: 0;
+  height: 120px;
+  width: 42px;
 }
 .list {
+  position: relative;
+  background-image: url('../../assets/icons/menu-list.png');
+  background-repeat: no-repeat;
+  /* background-size: 65px 180px;
   height: 180px;
   width: 65px;
-  background-image: url('../../assets/icons/menu-list.png');
-  background-size: 65px 180px;
-  background-repeat: no-repeat;
-  position: relative;
-  padding: 6px 6px;
+  padding: 6px 6px; */
+  background-size: 42px 120px;
+  height: 120px;
+  width: 42px;
+  padding: 4px 4px;
 }
 .list > li {
   list-style: none;
-  width: 32px;
-  height: 32px;
-  background-size: 32px 32px;
   position: relative;
   -webkit-app-region: no-drag;
+  /* width: 32px;
+  height: 32px;
+  background-size: 32px 32px; */
+  width: 21px;
+  height: 21px;
+  background-size: 21px 21px;
 }
 #li-camera {
   background-image: url('../../assets/icons/camera.png');
-  margin-top: 4px;
-  margin-left: 4px;
+  /* margin-top: 4px;
+  margin-left: 4px; */
+  margin-top: 2px;
+  margin-left: 2px;
 }
 #li-game {
   background-image: url('../../assets/icons/game.png');
-  margin-top: 8px;
-  margin-left: 15px;
+  /* margin-top: 8px;
+  margin-left: 15px; */
+  margin-top: 7px;
+  margin-left: 10px;
 }
 #li-doc {
   background-image: url('../../assets/icons/doc.png');
+  /* margin-top: 8px;
+  margin-left: 16px; */
   margin-top: 8px;
-  margin-left: 16px;
+  margin-left: 10px;
 }
 #li-close {
   background-image: url('../../assets/icons/close.png');
-  margin-top: 8px;
-  margin-left: 6px;
+  /* margin-top: 8px;
+  margin-left: 6px; */
+  margin-top: 7px;
+  margin-left: 2px;
 }
 #li-camera:hover {
   background-image: url('../../assets/icons/camera-h.png') !important;
