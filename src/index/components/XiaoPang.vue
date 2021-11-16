@@ -11,9 +11,9 @@
       <div class="menu-wrap" @mouseleave="hideMenu">
         <div class="menu-list" v-show="showMenu">
           <ul class="list">
-            <li id="li-camera" @click="openCamera"></li>
-            <li id="li-game" @click="openGame"></li>
-            <li id="li-doc" @click="openDoc"></li>
+            <li id="li-camera" @click="openCamera" title="摄像头"></li>
+            <li id="li-game" @click="openGame" title="游戏"></li>
+            <li id="li-doc" @click="openDoc" title="新手引导"></li>
             <li id="li-close" @click="closeMenu"></li>
           </ul>
         </div>
@@ -100,37 +100,30 @@ export default {
     }
   },
   components: { Message },
-  async mounted() {
-    const _this = this
-    ipcRenderer.on('closedGame', () => {
-      _this.inGame = false
-      console.log('退出游戏')
-    })
-    ipcRenderer.on('gameHasOpenCamera', () => {
-      if(!this.inCamera) {
-        this.openCamera()
-      }
-    })
 
-    // 快捷键
-    this.initQuickKey()
- 
-    this.video = document.getElementById('video')
-    await this.openCamera()
+  async mounted() {
+    // 初始化
+    this.init()
+    setInterval(() => {
+      this.loop();
+    }, 100)
     
-    detectHand(this.video).then((res) => {
+    // 摄像头引导
+    const re = window.confirm("将开启摄像头，体验手势交互？（360承诺您，您的数据将始终保存在本地，不存在数据泄露问题）");
+    if(re) {
+      this.openCamera()
+    }
+
+    // 新手引导
+    this.openDoc()
+
+    // 模型加载
+    detectHand().then((res) => {
       this.predictionHand = res
       console.log('hand detect ready')
     }).catch(
       console.log('hand detect fail')
     )
-    this.closeMenu()
-      
-    this.init()
-
-    setInterval(() => {
-      this.loop();
-    }, 100)
   },
   methods: {
     initQuickKey() {
@@ -188,6 +181,7 @@ export default {
         }
         this.mediaStreamTrack.stop();
         this.inCamera = false
+        alert("摄像头已关闭，需要时，可在菜单中主动开启摄像头")
         
       } else {
         const result = await setupCamera(this.video)
@@ -197,9 +191,11 @@ export default {
           }
           this.mediaStreamTrack = result
           this.inCamera = true
+          alert("摄像头已开启，可在菜单中控制摄像头的开关")
           console.log('camera ready')
         } else {
           this.inCamera = false
+          alert("摄像头开启失败")
           console.log('camera fail')
         }
       }      
@@ -228,6 +224,21 @@ export default {
       // this.img2 = document.getElementById('img2')
       this.eyes = document.getElementById('eyes')
       this.initGesture()
+      // 快捷键
+      this.initQuickKey()
+      this.video = document.getElementById('video')
+
+      // 通信
+      const _this = this
+      ipcRenderer.on('closedGame', () => {
+        _this.inGame = false
+        console.log('退出游戏')
+      })
+      ipcRenderer.on('gameHasOpenCamera', () => {
+        if(!this.inCamera) {
+          this.openCamera()
+        }
+      })
     },
     initGesture() {
       this.gestureTotal = {
@@ -281,7 +292,7 @@ export default {
     },
     addGesture() {
       if(this.video && this.predictionHand) {
-        this.predictionHand()?.then(res => {
+        this.predictionHand(this.video)?.then(res => {
           if(res !== 'normal') {
             this.gestureTotal[res] = this.gestureTotal[res] + 1
           }
