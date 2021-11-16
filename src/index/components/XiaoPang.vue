@@ -8,16 +8,18 @@
       </div>
       <div class="hide" @click="hide">
       </div>
-      <div class="menu-list" v-show="showMenu">
-        <ul class="list">
-          <li id="li-camera" @click="openCamera"></li>
-          <li id="li-game" @click="openGame"></li>
-          <li id="li-doc" @click="openDoc"></li>
-          <li id="li-close" @click="closeMenu"></li>
-        </ul>
-      </div>
-      <div class="open-menu" v-show="!showMenu" @click="openMenu">
-        <img src="../../assets/icons/up.png" alt="">
+      <div class="menu-wrap" @mouseleave="hideMenu">
+        <div class="menu-list" v-show="showMenu">
+          <ul class="list">
+            <li id="li-camera" @click="openCamera"></li>
+            <li id="li-game" @click="openGame"></li>
+            <li id="li-doc" @click="openDoc"></li>
+            <li id="li-close" @click="closeMenu"></li>
+          </ul>
+        </div>
+        <div class="open-menu" v-show="!showMenu" @click="openMenu">
+          <img src="../../assets/icons/up.png" alt="">
+        </div>
       </div>
     </div>
     <video id="video" playsinline style="display: none;">
@@ -175,6 +177,9 @@ export default {
     },
     openMenu() {
       this.showMenu = true;
+    },
+    hideMenu() {
+      this.showMenu = false;
     },
     async openCamera() {
       if(this.inCamera) {
@@ -472,12 +477,21 @@ export default {
 .hide:hover {
   background-image: url('../../assets/icons/min-h.png') !important;
 }
+.menu-wrap {
+  position: absolute;
+  width: 40px;
+  height: 115px;
+  bottom: 20px;
+  right: 0px;
+  /* border: 1px solid red; */
+  -webkit-app-region: no-drag;
+}
 .open-menu {
   /* bottom: 25px;
   right: 15px; */
-  bottom: 16px;
+  bottom: 0px;
   right: 10px;
-  -webkit-app-region: no-drag;
+  /* -webkit-app-region: no-drag; */
 }
 .open-menu > img {
   /* width: 48px;
@@ -490,8 +504,8 @@ export default {
   right: 0;
   height: 180px;
   width: 65px; */
-  bottom: 18px;
-  right: 0;
+  bottom: -3px;
+  right: 0px;
   height: 120px;
   width: 42px;
 }
