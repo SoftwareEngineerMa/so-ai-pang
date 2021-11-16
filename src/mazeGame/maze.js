@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { generateSquareMaze } from './lib/maze'
 import Box2D from 'box2dweb/box2d.js';
 import { boardcast, bcType } from './subject';
-import { filter, delay } from 'rxjs/operators';
+import { filter, delay, map } from 'rxjs/operators';
 import { isHit } from './utils';
 import { from } from 'rxjs';
 import setupCamera from '../utils/setCamera';
@@ -101,6 +101,9 @@ class Maze{
 
     mazeStartEnd = null;
 
+    // 控制初次生成地图加载缓存
+    record = false;
+
     constructor() {
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -128,15 +131,21 @@ class Maze{
                 this.mediaStreamTrack.stop()
             }
         })
+        ipcRenderer.on('file-err', (ev, d) => {
+            console.log(d);
+        })
 
         const video = document.getElementById('video')
         this.mediaStreamTrack = await setupCamera(video)
+        boardcast.next({ type: bcType.MAZE_LOADING });
         if(this.mediaStreamTrack) {
             ipcRenderer.send('gameHasOpenCamera')
  
             // 调用人脸检测示例
             let axis = [0, 0];
             const predictionFace = await detectFace(video);
+            boardcast.next({ type: bcType.MAZE_LOADING });
+            boardcast.next({ type: bcType.MAZE_LOADING });
             setInterval(() => {
                 predictionFace().then((res) => {
                     if (res === 'normal') {
@@ -158,10 +167,22 @@ class Maze{
         } else {
             console.log('game: start camera fail')
         }
-        
+        boardcast.next({ type: bcType.MAZE_LOADING });
+        boardcast.next({ type: bcType.MAZE_LOADING });
+        boardcast.next({ type: bcType.MAZE_LOADED });
+        this.hxpSleep = true;
         boardcast
-            .pipe(filter(data => data.type === bcType.HXP_REVIVE))
-            .subscribe(() => {
+            .pipe(filter(data => data.type === bcType.HXP_REVIVE), map(data => data.value))
+            .subscribe((value) => {
+                if (value) {
+                    const data = value[Object.keys(value)[0]]
+                    this.mazeScale = data.maze.length;
+                    this.maze = data.maze;
+                    this.maze['dimension'] = this.mazeScale;
+                    this.mazeStartEnd = data.startend;
+                    this.cameraDeep = this.cameraDeep + (this.mazeScale - 11) / 2 * 1.5
+                    this.record = true;
+                }
                 this.hxpSleep = false;
             })
         requestAnimationFrame(() => {this.loop()});
@@ -177,6 +198,9 @@ class Maze{
     loop() {
         switch (this.gameStatus) {
             case 'init':
+                if (this.hxpSleep) {
+                    break;
+                }
                 this.init();
                 break;
             case 'fadein':
@@ -215,11 +239,23 @@ class Maze{
             }
         ];
 
-        const index = Math.floor((Math.random() * startList.length));
-        this.mazeStartEnd = startList[index];
+        if(!this.record) {
+            const index = Math.floor((Math.random() * startList.length));
+            this.mazeStartEnd = startList[index];
 
-        this.maze = generateSquareMaze(this.mazeScale, this.mazeStartEnd.start);
-        this.maze[this.mazeStartEnd.end.x][this.mazeStartEnd.end.y] = false;
+            this.maze = generateSquareMaze(this.mazeScale, this.mazeStartEnd.start);
+            this.maze[this.mazeStartEnd.end.x][this.mazeStartEnd.end.y] = false;
+            const d = {
+                [(this.mazeScale - 11) / 2 + 1] : {
+                    "maze": this.maze,
+                    "startend": this.mazeStartEnd,
+                }
+            }
+            ipcRenderer.send('maze-save', d);
+        } else {
+            this.record = false;
+        }
+
         this.award = generateSquareMaze(this.mazeScale);
         this.scene = new THREE.Scene();
         this.cameraPosition = {x: this.maze.dimension / 2, y: this.maze.dimension / 2, z: this.cameraDeep};

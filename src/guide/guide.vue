@@ -42,7 +42,7 @@ body {
 }
 .guide {
     border-radius: 20px;
-    background-image: url('/img/guide.png');
+    background-image: url('/img/guide_.png');
     background-size: cover;
 }
 

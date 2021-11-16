@@ -28,6 +28,7 @@ module.exports = {
             builderOptions: {
                 appId: 'hxppet',
                 productName: '黄小胖',
+                asar: false,
                 win: {
                     icon: './public/favicon256new.ico'
                 },
