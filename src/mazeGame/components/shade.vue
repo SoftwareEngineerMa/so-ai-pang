@@ -18,7 +18,7 @@
               <div class="btn" :has_record="has_record" @click="quit">退出</div>
           </div>
       </div>
-      <div v-show="!in_show" class="loading" :style="{backgroundPosition: '0 ' + loading_pos + '%'}"></div>
+      <div v-show="!in_show" class="loading" :style="{backgroundPosition: '-6px ' + loading_pos + '%'}"></div>
     </div>
 </template>
 
@@ -189,16 +189,15 @@ export default {
 
 .loading {
     position: absolute;
-    width: 50%;
-    height: 0;
+    width: 40vw;
+    height: 3.5vw;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding-bottom: 4.3%;
-    /* border-radius: 20px; */
+    border-radius: 1.75vw;
     background-image: url('../../../public/loading.png');
     background-position-y: 0%;
-    background-size: cover;
+    background-size: 103%;
     z-index: 10;
 }
 

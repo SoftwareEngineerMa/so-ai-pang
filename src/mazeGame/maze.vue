@@ -1,6 +1,5 @@
 <template>
 <div>
-    <strong v-show="levelShow"  class="level">层数：{{level}} </strong>
     <shade></shade>
     <video id="video" playsinline></video>
     <maze-modal></maze-modal>
@@ -29,7 +28,7 @@ import AwardHint from './components/awardHint.vue';
 import Hxp from './components/hxp.vue';
 import Shade from './components/shade.vue'
 import { bcType, boardcast } from './subject';
-import { filter, map } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 
 
 
@@ -37,8 +36,6 @@ export default {
     name: 'Maze',
     data: function() {
         return {
-            level: 1,
-            levelShow: false,
             bgmNShow: false,
             soundSwitch: true,
         }
@@ -59,34 +56,12 @@ export default {
                 this.$refs.face.style.display = 'none';
                 return;
             } else {
-                if (this.levelShow) {
-                    this.$refs.face.style.display = 'block';
-                }
+                
+                this.$refs.face.style.display = 'block';
+                
             }
             this.onResize();
         })
-
-        boardcast   
-            .pipe(filter(data => data.type === bcType.MAZE_LEVEL), map(data => data.value))
-            .subscribe((data) => {
-                this.level = parseInt(data);
-            })
-
-        boardcast
-            .pipe(filter(data => data.type === bcType.VICTORY))
-            .subscribe(() => {
-                this.level += 1;
-            })
-        boardcast
-            .pipe(filter(data => data.type === bcType.LEVEL_SHOW))
-            .subscribe(() => {
-                this.levelShow = true;
-            })
-        boardcast
-            .pipe(filter(data => data.type === bcType.LEVEL_HIDE))
-            .subscribe(() => {
-                this.levelShow = false;
-            }) 
         boardcast 
             .pipe(filter(data => data.type === bcType.HXP_SHOW))
             .subscribe(() => {

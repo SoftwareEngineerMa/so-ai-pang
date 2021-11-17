@@ -1,5 +1,6 @@
 <template>
 <div class="score" :show='`${tipShow}`' >
+    <strong class="level">层数：{{level}} </strong>
     <div class="aw"></div><span id='aw-num'>{{ awardNum }}</span>
     <div id='time'>{{ time }}</div>
 </div>
@@ -19,7 +20,8 @@ export default {
             minute: 0,
             second: 0,
             millisecond: 0,
-            timer: null
+            timer: null,
+            level: 1
         }     
     },
     computed: {
@@ -50,6 +52,18 @@ export default {
                     }
                     this.timer = setInterval( this.timeUpdate, 10)
                 }
+            })
+
+        boardcast   
+            .pipe(filter(data => data.type === bcType.MAZE_LEVEL), map(data => data.value))
+            .subscribe((data) => {
+                this.level = parseInt(data);
+            })
+
+        boardcast
+            .pipe(filter(data => data.type === bcType.VICTORY))
+            .subscribe(() => {
+                this.level += 1;
             })
 
         boardcast
@@ -97,7 +111,7 @@ export default {
 <style scoped>
 .score {
     position: absolute;
-    border-top-left-radius: 15px;
+    /* border-top-left-radius: 15px; */
     border-bottom-left-radius: 15px;
     text-align: center;
     font-size: 2.2vw;
@@ -120,7 +134,7 @@ export default {
 }
 
 .score #time {
-    margin-top: 21%;
+    margin-top: 19%;
     margin-right: 4%;
     font-size: 2.2vw;
     color: aliceblue;
@@ -130,7 +144,7 @@ export default {
     position: absolute;
     font-size: 1.8vw;
     font-weight: bold;
-    top: 20px;
+    top: 15px;
     right: 21%;
 }
 
@@ -140,10 +154,17 @@ export default {
     width: 10%;
     height: 0;
     padding-bottom: 10%;
-    top: 24px;
+    top: 18%;
     right: 31%;
     background-image: url('../../../public/img/aw.png');
     background-size: cover;
+}
+
+.level {
+    position: absolute;
+    display: inline-block;
+    top: 18%;
+    left: 36%
 }
 
 </style>

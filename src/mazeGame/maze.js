@@ -292,7 +292,6 @@ class Maze{
             }
             this.gameStatus = 'play';
             boardcast.next({ type: bcType.TIP_SHOW });
-            boardcast.next({ type: bcType.LEVEL_SHOW });
             if (!this.maze[1][2]) {
                 boardcast.next({ type: bcType.HXP_TURE_TO, value: [0,1]});
             } else if (!this.maze[2][1]) {
@@ -575,7 +574,7 @@ class Maze{
 
     // 创建奖励块
     getAwardBlock(texture, position) {
-        const awardG = new THREE.IcosahedronGeometry( 0.2 );
+        const awardG = new THREE.IcosahedronGeometry( 0.13 );
         const awardM = new THREE.MeshPhongMaterial({ color: '#FFE459'});
         const award = new THREE.Mesh(awardG, awardM);
         award.position.set(position.x, position.y, position.z);
