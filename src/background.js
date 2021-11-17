@@ -108,13 +108,14 @@ function createGuideWindow() {
   let screenSize = screen.getPrimaryDisplay().workAreaSize;
   guide = new BrowserWindow({
     x: screenSize.width * 0.3,
-    y: screenSize.height * 0.5 - screenSize.width * 0.2,
-    width: screenSize.width * 0.4,
-    height: screenSize.width * 0.4,
+    y: screenSize.height * 0.5 - screenSize.width * 0.3,
+    width: screenSize.width * 0.6,
+    height: screenSize.width * 0.6 * 2029 / 2757,
     frame: false,// 无边框
     transparent: true,  // 透明
     // titleBarStyle: 'hidden', 
     icon: path.join(__dirname, './Icon512.icns'),
+    resizable: false,
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),

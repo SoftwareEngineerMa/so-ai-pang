@@ -77,7 +77,7 @@ body {
 
 .p_container {
     position: absolute;
-    top: 33%;
+    top: 36%;
     left: 12%;
     color: #272727;
 }
@@ -93,7 +93,7 @@ body {
 
 .p_promise {
     position: absolute;
-    bottom: 8%;
+    bottom: 0.5%;
     left: 12%;
 }
 
@@ -105,40 +105,40 @@ body {
 
 .bang {
     display: inline-block;
-    width: 1.8vw;
-    height: 1.8vw;
+    width: 3vw;
+    height: 3vw;
     background-image: url('../../public/img/good.png');
     background-size: cover;
 }
 
 .victory {
     display: inline-block;
-    width: 1.2vw;
-    height: 1.8vw;
+    width: 2vw;
+    height: 3vw;
     background-image: url('../../public/img/victory.png');
     background-size: cover;
 }
 
 .gun {
     display: inline-block;
-    width: 2.4vw;
-    height: 1.4vw;
+    width: 3.5vw;
+    height: 2.3vw;
     background-image: url('../../public/img/gun.png');
     background-size: cover;
 }
 
 .hi {
     display: inline-block;
-    width: 1.8vw;
-    height: 1.8vw;
+    width: 3vw;
+    height: 3vw;
     background-image: url('../../public/img/hi.png');
     background-size: cover;
 }
 
 .ok {
     display: inline-block;
-    width: 1.5vw;
-    height: 1.8vw;
+    width: 2.5vw;
+    height: 3vw;
     background-image: url('../../public/img/ok.png');
     background-size: cover;
 }
