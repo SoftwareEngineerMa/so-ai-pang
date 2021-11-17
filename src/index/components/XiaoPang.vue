@@ -8,16 +8,18 @@
       </div>
       <div class="hide" @click="hide">
       </div>
-      <div class="menu-list" v-show="showMenu">
-        <ul class="list">
-          <li id="li-camera" @click="openCamera"></li>
-          <li id="li-game" @click="openGame"></li>
-          <li id="li-doc" @click="openDoc"></li>
-          <li id="li-close" @click="closeMenu"></li>
-        </ul>
-      </div>
-      <div class="open-menu" v-show="!showMenu" @click="openMenu">
-        <img src="../../assets/icons/up.png" alt="">
+      <div class="menu-wrap" @mouseleave="hideMenu">
+        <div class="menu-list" v-show="showMenu">
+          <ul class="list">
+            <li id="li-camera" @click="openCamera" title="摄像头"></li>
+            <li id="li-game" @click="openGame" title="游戏"></li>
+            <li id="li-doc" @click="openDoc" title="新手引导"></li>
+            <li id="li-close" @click="closeMenu"></li>
+          </ul>
+        </div>
+        <div class="open-menu" v-show="!showMenu" @click="openMenu">
+          <img src="../../assets/icons/up.png" alt="">
+        </div>
       </div>
     </div>
     <video id="video" playsinline style="display: none;">
@@ -122,62 +124,30 @@ export default {
     }
   },
   components: { Message },
+
   async mounted() {
-    const _this = this
-    ipcRenderer.on('closedGame', () => {
-      _this.inGame = false
-      console.log('退出游戏')
-    })
-    ipcRenderer.on('gameHasOpenCamera', () => {
-      if(!this.inCamera) {
-        this.openCamera()
-      }
-    })
-
-    // 快捷键
-    this.initDateJsonList()
-    document.addEventListener('keydown', (e) => {
-      // 快捷键H 设置了循环播放一天的交互动作
-      if(e.code === 'KeyH' && _this.dayJsonList) {
-        _this.action = _this.dayJsonList[_this.dayTimeIndex++]
-        if(_this.dayTimeIndex >= _this.dayJsonList.length) {
-          _this.dayTimeIndex = 0
-        }
-      }
-      // 快捷键X 设置了循环播放一天的交互动作，展示用
-      if(e.code === 'KeyX' && _this.randomJson) {
-        let index = null
-        while(!index || index === this.lastIndex) {
-          index = Math.floor(Math.random() * this.randomJson.data.length)
-        }
-        this.lastIndex = index
-        this.action = this.randomJson.data[index]
-      }
-      // 快捷键P 设置了手势动作，展示用
-      if(e.code === 'KeyP' && _this.randomJson) {
-        this.handPose = this.handPoseList[this.handPoseIndex++]
-        if(this.handPoseIndex >= this.handPoseList.length) {
-          this.handPoseIndex = 0
-        }
-      }
-    })
-
-    this.video = document.getElementById('video')
-    await this.openCamera()
+    // 初始化
+    this.init()
+    setInterval(() => {
+      this.loop();
+    }, 100)
     
-    detectHand(this.video).then((res) => {
+    // 摄像头引导
+    const re = window.confirm("将开启摄像头，体验手势交互？（360承诺您，您的数据将始终保存在本地，不存在数据泄露问题）");
+    if(re) {
+      this.openCamera()
+    }
+
+    // 新手引导
+    this.openDoc()
+
+    // 模型加载
+    detectHand().then((res) => {
       this.predictionHand = res
       console.log('hand detect ready')
     }).catch(
       console.log('hand detect fail')
     )
-    this.closeMenu()
-      
-    this.init()
-
-    setInterval(() => {
-      this.loop();
-    }, 100)
   },
   methods: {
     initDateJsonList() {
@@ -185,7 +155,36 @@ export default {
       this.date = DATE.getFullYear() + '-' + this.fillZero(DATE.getMonth() + 1) + '-' +  this.fillZero(DATE.getDate())    // 2021-10-20
       this.today = DATE.getDay() > 0 && DATE.getDay() < 6 ? 'workdays' : 'weekends' // 工作日or周末
       console.log('this.date:', this.date)
-      this.dayJsonList = Object.values(this.dateJson[this.today][this.date])
+      if(this.today === 'workdays') {
+        this.dayJsonList = Object.values(this.dateJson[this.today][this.date])
+    
+        const _this = this
+        document.addEventListener('keydown', (e) => {
+          // 快捷键H 设置了循环播放一天的交互动作
+          if(e.code === 'KeyH' && _this.dayJsonList) {
+            _this.action = _this.dayJsonList[_this.dayTimeIndex++]
+            if(_this.dayTimeIndex >= _this.dayJsonList.length) {
+              _this.dayTimeIndex = 0
+            }
+          }
+          // 快捷键X 设置了循环播放一天的交互动作，展示用
+          if(e.code === 'KeyX' && _this.randomJson) {
+            let index = null
+            while(!index || index === this.lastIndex) {
+              index = Math.floor(Math.random() * this.randomJson.data.length)
+            }
+            this.lastIndex = index
+            this.action = this.randomJson.data[index]
+          }
+          // 快捷键P 设置了手势动作，展示用
+          if(e.code === 'KeyP' && _this.randomJson) {
+            this.handPose = this.handPoseList[this.handPoseIndex++]
+            if(this.handPoseIndex >= this.handPoseList.length) {
+              this.handPoseIndex = 0
+            }
+          }
+        })
+      }
     },
     hide() {
       ipcRenderer.send("window-min");
@@ -196,6 +195,9 @@ export default {
     openMenu() {
       this.showMenu = true;
     },
+    hideMenu() {
+      this.showMenu = false;
+    },
     async openCamera() {
       if(this.inCamera) {
         if(this.inGame) {
@@ -203,6 +205,7 @@ export default {
         }
         this.mediaStreamTrack.stop();
         this.inCamera = false
+        alert("摄像头已关闭，需要时，可在菜单中主动开启摄像头")
         
       } else {
         const result = await setupCamera(this.video)
@@ -212,9 +215,11 @@ export default {
           }
           this.mediaStreamTrack = result
           this.inCamera = true
+          alert("摄像头已开启，可在菜单中控制摄像头的开关")
           console.log('camera ready')
         } else {
           this.inCamera = false
+          alert("摄像头开启失败")
           console.log('camera fail')
         }
       }      
@@ -242,6 +247,21 @@ export default {
       this.img1 = document.getElementById('img1')
       this.eyes = document.getElementById('eyes')
       this.initGesture()
+      // 快捷键
+      this.initQuickKey()
+      this.video = document.getElementById('video')
+
+      // 通信
+      const _this = this
+      ipcRenderer.on('closedGame', () => {
+        _this.inGame = false
+        console.log('退出游戏')
+      })
+      ipcRenderer.on('gameHasOpenCamera', () => {
+        if(!this.inCamera) {
+          this.openCamera()
+        }
+      })
     },
     initGesture() {
       this.gestureTotal = {
@@ -295,7 +315,7 @@ export default {
     },
     addGesture() {
       if(this.video && this.predictionHand) {
-        this.predictionHand()?.then(res => {
+        this.predictionHand(this.video)?.then(res => {
           if(res !== 'normal') {
             this.gestureTotal[res] = this.gestureTotal[res] + 1
           }
@@ -566,12 +586,21 @@ export default {
 .hide:hover {
   background-image: url('../../assets/icons/min-h.png') !important;
 }
+.menu-wrap {
+  position: absolute;
+  width: 40px;
+  height: 115px;
+  bottom: 20px;
+  right: 0px;
+  /* border: 1px solid red; */
+  -webkit-app-region: no-drag;
+}
 .open-menu {
   /* bottom: 25px;
   right: 15px; */
-  bottom: 16px;
+  bottom: 0px;
   right: 10px;
-  -webkit-app-region: no-drag;
+  /* -webkit-app-region: no-drag; */
 }
 .open-menu > img {
   /* width: 48px;
@@ -584,8 +613,8 @@ export default {
   right: 0;
   height: 180px;
   width: 65px; */
-  bottom: 18px;
-  right: 0;
+  bottom: -3px;
+  right: 0px;
   height: 120px;
   width: 42px;
 }
