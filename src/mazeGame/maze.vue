@@ -1,6 +1,5 @@
 <template>
 <div>
-    <strong v-show="levelShow"  class="level">层数：{{level}} </strong>
     <shade></shade>
     <video id="video" playsinline></video>
     <maze-modal></maze-modal>
@@ -17,6 +16,7 @@
         <button @click="bgmY">是</button>
     </div>
     <div id="face" ref="face"></div>
+    <div id="sound" ref="sound" @click="() => this.soundSwitch = !this.soundSwitch"></div>
 </div>
 </template>
 
@@ -36,8 +36,6 @@ export default {
     name: 'Maze',
     data: function() {
         return {
-            level: 1,
-            levelShow: false,
             bgmNShow: false,
             soundSwitch: true,
         }
@@ -50,41 +48,24 @@ export default {
         Shade,
     },
     mounted: function(){
-        this.onResize();
+
+        this.$refs.sound.style.backgroundImage = "url('/img/sound-on.png')";
+
         window.addEventListener('resize', () => {
-            console.log('oooooo');
+            if ( window.innerHeight * 0.2 < 110 ) {
+                this.$refs.face.style.display = 'none';
+                return;
+            } else {
+                
+                this.$refs.face.style.display = 'block';
+                
+            }
             this.onResize();
         })
-
-        boardcast
-            .pipe(filter(data => data.type === bcType.VICTORY))
-            .subscribe(() => {
-                this.level += 1;
-            })
-        boardcast
-            .pipe(filter(data => data.type === bcType.LEVEL_SHOW))
-            .subscribe(() => {
-                
-                this.levelShow = true;
-            })
-        boardcast
-            .pipe(filter(data => data.type === bcType.LEVEL_HIDE))
-            .subscribe(() => {
-                this.levelShow = false;
-            }) 
         boardcast 
             .pipe(filter(data => data.type === bcType.HXP_SHOW))
             .subscribe(() => {
-                console.log('hxpshow');
-                // 如果已经选择过否，则不会再弹出提示
-                if (!this.soundSwitch) {
-                    return;
-                }
-                // this.bgmPlay().then(() => {
-                //     console.log('bgm播放失败！');
-                //     }).catch(() => {
-                //     this.bgmNShow = true;
-                //     });
+                console.log('hxp show');
             })
         boardcast
             .pipe(filter(data => data.type === bcType.HINT_SHOW))
@@ -93,22 +74,14 @@ export default {
                     this.coinPlay();
                 }
             })
-        // boardcast
-        //     .pipe(filter(data => data.type === bcType.HXP_TURE_TO))
-        //     .subscribe(() => {
-        //         this.footPlay();
-        //     })
+        
+
+        
         getMaze().start();
     },
     methods: {
         onResize() {
             const w = window.innerHeight * 0.2;
-            if ( w < 110 ) {
-                this.$refs.face.style.display = 'none';
-                return;
-            } else {
-                this.$refs.face.style.display = 'block';
-            }
             this.$refs.face.style.width = w + 'px';
             this.$refs.face.style.height = w + 'px';
         },
@@ -140,6 +113,12 @@ export default {
             this.bgmPlay();
             this.bgmNShow = false;
             this.soundSwitch = true;
+        }
+    },
+
+    watch: {
+        soundSwitch(val) {
+            this.$refs.sound.style.backgroundImage = val ? "url('/img/sound-on.png')" : "url('/img/sound-off.png')";
         }
     }
 }
@@ -195,6 +174,17 @@ body{
     left: 0;
     height: 200px;
     width: 200px;
+}
+
+#sound {
+    position: absolute;
+    width: 2.5vw;
+    height: 2.5vw;
+    top: 10px;
+    left: 50%;
+    background-size: 100%;
+    transform: translateX(-50%);
+    cursor: pointer;
 }
 
 

@@ -21,7 +21,10 @@ export const bcType = {
     LEVEL_HIDE: 'level: hide',
     VICTORY: 'victory',
     MAZE_CLOSING: 'maze: closing',
-    MAZE_SCROLL: 'maze: scroll'
+    MAZE_SCROLL: 'maze: scroll',
+    MAZE_LOADING: 'maze: loading',
+    MAZE_LOADED: 'maze: loaded',
+    MAZE_LEVEL: 'maze: level'
 }
 
 
