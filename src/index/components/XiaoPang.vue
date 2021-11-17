@@ -18,7 +18,7 @@
           </ul>
         </div>
         <div class="open-menu" v-show="!showMenu" @click="openMenu">
-          <img src="../../assets/icons/up.png" alt="">
+          <img src="../../../public/static/icons/up.png" alt="">
         </div>
       </div>
     </div>
@@ -215,6 +215,7 @@ export default {
       ipcRenderer.on("closedGuide", () => {
         this.inDoc = false;
       })
+      this.closeMenu()
     },
     closeMenu() {
       this.showMenu = !this.showMenu;
@@ -480,13 +481,13 @@ export default {
   right: 20px;
   width: 20px;
   height: 20px;
-  background-image: url('../../assets/icons/min.png');
+  background-image: url('../../../public/static/icons/min.png');
   background-size: 100%;
   -webkit-app-region: no-drag;
 }
 
 .hide:hover {
-  background-image: url('../../assets/icons/min-h.png') !important;
+  background-image: url('../../../public/static/icons/min-h.png') !important;
 }
 .menu-wrap {
   position: absolute;
@@ -522,7 +523,7 @@ export default {
 }
 .list {
   position: relative;
-  background-image: url('../../assets/icons/menu-list.png');
+  background-image: url('../../../public/static/icons/menu-list.png');
   background-repeat: no-repeat;
   /* background-size: 65px 180px;
   height: 180px;
@@ -545,43 +546,43 @@ export default {
   background-size: 21px 21px;
 }
 #li-camera {
-  background-image: url('../../assets/icons/camera.png');
+  background-image: url('../../../public/static/icons/camera.png');
   /* margin-top: 4px;
   margin-left: 4px; */
   margin-top: 2px;
   margin-left: 2px;
 }
 #li-game {
-  background-image: url('../../assets/icons/game.png');
+  background-image: url('../../../public/static/icons/game.png');
   /* margin-top: 8px;
   margin-left: 15px; */
   margin-top: 7px;
   margin-left: 10px;
 }
 #li-doc {
-  background-image: url('../../assets/icons/doc.png');
+  background-image: url('../../../public/static/icons/doc.png');
   /* margin-top: 8px;
   margin-left: 16px; */
   margin-top: 8px;
   margin-left: 10px;
 }
 #li-close {
-  background-image: url('../../assets/icons/close.png');
+  background-image: url('../../../public/static/icons/close.png');
   /* margin-top: 8px;
   margin-left: 6px; */
   margin-top: 7px;
   margin-left: 2px;
 }
 #li-camera:hover {
-  background-image: url('../../assets/icons/camera-h.png') !important;
+  background-image: url('../../../public/static/icons/camera-h.png') !important;
 }
 #li-game:hover {
-  background-image: url('../../assets/icons/game-h.png') !important;
+  background-image: url('../../../public/static/icons/game-h.png') !important;
 }
 #li-doc:hover {
-  background-image: url('../../assets/icons/doc-h.png') !important;
+  background-image: url('../../../public/static/icons/doc-h.png') !important;
 }
 #li-close:hover {
-  background-image: url('../../assets/icons/close-h.png') !important;
+  background-image: url('../../../public/static/icons/close-h.png') !important;
 }
 </style>
