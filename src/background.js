@@ -47,11 +47,6 @@ async function createMainWindow() {
   win.on('ready-to-show',() => {
     win.show();
   })
-  // 当点击关闭按钮
-  win.on('close', (e) => {
-    // e.preventDefault();  // 阻止退出程序
-    // win.hide();    // 隐藏主程序窗口
-  })
 
   if (process.platform === 'darwin') {
     app.dock.setIcon(path.join(__dirname, './favicon.icns'));
@@ -129,7 +124,7 @@ function createGuideWindow() {
   })
   guide.loadURL('app://./guide.html');
   // guide.loadURL('http://localhost:8080/guide.html');
-  if (!process.env.IS_TEST) guide.webContents.openDevTools()
+  // if (!process.env.IS_TEST) guide.webContents.openDevTools()
   guide.on('closed',() => {
     guide=null;
     win.webContents.send('closedGuide');
