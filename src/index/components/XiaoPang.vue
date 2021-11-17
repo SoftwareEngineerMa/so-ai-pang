@@ -78,7 +78,7 @@ export default {
       eyes: null,
       eyesWidth: eyeWidth,
       eyesHeight: eyeHeight,
-      eyeCenter: {x: 88, y: 68},
+      eyeCenter: {x: 48, y: 35},
       eyePosMap: new Map([
         [1, {x: 0, y: 0}],
         [2, {x: eyeWidth * -1,y: 0}],
@@ -150,7 +150,7 @@ export default {
     )
   },
   methods: {
-    initDateJsonList() {
+  initQuickKey() {
       const DATE = new Date()
       this.date = DATE.getFullYear() + '-' + this.fillZero(DATE.getMonth() + 1) + '-' +  this.fillZero(DATE.getDate())    // 2021-10-20
       this.today = DATE.getDay() > 0 && DATE.getDay() < 6 ? 'workdays' : 'weekends' // 工作日or周末
@@ -343,6 +343,7 @@ export default {
 
     // 眼球转动逻辑
     eyesMoveHandle(ev) {
+      console.log(ev.offsetX, ev.offsetY);
       let offX = ev.offsetX - this.eyeCenter.x;
       let offY = ev.offsetY - this.eyeCenter.y;
       const tan = Math.abs(offX) / Math.abs(offY);
