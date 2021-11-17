@@ -47,6 +47,11 @@ async function createMainWindow() {
   win.on('ready-to-show',() => {
     win.show();
   })
+  // 当点击关闭按钮
+  win.on('close', (e) => {
+    e.preventDefault();  // 阻止退出程序
+    win.hide();    // 隐藏主程序窗口
+  })
 
   if (process.platform === 'darwin') {
     app.dock.setIcon(path.join(__dirname, './favicon.icns'));
@@ -85,7 +90,7 @@ function createMazeWindow() {
     frame: true,// 无边框
     transparent: false,  // 透明
     titleBarStyle: 'hidden',
-    icon: path.join(__dirname, './Icon512.icns'),
+    icon: path.join(__dirname, './favicon256new.ico'),
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),
@@ -114,7 +119,7 @@ function createGuideWindow() {
     frame: false,// 无边框
     transparent: true,  // 透明
     // titleBarStyle: 'hidden', 
-    icon: path.join(__dirname, './Icon512.icns'),
+    icon: path.join(__dirname, './favicon256new.ico'),
     resizable: false,
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
