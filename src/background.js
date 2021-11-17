@@ -5,6 +5,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path')
+const fs = require('fs')
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -46,11 +47,6 @@ async function createMainWindow() {
   win.on('ready-to-show',() => {
     win.show();
   })
-  // 当点击关闭按钮
-  win.on('close', (e) => {
-    e.preventDefault();  // 阻止退出程序
-    win.hide();    // 隐藏主程序窗口
-  })
 
   if (process.platform === 'darwin') {
     app.dock.setIcon(path.join(__dirname, './favicon.icns'));
@@ -89,7 +85,7 @@ function createMazeWindow() {
     frame: true,// 无边框
     transparent: false,  // 透明
     titleBarStyle: 'hidden',
-    icon: path.join(__dirname, './favicon256new.ico'),
+    icon: path.join(__dirname, './Icon512.icns'),
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),
@@ -99,8 +95,8 @@ function createMazeWindow() {
   })
   maze.setMenu(null);  //关闭窗体顶部菜单栏
   
-  // maze.loadURL('app://./maze.html');
-  maze.loadURL('http://localhost:8080/maze.html');
+  maze.loadURL('app://./maze.html');
+  // maze.loadURL('http://localhost:8080/maze.html');
   // if (!process.env.IS_TEST) maze.webContents.openDevTools()
   maze.on('closed',() => {
     maze=null;
@@ -112,13 +108,14 @@ function createGuideWindow() {
   let screenSize = screen.getPrimaryDisplay().workAreaSize;
   guide = new BrowserWindow({
     x: screenSize.width * 0.3,
-    y: screenSize.height * 0.5 - screenSize.width * 0.2,
-    width: screenSize.width * 0.4,
-    height: screenSize.width * 0.4,
+    y: screenSize.height * 0.5 - screenSize.width * 0.3,
+    width: screenSize.width * 0.6,
+    height: screenSize.width * 0.6 * 2029 / 2757,
     frame: false,// 无边框
     transparent: true,  // 透明
     // titleBarStyle: 'hidden', 
-    icon: path.join(__dirname, './favicon256new.ico'),
+    icon: path.join(__dirname, './Icon512.icns'),
+    resizable: false,
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),
@@ -126,8 +123,8 @@ function createGuideWindow() {
       enableRemoteModule: true
     }
   })
-  // guide.loadURL('app://./guide.html');
-  guide.loadURL('http://localhost:8080/guide.html');
+  guide.loadURL('app://./guide.html');
+  // guide.loadURL('http://localhost:8080/guide.html');
   // if (!process.env.IS_TEST) guide.webContents.openDevTools()
   guide.on('closed',() => {
     guide=null;
@@ -219,6 +216,19 @@ ipcMain.on("closeGameCamera", () => {
 
 ipcMain.on("guide-close", () => {
   guide.close();
+})
+
+ipcMain.on("maze-close", () => {
+  maze.close();
+})
+
+ipcMain.on('maze-save', (ev, data) => {
+  console.log('maze-save:');
+  console.log(data);
+  fs.writeFile(path.join(__dirname,'/json/maze.json'), JSON.stringify(data), (e) => {
+    maze.webContents.send('file-err',e);
+    console.log(e);
+  })
 })
 
 
