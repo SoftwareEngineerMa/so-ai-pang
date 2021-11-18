@@ -47,8 +47,8 @@ async function createMainWindow() {
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
-    await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    // if (!process.env.IS_TEST) win.webContents.openDevTools()
+    await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
+    // if (!process.env.IS_TEST) win.webContents.openDevTools();
   } else {
     createProtocol("app");
     win.loadURL("app://./index.html");
@@ -107,18 +107,18 @@ function createMazeWindow() {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-      enableRemoteModule: true
-    }
-  })
-  maze.setMenu(null);  //关闭窗体顶部菜单栏
-  
+      enableRemoteModule: true,
+    },
+  });
+  maze.setMenu(null); //关闭窗体顶部菜单栏
+
   // maze.loadURL('app://./maze.html');
-  maze.loadURL('http://localhost:8080/maze.html');
+  maze.loadURL("http://localhost:8080/maze.html");
   // if (!process.env.IS_TEST) maze.webContents.openDevTools()
-  maze.on('closed',() => {
-    maze=null;
-    win.webContents.send('closedGame');
-  })
+  maze.on("closed", () => {
+    maze = null;
+    win.webContents.send("closedGame");
+  });
 }
 
 function createGuideWindow() {
@@ -137,11 +137,11 @@ function createGuideWindow() {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-      enableRemoteModule: true
-    }
-  })
+      enableRemoteModule: true,
+    },
+  });
   // guide.loadURL('app://./guide.html');
-  guide.loadURL('http://localhost:8080/guide.html');
+  guide.loadURL("http://localhost:8080/guide.html");
   // if (!process.env.IS_TEST) guide.webContents.openDevTools()
   guide.on("closed", () => {
     guide = null;
