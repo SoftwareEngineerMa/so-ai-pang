@@ -28,9 +28,20 @@ module.exports = {
             builderOptions: {
                 appId: 'hxppet',
                 productName: '黄小胖',
-                asar: false,
+                asar: false,   
+                nsis: {
+                    oneClick: false,
+                    createDesktopShortcut: true,
+                    createStartMenuShortcut: true,
+                    allowToChangeInstallationDirectory: true, // 允许修改安装目录
+                },
                 win: {
-                    icon: './public/favicon256new.ico'
+                    icon: './public/favicon256new.ico',
+                    target: [
+                        {
+                            "target": "nsis" // 我们要的目标安装包
+                        }
+                        ]
                 },
                 mac: {
                     icon: './public/Icon512.icns'

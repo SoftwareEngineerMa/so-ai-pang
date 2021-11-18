@@ -480,6 +480,91 @@
             "action": "wen",
             "duration": 6.0,
             "text": "你知道吗？只有自己幸福了，才有能力带给被人幸福！"
+        },
+        {
+            "action": "drink",
+            "duration": 5.0,
+            "text": "喂 你是仙人掌吗都不用喝水的？"
+        },
+        {
+            "action": "drink",
+            "duration": 3.0,
+            "text": "早C（coffee）晚A(alcohol) 那下午就来杯白开水？"
+        },
+        {
+            "action": "drink",
+            "duration": 3.0,
+            "text": "怎么没见你喝水？"
+        },
+        {
+            "action": "drink",
+            "duration": 3.0,
+            "text": "啊 你嘴巴起皮了还不喝水！！！"
+        },
+        {
+            "action": "wen",
+            "duration": 3.0,
+            "text": "迷宫你闯到第几关了？"
+        },
+        {
+            "action": "wen",
+            "duration": 3.0,
+            "text": "迷宫battle一下？"
+        },
+        {
+            "action": "clap",
+            "duration": 3.0,
+            "text": "听说迷宫后面有彩蛋，去试试呗~"
+        },
+        {
+            "action": "han",
+            "duration": 3.0,
+            "text": "快动动你的小脑袋吧，脖子都僵了！"
+        },
+        {
+            "action": "jing",
+            "duration": 3.0,
+            "text": "你好像瘦了！冬天像我一样胖胖的才能御寒呀"
+        },
+        {
+            "action": "jing",
+            "duration": 3.0,
+            "text": "你怎么越来越好看了！烦人"
+        },
+        {
+            "action": "hehe",
+            "duration": 3.0,
+            "text": "你在我心里和黄小美一样好看~嘻嘻"
+        },
+        {
+            "action": "weiqu",
+            "duration": 3.0,
+            "text": "隔壁小胖跟我说你有点好看呢"
+        },
+        {
+            "action": "angry",
+            "duration": 3.0,
+            "text": "说了多少遍多喝水怎么非是不听呢！！！"
+        },
+        {
+            "action": "tired",
+            "duration": 3.0,
+            "text": "你再不活动一下颈椎要抗议啦~"
+        },
+        {
+            "action": "jing",
+            "duration": 3.0,
+            "text": "我今天竟然只喝了一杯水！饮水机我来啦！"
+        },
+        {
+            "action": "drink",
+            "duration": 3.0,
+            "text": "我新买了一些茶包，可太养生了~"
+        },
+        {
+            "action": "wen",
+            "duration": 3.0,
+            "text": "你变酷的秘籍是什么呀 悄悄告诉我嘛~"
         }
     ]
 }

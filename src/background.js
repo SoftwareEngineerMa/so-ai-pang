@@ -73,7 +73,7 @@ function initTrayIcon () {
     }
   ])
 
-  // tray.setToolTip('demo')  // 设置鼠标指针在托盘图标上悬停时显示的文本
+  tray.setToolTip('黄小胖')  // 设置鼠标指针在托盘图标上悬停时显示的文本
   tray.setContextMenu(contextMenu)  // 设置图标的内容菜单
   // 点击托盘图标，显示主窗口
   tray.on("click", () => {
