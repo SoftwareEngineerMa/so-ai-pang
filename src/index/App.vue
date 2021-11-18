@@ -1,21 +1,24 @@
 <template>
   <div id="app">
-    <XiaoPang/>
+    <XiaoPang />
   </div>
 </template>
 
 <script>
-import XiaoPang from './components/XiaoPang.vue'
+import XiaoPang from "./components/XiaoPang.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    XiaoPang
-  }
-}
+    XiaoPang,
+  },
+};
 </script>
 
 <style>
+html {
+  overflow: hidden;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
