@@ -4,11 +4,10 @@
     <div class="wrap">
       <div class="xiao-pang">
         <img id="img1" :src="`./static/actions/${defaultPic}.gif`" alt="">
-        <!-- <img id="img2" :src="`./static/actions/${defaultPic2}.gif`" alt=""> -->
       </div>
       <div class="hide" @click="hide">
       </div>
-      <div class="menu-wrap" @mouseleave="hideMenu">
+      <div class="menu-wrap" @mouseleave="closeMenu">
         <div class="menu-list" v-show="showMenu">
           <ul class="list">
             <li id="li-camera" @click="openCamera" title="摄像头"></li>
@@ -24,8 +23,6 @@
     </div>
     <video id="video" playsinline style="display: none;">
     </video>
-    <Confirm v-if="confirmShow" :text="confirmText" @cancel-click="confirmCancel" @ok-click="confirmOK"></Confirm>
-    <Alert v-if="alertShow" :text="alertText" @ok-click="alertOK"></Alert>
   </div>
 </template>
 
@@ -40,18 +37,15 @@ import detectHand from '../../utils/handdetect';
 import gestureJson from '../../assets/json/gesture';
 import dateJson from '../../assets/json/date.json'
 import randomJson from '../../assets/json/random.json'
+
 // import expressionJson from '../../assets/json/expression.json'
 // import Vue from 'vue'
-
-import Confirm from './confirm.vue'
-import Alert from './alert.vue'
 
 export default {
   name: "XiaoPang",
   data() {
     return {
       defaultPic: 'think',
-      // defaultPic2: 'think',
       random_time: ['11:00:00', '15:00:00', '16:00:00', '18:00:00'],  // 出随机文案的时间节点
       emotionList: [
         { name: 'happy', value: 0 },
@@ -74,7 +68,6 @@ export default {
       activeTime: null,
       handPose: '',
       img1: null,
-      // img2: null,
 
       year: null,
       month: null,
@@ -102,31 +95,13 @@ export default {
 
       handPoseList: ['ok', 'shoot', 'great', 'victory', 'zhan'],
       handPoseIndex: 0,
-      confirmText: '',
-      confirmShow: false,
-      alertText: '',
-      alertShow: false,
     }
   },
-  components: { Message, Confirm, Alert },
+  components: { Message },
 
   async mounted() {
     // 初始化
     this.init()
-    setInterval(() => {
-      this.loop();
-    }, 100)
-    
-    // 摄像头引导
-    this.confirm('将开启摄像头，体验手势交互？（360承诺您，您的数据将始终保存在本地，不存在数据泄露问题）', () => {
-      this.openCamera()
-      this.confirmShow = false
-    }, () => {
-      this.confirmShow = false
-    })
-
-    // 新手引导
-    this.openDoc()
 
     // 模型加载
     detectHand().then((res) => {
@@ -135,6 +110,15 @@ export default {
     }).catch(
       console.log('hand detect fail')
     )
+
+    // 开启摄像头
+    this.openCamera()
+    this.action = { 'action': 'hi', 'text': "小胖提醒您：即将开启摄像头（360承诺您，您的数据将始终保存在本地，不存在数据泄露问题）", 'duration': 4 }
+    setTimeout(() => {
+      setInterval(() => {
+        this.loop();
+      }, 100)
+    }, 5000);
   },
   methods: {
     initQuickKey() {
@@ -182,9 +166,6 @@ export default {
     openMenu() {
       this.showMenu = true;
     },
-    hideMenu() {
-      this.showMenu = false;
-    },
     async openCamera() {
       if(this.inCamera) {
         if(this.inGame) {
@@ -192,9 +173,8 @@ export default {
         }
         this.mediaStreamTrack.stop();
         this.inCamera = false
-        this.myAlert("摄像头已关闭，需要时，可在菜单中主动开启摄像头", () => {
-          this.alertShow = false;
-        })
+
+        this.action = { 'action': 'hi', 'text': "小胖提醒您：摄像头已关闭，需要时，可在菜单中主动开启摄像头", 'duration': 4 }
         
       } else {
         const result = await setupCamera(this.video)
@@ -204,15 +184,14 @@ export default {
           }
           this.mediaStreamTrack = result
           this.inCamera = true
-          this.myAlert("摄像头已开启，可在菜单中控制摄像头的开关", () => {
-            this.alertShow = false;
-          })
+          this.action = { 'action': 'hi', 'text': "小胖提醒您：摄像头已开启，可在菜单中控制摄像头的开关", 'duration': 3 }
+          setTimeout(() => {
+            this.action = { 'action': 'clap', 'text': "对我比手势：棒/耶/打抢/OK/Hi 与我互动吧！", 'duration': 4 }
+          }, 3000);
           console.log('camera ready')
         } else {
           this.inCamera = false
-          this.myAlert("摄像头开启失败", () => {
-            this.alertShow = false;
-          })
+          this.action = { 'action': 'hi', 'text': "小胖提醒您：不知什么原因，摄像头开启失败了呢，可在菜单中控制摄像头的开关哦~", 'duration': 5 }
           console.log('camera fail')
         }
       }      
@@ -221,7 +200,6 @@ export default {
     openGame() {
       console.log("进入游戏")
       this.inGame = true
-      // window.open('/maze.html')
       ipcRenderer.send("maze-open")
       this.closeMenu()
     },
@@ -235,11 +213,10 @@ export default {
       this.closeMenu()
     },
     closeMenu() {
-      this.showMenu = !this.showMenu;
+      this.showMenu = false;
     },
     init() {
       this.img1 = document.getElementById('img1')
-      // this.img2 = document.getElementById('img2')
       this.eyes = document.getElementById('eyes')
       this.initGesture()
       // 快捷键
@@ -301,7 +278,6 @@ export default {
       if((this.hm < 1240 || this.hm > 1400) && !this.inGame && this.inCamera) {
         this.addGesture()
       }
-      // requestAnimationFrame(this.loop)
     },
     fillZero(num) {
       const numStr = '0' + num
@@ -345,17 +321,6 @@ export default {
         }
       } 
     },
-    confirm(text, ok, cancel ) {
-      this.confirmShow = true;
-      this.confirmText = text;
-      this.confirmCancel = cancel;
-      this.confirmOK = ok;
-    },
-    myAlert(text, ok) {
-      this.alertShow = true;
-      this.alertText = text;
-      this.alertOK = ok;
-    }
   },
   watch: {
     inCamera: function(val) {

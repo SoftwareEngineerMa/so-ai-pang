@@ -31,7 +31,7 @@ async function createMainWindow() {
   // Create the browser window.
   win = new BrowserWindow({
     x: screenSize.width - 400,
-    y: screenSize.height - 400,
+    y: screenSize.height - 300,
     width: 300,
     height: 300,
     frame: false, // 无边框
@@ -85,7 +85,7 @@ function initTrayIcon() {
     },
   ]);
 
-  // tray.setToolTip('demo')  // 设置鼠标指针在托盘图标上悬停时显示的文本
+  tray.setToolTip('黄小胖')  // 设置鼠标指针在托盘图标上悬停时显示的文本
   tray.setContextMenu(contextMenu); // 设置图标的内容菜单
   // 点击托盘图标，显示主窗口
   tray.on("click", () => {
@@ -99,8 +99,8 @@ function createMazeWindow() {
   maze = new BrowserWindow({
     width: screenSize.width,
     height: screenSize.height,
-    frame: true, // 无边框
-    transparent: false, // 透明
+    frame: true, 
+    transparent: false, 
     titleBarStyle: "hidden",
     icon: path.join(__dirname, "./favicon256new.ico"),
     webPreferences: {
