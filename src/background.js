@@ -100,9 +100,16 @@ function createMazeWindow() {
   })
   maze.setMenu(null);  //关闭窗体顶部菜单栏
   
-  maze.loadURL('app://./maze.html');
-  // maze.loadURL('http://localhost:8080/maze.html');
-  // if (!process.env.IS_TEST) maze.webContents.openDevTools()
+  switch (process.env.NODE_ENV) {
+    case 'development':
+      maze.loadURL('http://localhost:8080/maze.html');
+      // if (!process.env.IS_TEST) maze.webContents.openDevTools()
+      break
+    case 'production':
+      maze.loadURL('app://./maze.html');
+      break
+  }
+
   maze.on('closed',() => {
     maze=null;
     win.webContents.send('closedGame');
@@ -128,9 +135,17 @@ function createGuideWindow() {
       enableRemoteModule: true
     }
   })
-  guide.loadURL('app://./guide.html');
-  // guide.loadURL('http://localhost:8080/guide.html');
-  // if (!process.env.IS_TEST) guide.webContents.openDevTools()
+
+  switch (process.env.NODE_ENV) {
+    case 'development':
+      guide.loadURL('http://localhost:8080/guide.html');
+      // if (!process.env.IS_TEST) guide.webContents.openDevTools()
+      break
+    case 'production':
+      guide.loadURL('app://./guide.html');
+      break
+  }
+
   guide.on('closed',() => {
     guide=null;
     win.webContents.send('closedGuide');
