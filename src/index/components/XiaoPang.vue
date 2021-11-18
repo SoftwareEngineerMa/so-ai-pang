@@ -24,6 +24,8 @@
     </div>
     <video id="video" playsinline style="display: none;">
     </video>
+    <Confirm v-if="confirmShow" :text="confirmText" @cancel-click="confirmCancel" @ok-click="confirmOK"></Confirm>
+    <Alert v-if="alertShow" :text="alertText" @ok-click="alertOK"></Alert>
   </div>
 </template>
 
@@ -40,6 +42,9 @@ import dateJson from '../../assets/json/date.json'
 import randomJson from '../../assets/json/random.json'
 // import expressionJson from '../../assets/json/expression.json'
 // import Vue from 'vue'
+
+import Confirm from './confirm.vue'
+import Alert from './alert.vue'
 
 export default {
   name: "XiaoPang",
@@ -97,9 +102,13 @@ export default {
 
       handPoseList: ['ok', 'shoot', 'great', 'victory', 'zhan'],
       handPoseIndex: 0,
+      confirmText: '',
+      confirmShow: false,
+      alertText: '',
+      alertShow: false,
     }
   },
-  components: { Message },
+  components: { Message, Confirm, Alert },
 
   async mounted() {
     // 初始化
@@ -109,10 +118,12 @@ export default {
     }, 100)
     
     // 摄像头引导
-    const re = window.confirm("将开启摄像头，体验手势交互？（360承诺您，您的数据将始终保存在本地，不存在数据泄露问题）");
-    if(re) {
+    this.confirm('将开启摄像头，体验手势交互？（360承诺您，您的数据将始终保存在本地，不存在数据泄露问题）', () => {
       this.openCamera()
-    }
+      this.confirmShow = false
+    }, () => {
+      this.confirmShow = false
+    })
 
     // 新手引导
     this.openDoc()
@@ -181,7 +192,9 @@ export default {
         }
         this.mediaStreamTrack.stop();
         this.inCamera = false
-        alert("摄像头已关闭，需要时，可在菜单中主动开启摄像头")
+        this.myAlert("摄像头已关闭，需要时，可在菜单中主动开启摄像头", () => {
+          this.alertShow = false;
+        })
         
       } else {
         const result = await setupCamera(this.video)
@@ -191,11 +204,15 @@ export default {
           }
           this.mediaStreamTrack = result
           this.inCamera = true
-          alert("摄像头已开启，可在菜单中控制摄像头的开关")
+          this.myAlert("摄像头已开启，可在菜单中控制摄像头的开关", () => {
+            this.alertShow = false;
+          })
           console.log('camera ready')
         } else {
           this.inCamera = false
-          alert("摄像头开启失败")
+          this.myAlert("摄像头开启失败", () => {
+            this.alertShow = false;
+          })
           console.log('camera fail')
         }
       }      
@@ -327,6 +344,17 @@ export default {
           this.action = this.dateJson[this.today][time]
         }
       } 
+    },
+    confirm(text, ok, cancel ) {
+      this.confirmShow = true;
+      this.confirmText = text;
+      this.confirmCancel = cancel;
+      this.confirmOK = ok;
+    },
+    myAlert(text, ok) {
+      this.alertShow = true;
+      this.alertText = text;
+      this.alertOK = ok;
     }
   },
   watch: {
