@@ -1,6 +1,11 @@
 <template>
   <div id="message" class="message">
       {{ message[0] }}
+      <br/>
+      <div v-show="confirm" class="cancel" @click="onCancel">Cancel</div>
+      <div v-show="confirm" class="ok" @click="onOK">OK</div>
+      <div v-show="alert" class="alertOK" @click="onAlertOK">OK</div>
+      <div></div>
   </div>
 </template>
 
@@ -10,13 +15,23 @@ export default {
   props:{ message: Array },
   data() {
     return {
-      msgBox: ''
+      msgBox: '',
+      confirm: false,
+      alert: false
     }
   },
   watch: {
     message(val) {
       if(val) {
         this.msgBox.style.display = 'block'
+        if (val[1] === 'forever') {
+          if (val[2] === 'confirm') {
+            this.confirm = true;
+          } else {
+            this.alert = true;
+          }
+          return
+        }
         setTimeout(() => {
           this.msgBox.style.display = 'none'
         }, this.message[1] * 1000)
@@ -25,9 +40,26 @@ export default {
   },
   mounted() {
     this.msgBox = document.getElementById('message')
-      setTimeout(() => {
-        this.msgBox.style.display = 'none'
-      }, this.message[1] * 1000)
+    // setTimeout(() => {
+    //   this.msgBox.style.display = 'none'
+    // }, this.message[1] * 1000)
+  },
+  methods: {
+    onCancel() {
+      this.msgBox.style.display = 'none';
+      this.confirm = false;
+      this.$emit('confirm-cancel');
+    },
+    onOK() {
+      this.confirm = false;
+      this.msgBox.style.display = 'none';
+      this.$emit('confirm-ok');
+    },
+    onAlertOK() {
+      this.alert = false;
+      this.msgBox.style.display = 'none';
+      this.$emit('alert-ok');
+    }
   }
 }
 </script>
@@ -55,6 +87,49 @@ export default {
   padding: 8px;
   max-width: 150px;
 }
+
+.ok {
+  margin-left: 5px;
+}
+
+.cancel,.ok {
+  display: inline-block;
+  width: 60px;
+  height: 20px;
+  text-align: center;
+  line-height: 20px;
+  font-weight: bold;
+  margin-top: 5px;
+  border-radius: 5px;
+  background-color: #cacbcb;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+
+.cancel:hover,.ok:hover {
+  background-color: #0c75eb;
+  color: aliceblue;
+}
+
+.alertOK {
+  width: 130px;
+  height: 20px;
+  text-align: center;
+  line-height: 20px;
+  font-weight: bold;
+  margin-top: 5px;
+  margin-left: 2px;
+  border-radius: 5px;
+  background-color: #cacbcb;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+
+.alertOK:hover {
+  background-color: #0c75eb;
+  color: aliceblue;
+}
+
 .message::after {
   content: '';
   display: block;

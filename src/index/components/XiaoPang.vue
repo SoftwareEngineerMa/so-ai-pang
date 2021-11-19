@@ -1,6 +1,6 @@
 <template>
   <div id="xiaopang">
-    <Message :message="msg"/>
+    <Message :message="msg" @confirm-cancel="msgCancel" @confirm-ok="msgOK" @alert-ok="msgAlertOK"/>
     <div class="wrap">
       <div class="xiao-pang">
         <img id="img1" :src="`./static/actions/${defaultPic}.gif`" alt="">
@@ -59,6 +59,8 @@ export default {
       showMenu: false,
       msg: ['', 0],
       action: ['hi', '你好呀，我是黄小胖~', 0],
+      // 是否允许后续动作发生（伪阻塞）
+      actionAllow: false,
 
       dateJson,
       randomJson,
@@ -112,8 +114,15 @@ export default {
     )
 
     // 开启摄像头
-    this.openCamera()
-    this.action = { 'action': 'hi', 'text': "小胖提醒您：即将开启摄像头（360承诺您，您的数据将始终保存在本地，不存在数据泄露问题）", 'duration': 4 }
+    this.confirm("开启摄像头和我互动吧!", () => {
+      this.alert('360承诺您，您的数据将始终保存在本地，不存在信息泄漏问题', () => {
+        // 允许动作发生
+        this.actionAllow = true;
+      })
+      this.openCamera();
+    }, () => {
+      this.actionAllow = true;
+    });
     setTimeout(() => {
       setInterval(() => {
         this.loop();
@@ -321,6 +330,18 @@ export default {
         }
       } 
     },
+    msgOK() {},
+    msgCancel() {},
+    msgAlertOK() {},
+    confirm(text, ok = () => {}, cancel = () => {}) {
+      this.action = { 'action': 'confirm', 'text': text, 'duration': 'forever' };
+      this.msgOK = ok;
+      this.msgCancel = cancel;
+    },
+    alert(text, ok = () => {}) {
+      this.action = { 'action': 'alert', 'text': text, 'duration': 'forever' };
+      this.msgAlertOK = ok;
+    }
   },
   watch: {
     inCamera: function(val) {
@@ -383,6 +404,18 @@ export default {
       immediate: true,
       handler: function() {
         if(this.action && this.action.action) {
+          // confirm设置
+          if (this.action.action === 'confirm') {
+            this.msg = [this.action.text, this.action.duration, 'confirm']
+            return 
+          }
+          if (this.action.action === 'alert') {
+            this.msg = [this.action.text, this.action.duration, 'alert']
+            return
+          }
+          if (!this.actionAllow) {
+            return 
+          }
           clearTimeout(this.activeTimer)
           this.action.action = this.action.action || 'think'
           this.img1.src = `./static/actions/${this.action.action}.gif`
@@ -489,7 +522,7 @@ export default {
   bottom: 20px;
   right: 0px;
   /* border: 1px solid red; */
-  -webkit-app-region: no-drag;
+  /* -webkit-app-region: no-drag; */
 }
 .open-menu {
   /* bottom: 25px;
