@@ -3,7 +3,7 @@
     <div class="close" @click="closeClick"></div>
     <div class="p_container">
       <p class="p_1">Hi, 对面的靓仔！</p>
-      <p class="p_2">我试黄小胖，来自一个叫360的神秘星球。</p>
+      <p class="p_2">我是黄小胖，来自一个叫360的神秘星球。</p>
       <p class="p_2">陪伴是最长情的告白，请让我陪你工作、生活，</p>
       <p class="p_2">一起健康成长吧～我不会打扰专注工作的你，但</p>
       <p class="p_2">因为牵挂，会不时过来瞄一眼你。</p>
@@ -19,14 +19,14 @@
       <p class="p_2">动不太好哦！我正在散步，但好像误入了一个</p>
       <p class="p_2">迷宫，你休息一下，陪我走出去吧？</p>
     </div>
-    <div class="p_promise">
+    <!-- <div class="p_promise">
       <p>
         小胖承诺：您的数据将始终被安全地保存在本地，不会存在任何数据泄露的风险，请放心开启摄像头。如果您仍需关闭摄像头，
       </p>
       <p>
         可点击菜单中的摄像头按钮，待按钮置灰即已关闭次功能，360持续为您的数据安全保驾护航。
       </p>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -60,15 +60,21 @@ export default {
 </script>
 
 <style scoped>
+html {
+  overflow: hidden;
+}
+
 body {
   padding: 0 0;
   margin: 0 0;
+  overflow: hidden;
   -webkit-app-region: drag;
 }
 .guide {
   border-radius: 20px;
   background-image: url("/img/guide_.png");
   background-size: cover;
+  overflow: hidden;
   -webkit-app-region: drag;
 }
 
@@ -101,7 +107,7 @@ body {
 
 .p_promise {
   position: absolute;
-  bottom: 10%;
+  top: 85%;
   left: 12%;
 }
 

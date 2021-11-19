@@ -1,12 +1,16 @@
 <template>
   <div id="xiaopang">
-    <Message :message="msg" @confirm-cancel="msgCancel" @confirm-ok="msgOK" @alert-ok="msgAlertOK"/>
+    <Message
+      :message="msg"
+      @confirm-cancel="msgCancel"
+      @confirm-ok="msgOK"
+      @alert-ok="msgAlertOK"
+    />
     <div class="wrap">
       <div class="xiao-pang">
-        <img id="img1" :src="`./static/actions/${defaultPic}.gif`" alt="">
+        <img id="img1" :src="`./static/actions/${defaultPic}.gif`" alt="" />
       </div>
-      <div class="hide" @click="hide">
-      </div>
+      <div class="hide" @click="hide"></div>
       <div class="menu-wrap" @mouseleave="closeMenu">
         <div class="menu-list" v-show="showMenu">
           <ul class="list">
@@ -17,26 +21,25 @@
           </ul>
         </div>
         <div class="open-menu" v-show="!showMenu" @click="openMenu">
-          <img src="../../../public/static/icons/up.png" alt="">
+          <img src="../../../public/static/icons/up.png" alt="" />
         </div>
       </div>
     </div>
-    <video id="video" playsinline style="display: none;">
-    </video>
+    <video id="video" playsinline style="display: none;"></video>
   </div>
 </template>
 
 <script>
 import { ipcRenderer } from "electron";
-import Message from './Message.vue'
+import Message from "./Message.vue";
 // AI识别
-import setupCamera from '../../utils/setCamera';
-import detectHand from '../../utils/handdetect';
+import setupCamera from "../../utils/setCamera";
+import detectHand from "../../utils/handdetect";
 // import detectExpression from '../../utils/emotiondetect';
 // 文案
-import gestureJson from '../../assets/json/gesture';
-import dateJson from '../../assets/json/date.json'
-import randomJson from '../../assets/json/random.json'
+import gestureJson from "../../assets/json/gesture";
+import dateJson from "../../assets/json/date.json";
+import randomJson from "../../assets/json/random.json";
 
 // import expressionJson from '../../assets/json/expression.json'
 // import Vue from 'vue'
@@ -45,20 +48,20 @@ export default {
   name: "XiaoPang",
   data() {
     return {
-      defaultPic: 'think',
-      random_time: ['11:00:00', '15:00:00', '16:00:00', '18:00:00'],  // 出随机文案的时间节点
+      defaultPic: "think",
+      random_time: ["11:00:00", "15:00:00", "16:00:00", "18:00:00"], // 出随机文案的时间节点
       emotionList: [
-        { name: 'happy', value: 0 },
-        { name: 'sad', value: 0 },
-        { name: 'angry', value: 0 },
-        { name: 'surprised', value: 0 },
-        { name: 'disgusted', value: 0 },
-        { name: 'fearful', value: 0 }
+        { name: "happy", value: 0 },
+        { name: "sad", value: 0 },
+        { name: "angry", value: 0 },
+        { name: "surprised", value: 0 },
+        { name: "disgusted", value: 0 },
+        { name: "fearful", value: 0 },
       ],
       emotionTime: 17,
       showMenu: false,
-      msg: ['', 0],
-      action: ['hi', '你好呀，我是黄小胖~', 0],
+      msg: ["", 0],
+      action: ["hi", "你好呀，我是黄小胖~", 0],
       // 是否允许后续动作发生（伪阻塞）
       actionAllow: false,
 
@@ -68,7 +71,7 @@ export default {
       // expressionJson,
 
       activeTime: null,
-      handPose: '',
+      handPose: "",
       img1: null,
 
       year: null,
@@ -80,7 +83,7 @@ export default {
       hour: null,
       minute: null,
       second: null,
-      
+
       hm: 0,
       predictionHand: null,
       gestureTotal: null,
@@ -95,75 +98,88 @@ export default {
       dayTimeIndex: 0,
       lastIndex: null,
 
-      handPoseList: ['ok', 'shoot', 'great', 'victory', 'zhan'],
+      handPoseList: ["ok", "shoot", "great", "victory", "zhan"],
       handPoseIndex: 0,
-    }
+    };
   },
   components: { Message },
 
   async mounted() {
     // 初始化
-    this.init()
+    this.init();
 
     // 模型加载
-    detectHand().then((res) => {
-      this.predictionHand = res
-      console.log('hand detect ready')
-    }).catch(
-      console.log('hand detect fail')
-    )
+    detectHand()
+      .then((res) => {
+        this.predictionHand = res;
+        console.log("hand detect ready");
+      })
+      .catch(console.log("hand detect fail"));
 
     // 开启摄像头
-    this.confirm("开启摄像头和我互动吧!", () => {
-      this.alert('360承诺您，您的数据将始终保存在本地，不存在信息泄漏问题', () => {
-        // 允许动作发生
+    this.confirm(
+      "开启摄像头和我互动吧!",
+      () => {
+        this.alert(
+          "360承诺您，您的数据将始终保存在本地，不存在信息泄漏问题",
+          () => {
+            // 允许动作发生
+            this.actionAllow = true;
+          }
+        );
+        this.openCamera();
+      },
+      () => {
         this.actionAllow = true;
-      })
-      this.openCamera();
-    }, () => {
-      this.actionAllow = true;
-    });
+      }
+    );
     setTimeout(() => {
       setInterval(() => {
         this.loop();
-      }, 100)
+      }, 100);
     }, 5000);
   },
   methods: {
     initQuickKey() {
-      const DATE = new Date()
-      this.date = DATE.getFullYear() + '-' + this.fillZero(DATE.getMonth() + 1) + '-' +  this.fillZero(DATE.getDate())    // 2021-10-20
-      this.today = DATE.getDay() > 0 && DATE.getDay() < 6 ? 'workdays' : 'weekends' // 工作日or周末
-      console.log('this.date:', this.date)
-      if(this.today === 'workdays') {
-        this.dayJsonList = Object.values(this.dateJson[this.today][this.date])
-    
-        const _this = this
-        document.addEventListener('keydown', (e) => {
+      const DATE = new Date();
+      this.date =
+        DATE.getFullYear() +
+        "-" +
+        this.fillZero(DATE.getMonth() + 1) +
+        "-" +
+        this.fillZero(DATE.getDate()); // 2021-10-20
+      this.today =
+        DATE.getDay() > 0 && DATE.getDay() < 6 ? "workdays" : "weekends"; // 工作日or周末
+      console.log("this.date:", this.date);
+      if (this.today === "workdays") {
+        this.dayJsonList = Object.values(this.dateJson[this.today][this.date]);
+
+        const _this = this;
+        document.addEventListener("keydown", (e) => {
           // 快捷键H 设置了循环播放一天的交互动作
-          if(e.code === 'KeyH' && _this.dayJsonList) {
-            _this.action = _this.dayJsonList[_this.dayTimeIndex++]
-            if(_this.dayTimeIndex >= _this.dayJsonList.length) {
-              _this.dayTimeIndex = 0
+          if (e.code === "KeyH" && _this.dayJsonList) {
+            _this.action = _this.dayJsonList[_this.dayTimeIndex++];
+            if (_this.dayTimeIndex >= _this.dayJsonList.length) {
+              _this.dayTimeIndex = 0;
             }
           }
           // 快捷键X 设置了循环播放一天的交互动作，展示用
-          if(e.code === 'KeyX' && _this.randomJson) {
-            let index = null
-            while(!index || index === this.lastIndex) {
-              index = Math.floor(Math.random() * this.randomJson.data.length)
+          if (e.code === "KeyX" && _this.randomJson) {
+            let index = null;
+            while (!index || index === this.lastIndex) {
+              index = Math.floor(Math.random() * this.randomJson.data.length);
             }
-            this.lastIndex = index
-            this.action = this.randomJson.data[index]
+            this.lastIndex = index;
+            this.action = this.randomJson.data[index];
           }
           // 快捷键P 设置了手势动作，展示用
-          if(e.code === 'KeyP' && _this.randomJson) {
-            this.handPose = this.handPoseList[this.handPoseIndex++]
-            if(this.handPoseIndex >= this.handPoseList.length) {
-              this.handPoseIndex = 0
+          if (e.code === "KeyP" && _this.randomJson) {
+            this.handPose = this.handPoseList[this.handPoseIndex++];
+            if (this.handPoseIndex >= this.handPoseList.length) {
+              this.handPoseIndex = 0;
             }
           }
-        })
+        });
       }
     },
     hide() {
@@ -176,201 +192,233 @@ export default {
       this.showMenu = true;
     },
     async openCamera() {
-      if(this.inCamera) {
-        if(this.inGame) {
-          ipcRenderer.send('closeGameCamera')
+      if (this.inCamera) {
+        if (this.inGame) {
+          ipcRenderer.send("closeGameCamera");
         }
         this.mediaStreamTrack.stop();
-        this.inCamera = false
+        this.inCamera = false;
 
-        this.action = { 'action': 'hi', 'text': "小胖提醒您：摄像头已关闭，需要时，可在菜单中主动开启摄像头", 'duration': 4 }
-        
+        this.action = {
+          action: "hi",
+          text: "小胖提醒您：摄像头已关闭，需要时，可在菜单中主动开启摄像头",
+          duration: 4,
+        };
       } else {
-        const result = await setupCamera(this.video)
-        if(result) {
-          if(this.inGame) {
-            ipcRenderer.send('openGameCamera')
+        const result = await setupCamera(this.video);
+        if (result) {
+          if (this.inGame) {
+            ipcRenderer.send("openGameCamera");
           }
-          this.mediaStreamTrack = result
-          this.inCamera = true
-          this.action = { 'action': 'hi', 'text': "小胖提醒您：摄像头已开启，可在菜单中控制摄像头的开关", 'duration': 3 }
+          this.mediaStreamTrack = result;
+          this.inCamera = true;
+          this.action = {
+            action: "hi",
+            text: "小胖提醒您：摄像头已开启，可在菜单中控制摄像头的开关",
+            duration: 3,
+          };
           setTimeout(() => {
-            this.action = { 'action': 'clap', 'text': "对我比手势：棒/耶/打抢/OK/Hi 与我互动吧！", 'duration': 4 }
+            this.action = {
+              action: "clap",
+              text: "对我比手势：棒/耶/打抢/OK/Hi 与我互动吧！",
+              duration: 4,
+            };
           }, 3000);
-          console.log('camera ready')
+          console.log("camera ready");
         } else {
-          this.inCamera = false
-          this.action = { 'action': 'hi', 'text': "小胖提醒您：不知什么原因，摄像头开启失败了呢，可在菜单中控制摄像头的开关哦~", 'duration': 5 }
-          console.log('camera fail')
+          this.inCamera = false;
+          this.action = {
+            action: "hi",
+            text:
+              "小胖提醒您：不知什么原因，摄像头开启失败了呢，可在菜单中控制摄像头的开关哦~",
+            duration: 5,
+          };
+          console.log("camera fail");
         }
-      }      
-      this.closeMenu()
+      }
+      this.closeMenu();
     },
     openGame() {
-      console.log("进入游戏")
-      this.inGame = true
-      ipcRenderer.send("maze-open")
-      this.closeMenu()
+      console.log("进入游戏");
+      this.inGame = true;
+      ipcRenderer.send("maze-open");
+      this.closeMenu();
     },
     openDoc() {
       console.log("新手引导");
       this.inDoc = true;
-      ipcRenderer.send("guide-open")
+      ipcRenderer.send("guide-open");
       ipcRenderer.on("closedGuide", () => {
         this.inDoc = false;
-      })
-      this.closeMenu()
+      });
+      this.closeMenu();
     },
     closeMenu() {
       this.showMenu = false;
     },
     init() {
-      this.img1 = document.getElementById('img1')
-      this.eyes = document.getElementById('eyes')
-      this.initGesture()
+      this.img1 = document.getElementById("img1");
+      this.eyes = document.getElementById("eyes");
+      this.initGesture();
       // 快捷键
-      this.initQuickKey()
-      this.video = document.getElementById('video')
+      this.initQuickKey();
+      this.video = document.getElementById("video");
 
       // 通信
-      const _this = this
-      ipcRenderer.on('closedGame', () => {
-        _this.inGame = false
-        console.log('退出游戏')
-      })
-      ipcRenderer.on('gameHasOpenCamera', () => {
-        if(!this.inCamera) {
-          this.openCamera()
+      const _this = this;
+      ipcRenderer.on("closedGame", () => {
+        _this.inGame = false;
+        console.log("退出游戏");
+      });
+      ipcRenderer.on("gameHasOpenCamera", () => {
+        if (!this.inCamera) {
+          this.openCamera();
         }
-      })
+      });
     },
     initGesture() {
       this.gestureTotal = {
-        'victory': 0,
-        'zhan': 0,
-        'great': 0,
-        'fist': 0,
-        'point': 0,
-        'ok': 0,
-        'shoot': 0
-      }
+        victory: 0,
+        zhan: 0,
+        great: 0,
+        fist: 0,
+        point: 0,
+        ok: 0,
+        shoot: 0,
+      };
     },
     getGesture() {
       const item = Object.entries(this.gestureTotal).reduce((a, b) => {
-        if(a[1] > b[1]) {
-          return a
+        if (a[1] > b[1]) {
+          return a;
         }
-        return b
-      })
-      if(item[1] > 2 ) {
-        console.log(this.gestureTotal)
-        console.log('最多的是：', item)
+        return b;
+      });
+      if (item[1] > 2) {
+        console.log(this.gestureTotal);
+        console.log("最多的是：", item);
       }
-      
-      return item[1] > 2 ? item[0] : 'normal'
+
+      return item[1] > 2 ? item[0] : "normal";
     },
     loop() {
-      const DATE = new Date()
-      this.year = DATE.getFullYear()  //  年
-      this.month = DATE.getMonth() + 1  // 月
-      this.day = DATE.getDate()         // 日
-      this.week = DATE.getDay()     // 周几
-      this.hour = DATE.getHours()    //  时
-      this.minute = DATE.getMinutes()  //  分
-      this.second = DATE.getSeconds() // 秒
+      const DATE = new Date();
+      this.year = DATE.getFullYear(); //  年
+      this.month = DATE.getMonth() + 1; // 月
+      this.day = DATE.getDate(); // 日
+      this.week = DATE.getDay(); // 周几
+      this.hour = DATE.getHours(); //  时
+      this.minute = DATE.getMinutes(); //  分
+      this.second = DATE.getSeconds(); // 秒
 
-      this.date = this.year + '-' + this.month + '-' +  this.day    // 2021-10-20
-      this.today = this.week > 0 && this.week < 6 ? 'workdays' : 'weekends' // 工作日or周末
-      
-      this.hm = Number(this.fillZero(this.hour) + '' + this.fillZero(this.minute))
+      this.date = this.year + "-" + this.month + "-" + this.day; // 2021-10-20
+      this.today = this.week > 0 && this.week < 6 ? "workdays" : "weekends"; // 工作日or周末
 
-      if((this.hm < 1240 || this.hm > 1400) && !this.inGame && this.inCamera) {
-        this.addGesture()
+      this.hm = Number(
+        this.fillZero(this.hour) + "" + this.fillZero(this.minute)
+      );
+
+      if ((this.hm < 1240 || this.hm > 1400) && !this.inGame && this.inCamera) {
+        this.addGesture();
       }
     },
     fillZero(num) {
-      const numStr = '0' + num
-      const r = numStr.slice(-2)
-      return r
+      const numStr = "0" + num;
+      const r = numStr.slice(-2);
+      return r;
     },
     addGesture() {
-      if(this.video && this.predictionHand) {
-        this.predictionHand(this.video)?.then(res => {
-          if(res !== 'normal') {
-            this.gestureTotal[res] = this.gestureTotal[res] + 1
+      if (this.video && this.predictionHand) {
+        this.predictionHand(this.video)?.then((res) => {
+          if (res !== "normal") {
+            this.gestureTotal[res] = this.gestureTotal[res] + 1;
           }
         });
       }
     },
     initDefault() {
-      if(this.today === 'workdays') {
-        if((this.hm >= 1000 && this.hm < 1240) || (this.hm >= 1400 && this.hm < 1900)) {
-          this.defaultPic = 'work'
+      if (this.today === "workdays") {
+        if (
+          (this.hm >= 1000 && this.hm < 1240) ||
+          (this.hm >= 1400 && this.hm < 1900)
+        ) {
+          this.defaultPic = "work";
         } else if (this.hm >= 1240 && this.hm < 1400) {
-          this.defaultPic = 'zzz'  
+          this.defaultPic = "zzz";
         } else {
-          this.defaultPic = 'think' 
+          this.defaultPic = "think";
         }
       } else {
-        this.defaultPic = 'think'  
+        this.defaultPic = "think";
       }
     },
     hourAction(hour) {
-      let time = hour ? hour:this.hour + ':' + '00' + ':' + '00'
-      if(this.random_time.indexOf(time) > -1) {
+      let time = hour ? hour : this.hour + ":" + "00" + ":" + "00";
+      if (this.random_time.indexOf(time) > -1) {
         // 出自random
-        let index = Math.floor(Math.random() * this.randomJson.data.length)
-        this.action = this.randomJson.data[index]
+        let index = Math.floor(Math.random() * this.randomJson.data.length);
+        this.action = this.randomJson.data[index];
       } else if (this.dateJson[this.today][this.date]) {
         // 出自date
-        if(this.today == 'workdays' && this.dateJson[this.today][this.date][time]) {
-          this.action = this.dateJson[this.today][this.date][time]
-        }else if(this.today == 'weekends' && this.dateJson[this.today][time]) {
-          this.action = this.dateJson[this.today][time]
+        if (
+          this.today == "workdays" &&
+          this.dateJson[this.today][this.date][time]
+        ) {
+          this.action = this.dateJson[this.today][this.date][time];
+        } else if (
+          this.today == "weekends" &&
+          this.dateJson[this.today][time]
+        ) {
+          this.action = this.dateJson[this.today][time];
         }
-      } 
+      }
     },
     msgOK() {},
     msgCancel() {},
     msgAlertOK() {},
     confirm(text, ok = () => {}, cancel = () => {}) {
-      this.action = { 'action': 'confirm', 'text': text, 'duration': 'forever' };
+      this.action = { action: "confirm", text: text, duration: "forever" };
       this.msgOK = ok;
       this.msgCancel = cancel;
     },
     alert(text, ok = () => {}) {
-      this.action = { 'action': 'alert', 'text': text, 'duration': 'forever' };
+      this.action = { action: "alert", text: text, duration: "forever" };
       this.msgAlertOK = ok;
-    }
+    },
   },
   watch: {
     inCamera: function(val) {
-      if(val) {
-        document.getElementById('li-camera').style.backgroundImage = "url('./static/icons/camera-h.png')"
+      if (val) {
+        document.getElementById("li-camera").style.backgroundImage =
+          "url('./static/icons/camera-h.png')";
       } else {
-        document.getElementById('li-camera').style.backgroundImage = "url('./static/icons/camera.png')"
+        document.getElementById("li-camera").style.backgroundImage =
+          "url('./static/icons/camera.png')";
       }
     },
     inGame: function(val) {
-      if(val) {
-        document.getElementById('li-game').style.backgroundImage = "url('./static/icons/game-h.png')"
+      if (val) {
+        document.getElementById("li-game").style.backgroundImage =
+          "url('./static/icons/game-h.png')";
       } else {
-        document.getElementById('li-game').style.backgroundImage = "url('./static/icons/game.png')"
+        document.getElementById("li-game").style.backgroundImage =
+          "url('./static/icons/game.png')";
       }
     },
     inDoc: function(val) {
-      if(val) {
-        document.getElementById('li-doc').style.backgroundImage = "url('./static/icons/doc-h.png')"
+      if (val) {
+        document.getElementById("li-doc").style.backgroundImage =
+          "url('./static/icons/doc-h.png')";
       } else {
-        document.getElementById('li-doc').style.backgroundImage = "url('./static/icons/doc.png')"
+        document.getElementById("li-doc").style.backgroundImage =
+          "url('./static/icons/doc.png')";
       }
     },
-    today: function() {
-    },
+    today: function() {},
     hour: function() {
       // 整点动作
-      this.hourAction()
-      
+      this.hourAction();
+
       // else if (this.hour === this.emotionTime) {
       //   const emotion = (this.emotionList.reduce((maxItem, item) => item.value > maxItem ? item : maxItem)).name
       //   this.action = expressionJson[emotion][Math.floor(Math.random() * expressionJson[emotion].length)]
@@ -378,47 +426,47 @@ export default {
     },
     minute: function() {
       // 非整点 午睡动作
-      if(this.today == 'workdays' && this.hm == 1240) {
-        let time = '12:40:00'
-        this.action = this.dateJson[this.today][this.date][time]
+      if (this.today == "workdays" && this.hm == 1240) {
+        let time = "12:40:00";
+        this.action = this.dateJson[this.today][this.date][time];
       }
-      
-      // 切换默认工作
-      this.initDefault()
 
-      if(this.hm === 1240) {
-        this.show()
+      // 切换默认工作
+      this.initDefault();
+
+      if (this.hm === 1240) {
+        this.show();
       }
     },
     second: async function() {
-      if(this.second % 2 === 0) {
-        const gest = this.getGesture()
-        if(gest !== 'normal') {
-          this.handPose = gest
-          this.initGesture()
-        } 
+      if (this.second % 2 === 0) {
+        const gest = this.getGesture();
+        if (gest !== "normal") {
+          this.handPose = gest;
+          this.initGesture();
+        }
       }
     },
     action: {
       deep: true,
       immediate: true,
       handler: function() {
-        if(this.action && this.action.action) {
+        if (this.action && this.action.action) {
           // confirm设置
-          if (this.action.action === 'confirm') {
-            this.msg = [this.action.text, this.action.duration, 'confirm']
-            return 
+          if (this.action.action === "confirm") {
+            this.msg = [this.action.text, this.action.duration, "confirm"];
+            return;
           }
-          if (this.action.action === 'alert') {
-            this.msg = [this.action.text, this.action.duration, 'alert']
-            return
+          if (this.action.action === "alert") {
+            this.msg = [this.action.text, this.action.duration, "alert"];
+            return;
           }
           if (!this.actionAllow) {
-            return 
+            return;
           }
-          clearTimeout(this.activeTimer)
-          this.action.action = this.action.action || 'think'
-          this.img1.src = `./static/actions/${this.action.action}.gif`
+          clearTimeout(this.activeTimer);
+          this.action.action = this.action.action || "think";
+          this.img1.src = `./static/actions/${this.action.action}.gif`;
           // 图片加载需要时间，不用onload的话，文本和图片显示有时间差
           this.img1.onload = () => {
             this.msg = [this.action.text, this.action.duration];
@@ -426,33 +474,34 @@ export default {
             // this.img2.style.display = 'block'
             this.activeTimer = setTimeout(() => {
               if (this.hm === 1200) {
-                this.hide()
-                return
+                this.hide();
+                return;
               }
               // this.img1.style.display = 'block'
               // this.img2.style.display = 'none'
-              this.img1.src = `./static/actions/${this.defaultPic}.gif`
-              this.msg = []
-              this.action = []
-            }, this.action.duration * 1000)
+              this.img1.src = `./static/actions/${this.defaultPic}.gif`;
+              this.msg = [];
+              this.action = [];
+            }, this.action.duration * 1000);
 
-            this.img1.onload = null
-          }
+            this.img1.onload = null;
+          };
         }
-    }},
+      },
+    },
     handPose: function(val) {
-      if(this.handPose !== 'normal') {
-        const gestureList = gestureJson[val]
-        if(gestureList) {
-          this.action = gestureList[Math.floor(Math.random() * gestureList.length)]
+      if (this.handPose !== "normal") {
+        const gestureList = gestureJson[val];
+        if (gestureList) {
+          this.action =
+            gestureList[Math.floor(Math.random() * gestureList.length)];
         }
       }
-      
-      this.handPose = 'normal'
-    }
-  }
-};
 
+      this.handPose = "normal";
+    },
+  },
+};
 </script>
 
 <style>
@@ -483,7 +532,6 @@ export default {
   width: 200px;
   height: 200px;
   /* border: 1px solid red; */
-
 }
 .xiao-pang > img {
   /* width: 283px;
@@ -495,7 +543,9 @@ export default {
 }
 
 /* 菜单 */
-.hide, .menu-list, .open-menu {
+.hide,
+.menu-list,
+.open-menu {
   position: absolute;
 }
 .hide {
@@ -507,13 +557,13 @@ export default {
   right: 20px;
   width: 20px;
   height: 20px;
-  background-image: url('../../../public/static/icons/min.png');
+  background-image: url("../../../public/static/icons/min.png");
   background-size: 100%;
   -webkit-app-region: no-drag;
 }
 
 .hide:hover {
-  background-image: url('../../../public/static/icons/min-h.png') !important;
+  background-image: url("../../../public/static/icons/min-h.png") !important;
 }
 .menu-wrap {
   position: absolute;
@@ -522,7 +572,7 @@ export default {
   bottom: 20px;
   right: 0px;
   /* border: 1px solid red; */
-  /* -webkit-app-region: no-drag; */
+  -webkit-app-region: no-drag;
 }
 .open-menu {
   /* bottom: 25px;
@@ -549,7 +599,7 @@ export default {
 }
 .list {
   position: relative;
-  background-image: url('../../../public/static/icons/menu-list.png');
+  background-image: url("../../../public/static/icons/menu-list.png");
   background-repeat: no-repeat;
   /* background-size: 65px 180px;
   height: 180px;
@@ -572,43 +622,43 @@ export default {
   background-size: 21px 21px;
 }
 #li-camera {
-  background-image: url('../../../public/static/icons/camera.png');
+  background-image: url("../../../public/static/icons/camera.png");
   /* margin-top: 4px;
   margin-left: 4px; */
   margin-top: 2px;
   margin-left: 2px;
 }
 #li-game {
-  background-image: url('../../../public/static/icons/game.png');
+  background-image: url("../../../public/static/icons/game.png");
   /* margin-top: 8px;
   margin-left: 15px; */
   margin-top: 7px;
   margin-left: 10px;
 }
 #li-doc {
-  background-image: url('../../../public/static/icons/doc.png');
+  background-image: url("../../../public/static/icons/doc.png");
   /* margin-top: 8px;
   margin-left: 16px; */
   margin-top: 8px;
   margin-left: 10px;
 }
 #li-close {
-  background-image: url('../../../public/static/icons/close.png');
+  background-image: url("../../../public/static/icons/close.png");
   /* margin-top: 8px;
   margin-left: 6px; */
   margin-top: 7px;
   margin-left: 2px;
 }
 #li-camera:hover {
-  background-image: url('../../../public/static/icons/camera-h.png') !important;
+  background-image: url("../../../public/static/icons/camera-h.png") !important;
 }
 #li-game:hover {
-  background-image: url('../../../public/static/icons/game-h.png') !important;
+  background-image: url("../../../public/static/icons/game-h.png") !important;
 }
 #li-doc:hover {
-  background-image: url('../../../public/static/icons/doc-h.png') !important;
+  background-image: url("../../../public/static/icons/doc-h.png") !important;
 }
 #li-close:hover {
-  background-image: url('../../../public/static/icons/close-h.png') !important;
+  background-image: url("../../../public/static/icons/close-h.png") !important;
 }
 </style>

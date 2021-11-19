@@ -85,7 +85,7 @@ function initTrayIcon() {
     },
   ]);
 
-  tray.setToolTip('黄小胖')  // 设置鼠标指针在托盘图标上悬停时显示的文本
+  tray.setToolTip("黄小胖"); // 设置鼠标指针在托盘图标上悬停时显示的文本
   tray.setContextMenu(contextMenu); // 设置图标的内容菜单
   // 点击托盘图标，显示主窗口
   tray.on("click", () => {
@@ -99,42 +99,48 @@ function createMazeWindow() {
   maze = new BrowserWindow({
     width: screenSize.width,
     height: screenSize.height,
-    frame: true, 
-    transparent: false, 
+    frame: true,
+    transparent: false,
     titleBarStyle: "hidden",
     icon: path.join(__dirname, "./favicon256new.ico"),
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-      enableRemoteModule: true
-    }
-  })
-  maze.setMenu(null);  //关闭窗体顶部菜单栏
-  
+      enableRemoteModule: true,
+    },
+  });
+  maze.setMenu(null); //关闭窗体顶部菜单栏
+
   switch (process.env.NODE_ENV) {
-    case 'development':
-      maze.loadURL('http://localhost:8080/maze.html');
+    case "development":
+      maze.loadURL("http://localhost:8080/maze.html");
       // if (!process.env.IS_TEST) maze.webContents.openDevTools()
-      break
-    case 'production':
-      maze.loadURL('app://./maze.html');
-      break
+      break;
+    case "production":
+      maze.loadURL("app://./maze.html");
+      break;
   }
 
-  maze.on('closed',() => {
-    maze=null;
-    win.webContents.send('closedGame');
-  })
+  maze.on("closed", () => {
+    maze = null;
+    win.webContents.send("closedGame");
+  });
 }
 
 function createGuideWindow() {
   let screenSize = screen.getPrimaryDisplay().workAreaSize;
+  let width = screenSize.width * 0.6;
+  let height = (screenSize.width * 0.6 * 2029) / 2757;
+  if (height > 600) {
+    height = 600;
+    width = (600 * 2757) / 2029;
+  }
   guide = new BrowserWindow({
     x: screenSize.width * 0.3,
     y: screenSize.height * 0.5 - (screenSize.width * 0.6 * 2029) / 2757,
-    width: screenSize.width * 0.6,
-    height: (screenSize.width * 0.6 * 2029) / 2757,
+    width: width,
+    height: height,
     frame: false, // 无边框
     transparent: true, // 透明
     // titleBarStyle: 'hidden',
@@ -144,24 +150,23 @@ function createGuideWindow() {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       // preload: path.join(__dirname, 'preload.js'),
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-      enableRemoteModule: true
-    }
-  })
-
+      enableRemoteModule: true,
+    },
+  });
   switch (process.env.NODE_ENV) {
-    case 'development':
-      guide.loadURL('http://localhost:8080/guide.html');
-      // if (!process.env.IS_TEST) guide.webContents.openDevTools()
-      break
-    case 'production':
-      guide.loadURL('app://./guide.html');
-      break
+    case "development":
+      guide.loadURL("http://localhost:8080/guide.html");
+      if (!process.env.IS_TEST) guide.webContents.openDevTools();
+      break;
+    case "production":
+      guide.loadURL("app://./guide.html");
+      break;
   }
 
-  guide.on('closed',() => {
-    guide=null;
-    win.webContents.send('closedGuide');
-  })
+  guide.on("closed", () => {
+    guide = null;
+    win.webContents.send("closedGuide");
+  });
 }
 
 // Quit when all windows are closed.
