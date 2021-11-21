@@ -1,7 +1,9 @@
 <template>
     <div v-show="show" class="shade" :style="{ width: width, height: height }">
       <strong v-show="!in_show">加载中...</strong>
+
       <div class="intro" v-show="in_show">
+          <img src="../../../public/img/maze_intro_.png"/>
           <div class="text-container">
               <p class="text-title">求助～求助～</p>
               <p class="p_1">我在360星球迷路了，快帮助我走出迷宫吧！</p>
@@ -123,19 +125,26 @@ export default {
     height: 0;
     padding-bottom: 49.8%;
     text-align: center;
-    background-image: url('../../../public/img/maze_intro_.png');
-    background-size: cover;
     top: 50%;
     left: 50%;
-    z-index: 100;
     transform: translate(-50%, -50%);
-    
+}
+
+.intro img{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 10;
 }
 
 .text-container {
+    position: absolute;
     width: 100%;
     height: 100%;
     text-align: center;
+    z-index: 100;
 }
 
 .text-title {
@@ -170,6 +179,7 @@ export default {
     width: 100%;
     height: 22%;
     bottom: 0;
+    z-index: 100;
 }
 
 .btn {
