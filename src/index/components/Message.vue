@@ -1,11 +1,14 @@
 <template>
   <div id="message" class="message">
       {{ message[0] }}
-      <br/>
-      <div v-show="confirm" class="cancel" @click="onCancel">Cancel</div>
-      <div v-show="confirm" class="ok" @click="onOK">OK</div>
-      <div v-show="alert" class="alertOK" @click="onAlertOK">OK</div>
-      <div></div>
+      <br v-show="confirm" />
+      <div v-show="confirm" class="confirm-wrap">
+        <div class="cancel" @click="onCancel">Cancel</div>
+        <div class="ok" @click="onOK">OK</div>
+      </div>
+      <!-- <div  v-show="alert" class="alert-wrap">
+        <div class="alertOK" @click="onAlertOK">OK</div>
+      </div> -->
   </div>
 </template>
 
@@ -22,27 +25,21 @@ export default {
   },
   watch: {
     message(val) {
+      if(!val || val.length === 0) {
+        this.msgBox.style.display = 'none'
+        return
+      }
       if(val) {
         this.msgBox.style.display = 'block'
-        if (val[1] === 'forever') {
-          if (val[2] === 'confirm') {
-            this.confirm = true;
-          } else {
-            this.alert = true;
-          }
+        if (val[2] === 1) {
+          this.confirm = true;
           return
         }
-        setTimeout(() => {
-          this.msgBox.style.display = 'none'
-        }, this.message[1] * 1000)
       }
     }
   },
   mounted() {
     this.msgBox = document.getElementById('message')
-    // setTimeout(() => {
-    //   this.msgBox.style.display = 'none'
-    // }, this.message[1] * 1000)
   },
   methods: {
     onCancel() {
@@ -82,14 +79,20 @@ export default {
   max-width: 140px; */
   border-radius: 10px;
   font-size: 12px;
-  right: 100px;
-  top: -40px;
+  right: 70px;
+  top: -70px;
   padding: 8px;
-  max-width: 150px;
+  max-width: 190px;
+}
+
+.confirm-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .ok {
-  margin-left: 5px;
+  margin-left: 20px;
 }
 
 .cancel,.ok {
@@ -107,11 +110,11 @@ export default {
 }
 
 .cancel:hover,.ok:hover {
-  background-color: #0c75eb;
+  background-color: rgb(255, 221, 62);
   color: aliceblue;
 }
 
-.alertOK {
+/* .alertOK {
   width: 130px;
   height: 20px;
   text-align: center;
@@ -128,7 +131,7 @@ export default {
 .alertOK:hover {
   background-color: #0c75eb;
   color: aliceblue;
-}
+} */
 
 .message::after {
   content: '';

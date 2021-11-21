@@ -50,20 +50,18 @@ export default {
     return {
       defaultPic: "think",
       random_time: ["11:00:00", "15:00:00", "16:00:00", "18:00:00"], // 出随机文案的时间节点
-      emotionList: [
-        { name: "happy", value: 0 },
-        { name: "sad", value: 0 },
-        { name: "angry", value: 0 },
-        { name: "surprised", value: 0 },
-        { name: "disgusted", value: 0 },
-        { name: "fearful", value: 0 },
-      ],
+      // emotionList: [
+      //   { name: "happy", value: 0 },
+      //   { name: "sad", value: 0 },
+      //   { name: "angry", value: 0 },
+      //   { name: "surprised", value: 0 },
+      //   { name: "disgusted", value: 0 },
+      //   { name: "fearful", value: 0 },
+      // ],
       emotionTime: 17,
       showMenu: false,
       msg: ["", 0],
-      action: ["hi", "你好呀，我是黄小胖~", 0],
-      // 是否允许后续动作发生（伪阻塞）
-      actionAllow: false,
+      action: [],
 
       dateJson,
       randomJson,
@@ -100,6 +98,7 @@ export default {
 
       handPoseList: ["ok", "shoot", "great", "victory", "zhan"],
       handPoseIndex: 0,
+      handDetectReady: false
     };
   },
   components: { Message },
@@ -113,31 +112,29 @@ export default {
       .then((res) => {
         this.predictionHand = res;
         console.log("hand detect ready");
+        this.handDetectReady = true
       })
       .catch(console.log("hand detect fail"));
 
     // 开启摄像头
     this.confirm(
-      "开启摄像头和我互动吧!",
+      { 'action': 'hi', 'text': "360承诺您：您的数据将始终保存在本地，不存在任何信息泄露风险，快开启摄像头与我互动吧！", 'duration': 0, isConfirm: 1 },
       () => {
-        this.alert(
-          "360承诺您，您的数据将始终保存在本地，不存在信息泄漏问题",
-          () => {
-            // 允许动作发生
-            this.actionAllow = true;
-          }
-        );
         this.openCamera();
       },
       () => {
-        this.actionAllow = true;
+        this.action = {
+          action: "enen",
+          text: "小胖提醒您：需要手势互动时，可在菜单按钮中主动开启摄像头！",
+          duration: 4,
+        };
       }
     );
-    setTimeout(() => {
-      setInterval(() => {
-        this.loop();
-      }, 100);
-    }, 5000);
+    
+    setInterval(() => {
+      this.loop();
+    }, 150);
+    
   },
   methods: {
     initQuickKey() {
@@ -200,9 +197,9 @@ export default {
         this.inCamera = false;
 
         this.action = {
-          action: "hi",
+          action: "enen",
           text: "小胖提醒您：摄像头已关闭，需要时，可在菜单中主动开启摄像头",
-          duration: 4,
+          duration: 3,
         };
       } else {
         const result = await setupCamera(this.video);
@@ -213,25 +210,28 @@ export default {
           this.mediaStreamTrack = result;
           this.inCamera = true;
           this.action = {
-            action: "hi",
+            action: "enen",
             text: "小胖提醒您：摄像头已开启，可在菜单中控制摄像头的开关",
             duration: 3,
           };
           setTimeout(() => {
-            this.action = {
-              action: "clap",
-              text: "对我比手势：棒/耶/打抢/OK/Hi 与我互动吧！",
-              duration: 4,
-            };
+            if(this.handDetectReady) {
+              this.action = {
+                action: "enen",
+                text: "对我比手势：Hi/棒/耶/打抢/OK 与我互动吧！",
+                duration: 3,
+              };
+            }
           }, 3000);
+         
           console.log("camera ready");
         } else {
           this.inCamera = false;
           this.action = {
-            action: "hi",
+            action: "wen",
             text:
-              "小胖提醒您：不知什么原因，摄像头开启失败了呢，可在菜单中控制摄像头的开关哦~",
-            duration: 5,
+              "小胖提醒您：摄像头开启失败了呢，可在菜单中控制摄像头的开关哦~",
+            duration: 3,
           };
           console.log("camera fail");
         }
@@ -376,18 +376,27 @@ export default {
     msgOK() {},
     msgCancel() {},
     msgAlertOK() {},
-    confirm(text, ok = () => {}, cancel = () => {}) {
-      this.action = { action: "confirm", text: text, duration: "forever" };
+    confirm(action, ok = () => {}, cancel = () => {}) {
+      this.action = action;
       this.msgOK = ok;
       this.msgCancel = cancel;
     },
-    alert(text, ok = () => {}) {
-      this.action = { action: "alert", text: text, duration: "forever" };
-      this.msgAlertOK = ok;
-    },
+    // alert(text, ok = () => {}) {
+    //   this.action = { action: "alert", text: text, duration: "forever" };
+    //   this.msgAlertOK = ok;
+    // },
   },
   watch: {
-    inCamera: function(val) {
+    handDetectReady(val) {
+      if(val && this.inCamera && !this.inGame) {
+        this.action = {
+          action: "enen",
+          text: "对我比手势：棒/耶/打抢/OK/Hi 与我互动吧！",
+          duration: 4,
+        };
+      }
+    },
+    inCamera(val) {
       if (val) {
         document.getElementById("li-camera").style.backgroundImage =
           "url('./static/icons/camera-h.png')";
@@ -396,7 +405,7 @@ export default {
           "url('./static/icons/camera.png')";
       }
     },
-    inGame: function(val) {
+    inGame(val) {
       if (val) {
         document.getElementById("li-game").style.backgroundImage =
           "url('./static/icons/game-h.png')";
@@ -405,7 +414,7 @@ export default {
           "url('./static/icons/game.png')";
       }
     },
-    inDoc: function(val) {
+    inDoc(val) {
       if (val) {
         document.getElementById("li-doc").style.backgroundImage =
           "url('./static/icons/doc-h.png')";
@@ -414,8 +423,8 @@ export default {
           "url('./static/icons/doc.png')";
       }
     },
-    today: function() {},
-    hour: function() {
+    today() {},
+    hour() {
       // 整点动作
       this.hourAction();
 
@@ -424,7 +433,7 @@ export default {
       //   this.action = expressionJson[emotion][Math.floor(Math.random() * expressionJson[emotion].length)]
       // }
     },
-    minute: function() {
+    minute() {
       // 非整点 午睡动作
       if (this.today == "workdays" && this.hm == 1240) {
         let time = "12:40:00";
@@ -439,57 +448,43 @@ export default {
       }
     },
     second: async function() {
-      if (this.second % 2 === 0) {
+      // if (this.second % 2 === 0) {
         const gest = this.getGesture();
         if (gest !== "normal") {
           this.handPose = gest;
           this.initGesture();
         }
-      }
+      // }
     },
     action: {
       deep: true,
       immediate: true,
       handler: function() {
         if (this.action && this.action.action) {
-          // confirm设置
-          if (this.action.action === "confirm") {
-            this.msg = [this.action.text, this.action.duration, "confirm"];
-            return;
-          }
-          if (this.action.action === "alert") {
-            this.msg = [this.action.text, this.action.duration, "alert"];
-            return;
-          }
-          if (!this.actionAllow) {
-            return;
-          }
           clearTimeout(this.activeTimer);
           this.action.action = this.action.action || "think";
           this.img1.src = `./static/actions/${this.action.action}.gif`;
           // 图片加载需要时间，不用onload的话，文本和图片显示有时间差
           this.img1.onload = () => {
-            this.msg = [this.action.text, this.action.duration];
-            // this.img1.style.display = 'none'
-            // this.img2.style.display = 'block'
-            this.activeTimer = setTimeout(() => {
-              if (this.hm === 1200) {
-                this.hide();
-                return;
-              }
-              // this.img1.style.display = 'block'
-              // this.img2.style.display = 'none'
-              this.img1.src = `./static/actions/${this.defaultPic}.gif`;
-              this.msg = [];
-              this.action = [];
-            }, this.action.duration * 1000);
-
+            this.msg = [this.action.text, this.action.duration, this.action.isConfirm];
+            if(!this.action.isConfirm) {
+              this.activeTimer = setTimeout(() => {
+                if (this.hm === 1200) {
+                  this.hide();
+                  return;
+                }
+                this.img1.src = `./static/actions/${this.defaultPic}.gif`;
+                this.msg = [];
+                this.action = [];
+              }, this.action.duration * 1000);
+            }
+            
             this.img1.onload = null;
           };
         }
       },
     },
-    handPose: function(val) {
+    handPose(val) {
       if (this.handPose !== "normal") {
         const gestureList = gestureJson[val];
         if (gestureList) {
@@ -522,7 +517,7 @@ export default {
 .wrap {
   width: 200px;
   height: 200px;
-  margin: 50px 0 0 50px;
+  margin: 70px 0 0 70px;
   position: relative;
 }
 .xiao-pang {
