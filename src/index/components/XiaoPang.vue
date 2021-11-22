@@ -240,7 +240,7 @@ export default {
                 duration: 3,
               };
             }
-          }, 3000);
+          }, 5000);
 
           console.log("camera ready");
         } else {
