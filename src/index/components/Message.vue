@@ -1,5 +1,5 @@
 <template>
-  <div id="message" class="message">
+  <div id="message" class="message" :style="{ 'top':`${msgTop}px` }">
       {{ message[0] }}
       <br v-show="confirm" />
       <div v-show="confirm" class="confirm-wrap">
@@ -20,16 +20,24 @@ export default {
     return {
       msgBox: '',
       confirm: false,
-      alert: false
+      alert: false,
+      msgTop: -40,
     }
   },
   watch: {
     message(val) {
       if(!val || val.length === 0) {
-        this.msgBox.style.display = 'none'
+        this.msgBox.style.display = 'none' 
         return
       }
       if(val) {
+        if((val[0].length > 30 && val[2] === 1) || val[0].length > 60) {
+          this.msgTop = -70
+        } else if (val[0].length <= 12 ) {
+          this.msgTop = -20
+        } else {
+          this.msgTop = -40
+        }
         this.msgBox.style.display = 'block'
         if (val[2] === 1) {
           this.confirm = true;
@@ -63,6 +71,7 @@ export default {
 
 <style>
 .message {
+  display: none;
   /* border: 1px solid red; */
   color: #333;
   background-color: #FFF2BB;
@@ -80,7 +89,6 @@ export default {
   border-radius: 10px;
   font-size: 12px;
   right: 70px;
-  top: -70px;
   padding: 8px;
   max-width: 190px;
 }

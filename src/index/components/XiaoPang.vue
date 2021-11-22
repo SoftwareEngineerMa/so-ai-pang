@@ -98,7 +98,9 @@ export default {
 
       handPoseList: ["ok", "shoot", "great", "victory", "zhan"],
       handPoseIndex: 0,
-      handDetectReady: false
+      handDetectReady: false,
+
+      actionAllow: false,
     };
   },
   components: { Message },
@@ -107,6 +109,33 @@ export default {
     // 初始化
     this.init();
 
+    const DATE = new Date();
+    this.today = DATE.getDay() > 0 && DATE.getDay() < 6 ? "workdays" : "weekends"; // 工作日or周末
+    this.hm = Number(
+      this.fillZero(DATE.getHours()) + "" + this.fillZero(DATE.getMinutes())
+    );
+    this.initDefault(true);
+    this.$nextTick(() => {
+      // 开启摄像头
+      this.confirm(
+        { 'action': 'hi', 'text': "360承诺您：您的数据将始终保存在本地，不存在任何信息泄露风险，快开启摄像头与我互动吧！", 'duration': 0, isConfirm: 1 },
+        () => {
+          this.openCamera();
+        },
+        () => {
+          if(!this.actionAllow) {
+            this.actionAllow = true;
+          }
+          this.action = {
+            action: "enen",
+            text: "小胖提醒您：需要手势互动时，可在菜单按钮中主动开启摄像头！",
+            duration: 3,
+          };
+        }
+      );
+    
+    })
+   
     // 模型加载
     detectHand()
       .then((res) => {
@@ -115,26 +144,9 @@ export default {
         this.handDetectReady = true
       })
       .catch(console.log("hand detect fail"));
-
-    // 开启摄像头
-    this.confirm(
-      { 'action': 'hi', 'text': "360承诺您：您的数据将始终保存在本地，不存在任何信息泄露风险，快开启摄像头与我互动吧！", 'duration': 0, isConfirm: 1 },
-      () => {
-        this.openCamera();
-      },
-      () => {
-        this.action = {
-          action: "enen",
-          text: "小胖提醒您：需要手势互动时，可在菜单按钮中主动开启摄像头！",
-          duration: 4,
-        };
-      }
-    );
-    
     setInterval(() => {
       this.loop();
     }, 150);
-    
   },
   methods: {
     initQuickKey() {
@@ -195,7 +207,9 @@ export default {
         }
         this.mediaStreamTrack.stop();
         this.inCamera = false;
-
+        if(!this.actionAllow) {
+          this.actionAllow = true;
+        }
         this.action = {
           action: "enen",
           text: "小胖提醒您：摄像头已关闭，需要时，可在菜单中主动开启摄像头",
@@ -209,6 +223,10 @@ export default {
           }
           this.mediaStreamTrack = result;
           this.inCamera = true;
+
+          if(!this.actionAllow) {
+            this.actionAllow = true;
+          }
           this.action = {
             action: "enen",
             text: "小胖提醒您：摄像头已开启，可在菜单中控制摄像头的开关",
@@ -217,22 +235,27 @@ export default {
           setTimeout(() => {
             if(this.handDetectReady) {
               this.action = {
-                action: "enen",
+                action: "clap",
                 text: "对我比手势：Hi/棒/耶/打抢/OK 与我互动吧！",
                 duration: 3,
               };
             }
           }, 3000);
-         
+
           console.log("camera ready");
         } else {
           this.inCamera = false;
+
+          if(!this.actionAllow) {
+            this.actionAllow = true;
+          }
           this.action = {
             action: "wen",
             text:
               "小胖提醒您：摄像头开启失败了呢，可在菜单中控制摄像头的开关哦~",
             duration: 3,
           };
+
           console.log("camera fail");
         }
       }
@@ -260,6 +283,7 @@ export default {
       this.img1 = document.getElementById("img1");
       this.eyes = document.getElementById("eyes");
       this.initGesture();
+
       // 快捷键
       this.initQuickKey();
       this.video = document.getElementById("video");
@@ -336,7 +360,10 @@ export default {
         });
       }
     },
-    initDefault() {
+    initDefault(isInit) {
+      if(!this.actionAllow && !isInit) {
+        return
+      }
       if (this.today === "workdays") {
         if (
           (this.hm >= 1000 && this.hm < 1240) ||
@@ -390,9 +417,9 @@ export default {
     handDetectReady(val) {
       if(val && this.inCamera && !this.inGame) {
         this.action = {
-          action: "enen",
+          action: "clap",
           text: "对我比手势：棒/耶/打抢/OK/Hi 与我互动吧！",
-          duration: 4,
+          duration: 3,
         };
       }
     },
@@ -441,7 +468,7 @@ export default {
       }
 
       // 切换默认工作
-      this.initDefault();
+      this.initDefault(false);
 
       if (this.hm === 1240) {
         this.show();
@@ -461,6 +488,9 @@ export default {
       immediate: true,
       handler: function() {
         if (this.action && this.action.action) {
+          if (!this.actionAllow && !this.action.isConfirm) {
+            return
+          }
           clearTimeout(this.activeTimer);
           this.action.action = this.action.action || "think";
           this.img1.src = `./static/actions/${this.action.action}.gif`;

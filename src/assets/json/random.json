@@ -157,11 +157,6 @@
             "text": "你！去给我喝水！"
         },
         {
-            "action": "sorry",
-            "duration": 5.0,
-            "text": "Sorry~"
-        },
-        {
             "action": "drink",
             "duration": 3.0,
             "text": "忘记提醒你喝水了"
