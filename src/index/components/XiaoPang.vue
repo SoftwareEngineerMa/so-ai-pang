@@ -233,7 +233,7 @@ export default {
             duration: 3,
           };
           setTimeout(() => {
-            if(this.handDetectReady) {
+            if(this.handDetectReady && !this.inGame) {
               this.action = {
                 action: "clap",
                 text: "对我比手势：Hi/棒/耶/打抢/OK 与我互动吧！",
