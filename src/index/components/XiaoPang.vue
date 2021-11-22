@@ -212,7 +212,7 @@ export default {
         }
         this.action = {
           action: "enen",
-          text: "小胖提醒您：摄像头已关闭，需要时，可在菜单中主动开启摄像头",
+          text: "小胖提醒您：摄像头已关闭，需要时，可在菜单中主动开启摄像头~",
           duration: 3,
         };
       } else {
@@ -229,7 +229,7 @@ export default {
           }
           this.action = {
             action: "enen",
-            text: "小胖提醒您：摄像头已开启，可在菜单中控制摄像头的开关",
+            text: "小胖提醒您：摄像头已开启，可在菜单中控制摄像头的开关~",
             duration: 3,
           };
           setTimeout(() => {
