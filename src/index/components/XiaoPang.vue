@@ -486,9 +486,11 @@ export default {
     action: {
       deep: true,
       immediate: true,
-      handler: function() {
+      handler: function(newV, oldV) {
         if (this.action && this.action.action) {
+          // console.log(this.actionAllow, this.action.isConfirm)
           if (!this.actionAllow && !this.action.isConfirm) {
+            this.action = oldV
             return
           }
           clearTimeout(this.activeTimer);
