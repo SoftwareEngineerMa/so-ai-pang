@@ -219,6 +219,10 @@ ipcMain.on("window-min", () => {
   win.minimize();
 });
 
+ipcMain.on("window-show", () => {
+  win.show();
+});
+
 ipcMain.on("maze-open", () => {
   if (maze) {
     maze.show();

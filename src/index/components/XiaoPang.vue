@@ -342,7 +342,7 @@ export default {
         this.fillZero(this.hour) + "" + this.fillZero(this.minute)
       );
 
-      if ((this.hm < 1240 || this.hm > 1400) && !this.inGame && this.inCamera) {
+      if ((this.hm < 1240 || this.hm > 1300) && !this.inGame && this.inCamera) {
         this.addGesture();
       }
     },
@@ -367,10 +367,10 @@ export default {
       if (this.today === "workdays") {
         if (
           (this.hm >= 1000 && this.hm < 1240) ||
-          (this.hm >= 1400 && this.hm < 1900)
+          (this.hm >= 1300 && this.hm < 1900)
         ) {
           this.defaultPic = "work";
-        } else if (this.hm >= 1240 && this.hm < 1400) {
+        } else if (this.hm >= 1240 && this.hm < 1300) {
           this.defaultPic = "zzz";
         } else {
           this.defaultPic = "think";
