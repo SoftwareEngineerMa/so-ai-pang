@@ -277,7 +277,7 @@
             "text": "再不活动一下，你就长草了！"
         },
         {
-            "action": "sleep",
+            "action": "tired",
             "duration": 5.0,
             "text": "怎么肥事，有点困..."
         },
