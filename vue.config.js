@@ -1,3 +1,7 @@
+const crypto = require('crypto');
+const cryotoHash = crypto.createHash;
+crypto.createHash =  algorithm => cryotoHash(algorithm === 'md4' ? 'sha256' : algorithm);
+
 module.exports = {
     pages: {
         index: {
@@ -48,5 +52,6 @@ module.exports = {
                 }
            }
         }
-    }
+    },
+    
 }

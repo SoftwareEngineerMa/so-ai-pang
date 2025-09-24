@@ -6,9 +6,12 @@
       @confirm-ok="msgOK"
       @alert-ok="msgAlertOK"
     />
+    <Chat v-show="showChat"
+      @send-chat="sendChat"
+    />
     <div class="wrap">
       <div class="xiao-pang">
-        <img id="img1" :src="`./static/actions/${defaultPic}.gif`" alt="" />
+        <img id="img1" :src="`./static/actions/${defaultPic}.gif`" alt="" @click="chat"/>
       </div>
       <div class="hide" @click="hide"></div>
       <div class="menu-wrap" @mouseleave="closeMenu">
@@ -32,6 +35,7 @@
 <script>
 import { ipcRenderer } from "electron";
 import Message from "./Message.vue";
+import Chat from "./Chat.vue";
 // AI识别
 import setupCamera from "../../utils/setCamera";
 import detectHand from "../../utils/handdetect";
@@ -43,6 +47,8 @@ import randomJson from "../../assets/json/random.json";
 
 // import expressionJson from '../../assets/json/expression.json'
 // import Vue from 'vue'
+
+import { callDeepSeek } from "../../utils/chat";
 
 export default {
   name: "XiaoPang",
@@ -101,9 +107,11 @@ export default {
       handDetectReady: false,
 
       actionAllow: false,
+
+      showChat: false,
     };
   },
-  components: { Message },
+  components: { Message, Chat },
 
   async mounted() {
     // 初始化
@@ -191,6 +199,10 @@ export default {
         });
       }
     },
+    chat() {
+      this.showChat = true;
+    },
+
     hide() {
       ipcRenderer.send("window-min");
     },
@@ -403,6 +415,23 @@ export default {
     msgOK() {},
     msgCancel() {},
     msgAlertOK() {},
+    async sendChat(msg) {
+      this.showChat = false;
+      console.log('发送消息:', msg);
+      try {
+        const responseMsg = await callDeepSeek(msg);
+        console.log('大模型回复:', responseMsg);
+        this.action = {
+          "action": "enen",
+          "duration": 10,
+          "text": responseMsg
+        }
+        
+      } catch (error) {
+        console.error('获取大模型回复失败:', error);
+        this.showChat = false;
+      }
+    },
     confirm(action, ok = () => {}, cancel = () => {}) {
       this.action = action;
       this.msgOK = ok;

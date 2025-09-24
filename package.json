@@ -19,6 +19,7 @@
     "@tensorflow/tfjs-converter": "^3.9.0",
     "@tensorflow/tfjs-core": "^3.9.0",
     "@vladmandic/face-api": "^1.5.4",
+    "axios": "^1.10.0",
     "box2dweb": "^2.1.0-b",
     "rxjs": "^7.4.0",
     "stats.js": "^0.17.0",
@@ -32,7 +33,7 @@
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
     "css-loader": "^6.4.0",
-    "electron": "^13.0.0",
+    "electron": "^15.0.0",
     "electron-devtools-installer": "^3.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
@@ -64,5 +65,8 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "resolutions": {
+    "webpack/loader-utils": "^2.0.0"
+  }
 }
